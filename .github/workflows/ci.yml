@@ -18,6 +18,7 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: maven
+      - run: chmod +x mvnw
       - run: ./mvnw -B package
 
   email-service:
@@ -32,6 +33,7 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: maven
+      - run: chmod +x mvnw
       - run: ./mvnw -B package
 
   frontend:
