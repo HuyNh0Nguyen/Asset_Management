@@ -5,7 +5,7 @@ import { MatButton } from "@angular/material/button";
 import { MatError, MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatIcon } from "@angular/material/icon";
 import { MatInput } from "@angular/material/input";
-import { ProbesStore } from "@features/dev-tools/data/probes.store";
+import { ProbesStore } from "../../data/probes.store";
 
 // Kiểu ảnh backend chấp nhận ở endpont thử
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/webp';

@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/cor
 import { FormGroup } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
-import { LAPTOP_ATTRIBUTE_DEFINITIONS, LAPTOP_ATTRIBUTE_VALUES } from "@features/dev-tools/data/laptop-attributes.mock";
+import { LAPTOP_ATTRIBUTE_DEFINITIONS, LAPTOP_ATTRIBUTE_VALUES } from "../../data/laptop-attributes.mock";
 import { buildAttributesPayload } from "@shared/forms/dynamic-attribute-form/attribute-form.utils";
 import { AttributeValues } from "@shared/forms/dynamic-attribute-form/attribute-values.model";
 import { DynamicAttributeForm } from "@shared/forms/dynamic-attribute-form/dynamic-attribute-form";
