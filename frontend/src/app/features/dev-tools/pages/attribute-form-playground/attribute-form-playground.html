@@ -1,0 +1,23 @@
+<h1 class="page-title">Thử form thuộc tính động</h1>
+
+<section class="page-card">
+  <div class="playground-toolbar">
+    <mat-slide-toggle [checked]="disabled()" (change)="toggleDisabled($event.checked)">Chế độ chỉ xem</mat-slide-toggle>
+    <button mat-stroked-button type="button" (click)="resetToEmpty()">Form trống (tạo mới)</button>
+  </div>
+
+  <app-dynamic-attribute-form
+    [definitions]="definitions"
+    [values]="values()"
+    [group]="attributesGroup"
+    [disabled]="disabled()"
+  />
+
+  <div class="playground-actions">
+    <button mat-flat-button type="button" (click)="submit()">Kiểm tra & tạo payload</button>
+  </div>
+
+  @if (payload(); as body) {
+    <pre class="playground-payload">{{ body | json }}</pre>
+  }
+</section>

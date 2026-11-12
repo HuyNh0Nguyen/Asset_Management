@@ -1,0 +1,58 @@
+<h1 class="page-title">Kiểm tra hạ tầng</h1>
+
+<section class="page-card">
+  <h2 class="probe-heading">Ảnh qua URL ký</h2>
+  <p class="probe-hint">Ảnh phải hiện được ở cả <b>:4200</b> (local) và <b>:8000</b> (dev). Xóa phần chữ ký trong URL thì MinIO phải từ chối</p>
+
+  <div class="probe-actions">
+    <label class="probe-file">
+      <input type="file" [accept]="acceptedImageTypes" (change)="onFileSelected($event)" />
+    </label>
+    <button mat-flat-button type="button" [disabled]="!selectedFile() || store.uploading()" (click)="upload()">
+      <mat-icon>upload</mat-icon>
+      {{ store.uploading() ? 'Đang tải…' : 'Tải lên' }}
+    </button>
+  </div>
+
+  @if (store.storageProbe(); as probe) {
+    <div class="probe-result">
+      <img class="probe-image" [src]="probe.url" alt="Ảnh thử tải lên MinIO" />
+      <div class="probe-meta">
+        <p>Hết hạn lúc: <b>{{ probe.expiresAt | date: 'HH:mm:ss dd/MM/yyyy' }}</b></p>
+        <p class="probe-url">{{ probe.url }}</p>
+        <button mat-stroked-button type="button" (click)="store.refreshUrl()">
+          <mat-icon>refresh</mat-icon>
+          Lấy URL ký mới
+        </button>
+      </div>
+    </div>
+  }
+</section>
+
+<section class="page-card">
+  <h2 class="probe-heading">Email thử</h2>
+  <p class="probe-hint">Đường đi: backend → RabbitMQ → email-service → Gmail (cả local và dev)</p>
+
+  <form class="probe-email-form" [formGroup]="emailForm" (ngSubmit)="sendEmail()">
+    <mat-form-field appearance="outline">
+      <mat-label>Email người nhận</mat-label>
+      <input matInput type="email" formControlName="recipientEmail" />
+      @if (emailForm.controls.recipientEmail.hasError('required')) {
+        <mat-error>Vui lòng nhập email</mat-error>
+      } @else if (emailForm.controls.recipientEmail.hasError('email')) {
+        <mat-error>Email không hợp lệ</mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Tên người nhận</mat-label>
+      <input matInput formControlName="recipientName" />
+      @if (emailForm.controls.recipientName.hasError('required')) {
+        <mat-error>Vui lòng nhập tên</mat-error>
+      }
+    </mat-form-field>
+    <button mat-flat-button type="submit" [disabled]="store.sendingEmail()">
+      <mat-icon>send</mat-icon>
+      Gửi email thử
+    </button>
+  </form>
+</section>

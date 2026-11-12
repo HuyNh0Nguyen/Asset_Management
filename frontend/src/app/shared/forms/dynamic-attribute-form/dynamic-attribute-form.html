@@ -1,0 +1,81 @@
+<div class="attribute-grid">
+  @for (definition of activeDefinitions(); track definition.code) {
+    @if (controlOf(definition.code); as control) {
+      @switch (definition.dataType) {
+        @case (DataType.BOOLEAN) {
+          <div class="attribute-boolean">
+            <span class="attribute-boolean-label">
+              {{ definition.label }}
+              @if (definition.required) {
+                <span class="attribute-required">*</span>
+              }
+            </span>
+            <mat-radio-group [formControl]="control" [attr.aria-label]="definition.label">
+              <mat-radio-button [value]="true">{{ YesNo.YES }}</mat-radio-button>
+              <mat-radio-button [value]="false">{{ YesNo.NO }}</mat-radio-button>
+            </mat-radio-group>
+            @if (control.touched && control.hasError('required')) {
+              <span class="attribute-error">Vui lòng chọn {{ definition.label }}</span>
+            }
+          </div>
+        }
+        @case (DataType.SELECT) {
+          <mat-form-field appearance="outline">
+            <mat-label>{{ definition.label }}</mat-label>
+            <mat-select [formControl]="control" [required]="definition.required">
+              @if (!definition.required) {
+                <mat-option [value]="null">— Không chọn —</mat-option>
+              }
+              @for (option of definition.options; track option.code) {
+                <mat-option [value]="option.code">{{ option.label }}</mat-option>
+              }
+            </mat-select>
+            @if (control.hasError('required')) {
+              <mat-error>Vui lòng chọn {{ definition.label }}</mat-error>
+            }
+          </mat-form-field>
+        }
+        @default {
+          <mat-form-field appearance="outline">
+            <mat-label>{{ definition.label }}</mat-label>
+            @switch (definition.dataType) {
+              @case (DataType.NUMBER) {
+                <input matInput type="number" inputmode="decimal" [formControl]="control" [required]="definition.required" />
+              }
+              @case (DataType.DATE) {
+                <input matInput type="date" [formControl]="control" [required]="definition.required" />
+              }
+              @default {
+                <input matInput type="text" [formControl]="control" [required]="definition.required" />
+              }
+            }
+            @if (definition.measureUnit) {
+              <span matTextSuffix>{{ definition.measureUnit }}</span>
+            }
+            @if (control.hasError('required')) {
+              <mat-error>Vui lòng nhập {{ definition.label }}</mat-error>
+            } @else if (control.hasError('number')) {
+              <mat-error>{{ definition.label }} phải là số</mat-error>
+            }
+          </mat-form-field>
+        }
+      }
+    }
+  } @empty {
+    <p class="attribute-empty">Loại tài sản này chưa khai thuộc tính nào.</p>
+  }
+</div>
+
+@if (inactiveAttributes().length > 0) {
+  <div class="attribute-inactive">
+    <p class="attribute-inactive-title">Thuộc tính ngừng dùng (chỉ đọc)</p>
+    <dl>
+      @for (item of inactiveAttributes(); track item.code) {
+        <div class="attribute-inactive-row">
+          <dt>{{ item.label }}</dt>
+          <dd>{{ item.display }}</dd>
+        </div>
+      }
+    </dl>
+  </div>
+}

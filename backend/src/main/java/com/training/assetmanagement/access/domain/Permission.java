@@ -1,0 +1,23 @@
+package com.training.assetmanagement.access.domain;
+
+public enum Permission {
+    ASSET_VIEW,
+    ASSET_CREATE,
+    ASSET_TECH_EDIT,
+    ASSET_FINANCE_VIEW,
+    ASSET_FINANCE_EDIT,
+    ASSET_OPERATE,
+    ASSET_TRANSFER,
+    DISPOSAL_PROPOSE,
+    REQUEST_CREATE,
+    REQUEST_VIEW,
+    CATALOG_MANAGE,
+    DASHBOARD_VIEW,
+    WORKFLOW_MANAGE,
+    TASK_REASSIGN,
+    ORG_MANAGE,
+    USER_MANAGE,
+    ROLE_MANAGE,
+    AUDIT_VIEW,
+    SYSTEM_CONFIG
+}

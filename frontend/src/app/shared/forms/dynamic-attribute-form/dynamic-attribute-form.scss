@@ -1,0 +1,75 @@
+// Hai cột từ iPad trở lên, một cột trên điện thoại
+.attribute-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 16px;
+  row-gap: 4px;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.attribute-boolean {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 0 20px;
+}
+
+.attribute-boolean-label {
+  color: var(--vt-text-muted);
+}
+
+.attribute-required {
+  color: var(--vt-error);
+}
+
+.attribute-error {
+  color: var(--vt-error);
+  font-size: 12px;
+}
+
+.attribute-empty {
+  grid-column: 1 / -1;
+  color: var(--vt-text-muted);
+}
+
+.attribute-inactive {
+  margin-top: 8px;
+  padding: 12px 16px;
+  border: 1px dashed var(--vt-border);
+  border-radius: var(--vt-radius);
+  background: var(--vt-background);
+}
+
+.attribute-inactive-title {
+  margin: 0 0 8px;
+  color: var(--vt-text-muted);
+  font-weight: 500;
+}
+
+.attribute-inactive-row {
+  display: flex;
+  gap: 8px;
+
+  dt {
+    min-width: 160px;
+    color: var(--vt-text-muted);
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .attribute-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .attribute-inactive-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

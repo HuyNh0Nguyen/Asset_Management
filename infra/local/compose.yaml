@@ -1,0 +1,42 @@
+# Chỉ hạ tầng; ba ứng dụng chạy bằng mvnw / npm.
+# Compose tự đọc infra/local/.env để thay các biến ${...} bên dưới.
+# Mỗi container chỉ nhận đúng biến nó cần -> tài khoản Gmail không lọt vào container hạ tầng.
+name: asset-local
+services:
+  mariadb:
+    extends: { file: ../shared/services.yaml, service: mariadb }
+    environment:
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD:?}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:?}
+    volumes: [mariadb_data:/var/lib/mysql]
+    ports: ["127.0.0.1:3306:3306"]
+
+  minio:
+    extends: { file: ../shared/services.yaml, service: minio }
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?}
+    volumes: [minio_data:/data]
+    ports: ["127.0.0.1:9000:9000", "127.0.0.1:9001:9001"]
+
+  minio-init:
+    extends: { file: ../shared/services.yaml, service: minio-init }
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?}
+      MINIO_APP_USER: ${MINIO_APP_USER:?}
+      MINIO_APP_PASSWORD: ${MINIO_APP_PASSWORD:?}
+    depends_on: { minio: { condition: service_healthy } }
+
+  rabbitmq:
+    extends: { file: ../shared/services.yaml, service: rabbitmq }
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:?}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:?}
+    volumes: [rabbitmq_data:/var/lib/rabbitmq]
+    ports: ["127.0.0.1:5672:5672", "127.0.0.1:15672:15672"]
+
+volumes:
+  mariadb_data:
+  minio_data:
+  rabbitmq_data:

@@ -1,0 +1,30 @@
+<mat-toolbar class="shell-header">
+  @if (!isDesktop()) {
+    <button mat-icon-button type="button" aria-label="Mở menu" (click)="drawer.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+  }
+  <a class="shell-brand">
+    <img class="shell-brand-logo" [src]="brandLogo" alt="" width="32" height="32" />
+    <span>Quản lý tài sản</span>
+  </a>
+  <span class="shell-spacer"></span>
+  <!-- GĐ2: chuông thông báo, ảnh đại diện, đăng xuất -->
+</mat-toolbar>
+
+<mat-sidenav-container class="shell-body">
+  <mat-sidenav #drawer class="shell-sidenav" [mode]="isDesktop() ? 'side' : 'over'" [opened]="isDesktop()">
+    <mat-nav-list>
+      @for (item of menuItems; track item.url) {
+        <a mat-list-item [routerLink]="item.url" routerLinkActive="shell-nav-active" (click)="onNavigate(drawer)">
+          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          <span matListItemTitle>{{ item.label }}</span>
+        </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="shell-content">
+    <router-outlet />
+  </mat-sidenav-content>
+</mat-sidenav-container>

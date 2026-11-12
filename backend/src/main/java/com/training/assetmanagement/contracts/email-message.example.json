@@ -1,0 +1,10 @@
+{
+  "emailLogId": "019a6d3e-8f42-7c1a-b5e9-3d27f0a8c641",
+  "eventType": "REQUEST_REJECTED",
+  "recipientEmail": "nv.an@example.com",
+  "recipientName": "Nguyễn Văn An",
+  "subject": "[Quản lý tài sản] Phiếu PDX-2026-0153 bị từ chối",
+  "templateName": "request-rejected",
+  "link": "http://localhost:8000/requests/019a6d3a-1b07-7e85-9c4f-a62d18e3b7f0",
+  "templateVars": { "requestCode": "PDX-2026-0153", "stageName": "Trưởng phòng", "decidedBy": "Trần Bình", "reason": "Dùng server chung của phòng" }
+}

@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{email/base-layout :: layout(~{::section})}">
+<body>
+<section>
+  <p style="margin:0 0 8px;">Đây là email thử hạ tầng của giai đoạn 0.</p>
+  <p style="margin:0;">
+    Đường đi: backend → RabbitMQ → email-service → Mailpit. Gửi lúc <b th:text="${sentAt}">08:00:00 10/11/2026</b>.
+  </p>
+</section>
+</body>
+</html>

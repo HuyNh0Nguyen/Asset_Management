@@ -1,0 +1,83 @@
+# Stack DEV: hạ tầng + backend + email-service + frontend, chạy hoàn toàn trong Docker.
+# Compose tự đọc infra/dev/.env (cùng thư mục) để thay các biến ${...}.
+name: asset-dev
+services:
+  mariadb:
+    extends: { file: ../shared/services.yaml, service: mariadb }
+    environment:
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD:?}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:?}
+    volumes: [mariadb_data:/var/lib/mysql]
+    ports: ["127.0.0.1:3307:3306"]        # chỉ để gỡ lỗi bằng DBeaver
+
+  minio:
+    extends: { file: ../shared/services.yaml, service: minio }
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?}
+    volumes: [minio_data:/data]
+    ports: ["127.0.0.1:9003:9001"]        # console; API KHÔNG mở — trình duyệt đi qua nginx
+
+  minio-init:
+    extends: { file: ../shared/services.yaml, service: minio-init }
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_APP_USER: ${MINIO_APP_USER:?}
+      MINIO_APP_PASSWORD: ${MINIO_APP_PASSWORD:?}
+    depends_on: { minio: { condition: service_healthy } }
+
+  rabbitmq:
+    extends: { file: ../shared/services.yaml, service: rabbitmq }
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:?}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?Điền RABBITMQ_PASSWORD}
+    volumes: [rabbitmq_data:/var/lib/rabbitmq]
+    ports: ["127.0.0.1:15673:15672"]      # giao diện quản trị; AMQP KHÔNG mở ra ngoài
+
+  backend:
+    build: ../../backend
+    restart: unless-stopped
+    environment:                          # tên biến = tên thuộc tính dạng UPPER_SNAKE
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_PASSWORD: ${MARIADB_PASSWORD}
+      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_USER}
+      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      APP_STORAGE_ACCESS_KEY: ${MINIO_APP_USER}
+      APP_STORAGE_SECRET_KEY: ${MINIO_APP_PASSWORD}
+      # URL ký ảnh chứa host này -> phải trùng địa chỉ trình duyệt đang mở
+      APP_STORAGE_PUBLIC_ENDPOINT: ${PUBLIC_BASE_URL:-http://localhost:8000}
+      APP_PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:8000}
+      APP_JWT_SECRET: ${JWT_SECRET:?Điền JWT_SECRET (≥ 32 byte)}
+      APP_SEED_DEMO: ${SEED_DEMO:-true}
+      APP_DEMO_MAILBOX: ${DEMO_MAILBOX:-}
+    depends_on:
+      mariadb:    { condition: service_healthy }
+      minio-init: { condition: service_completed_successfully }
+      rabbitmq:   { condition: service_healthy }
+
+  email-service:
+    build: ../../email-service
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_USER}
+      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      SPRING_MAIL_USERNAME: ${MAIL_USERNAME:?}
+      SPRING_MAIL_PASSWORD: ${MAIL_PASSWORD:?}
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+
+  frontend:
+    build: ../../frontend
+    restart: unless-stopped
+    environment:
+      BACKEND_UPSTREAM: http://backend:8080
+      STORAGE_UPSTREAM: http://minio:9000
+    ports: ["${HTTP_PORT:-8000}:80"]      # cổng DUY NHẤT mở ra ngoài máy
+    depends_on: [backend]
+
+volumes:
+  mariadb_data:
+  minio_data:
+  rabbitmq_data:

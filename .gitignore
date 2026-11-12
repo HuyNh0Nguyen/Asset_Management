@@ -1,0 +1,18 @@
+docs/*
+# Java
+target/
+*.class
+# Node / Angular
+node_modules/
+dist/
+.angular/
+# IDE, hệ điều hành
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+*.log
+# Bí mật thật của từng môi trường (tài khoản Gmail...) — không bao giờ commit
+infra/*/.env
