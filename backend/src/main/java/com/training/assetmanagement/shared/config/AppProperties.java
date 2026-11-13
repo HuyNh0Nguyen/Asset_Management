@@ -31,5 +31,9 @@ public record AppProperties(
         @NotBlank String secretKey
     ) {}
 
-    public record Jwt(@NotBlank @Size(min = 32) String secret) {}
+    // HS256 cần secret >= 32 byte
+    public record Jwt(
+        @NotBlank @Size(min = 32) String secret,
+        @NotNull Duration ttl
+    ) {}
 }

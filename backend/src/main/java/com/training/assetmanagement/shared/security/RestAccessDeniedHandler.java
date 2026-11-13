@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +23,10 @@ public class RestAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException {
-        errorResponseWriter.write(request, response, ErrorCode.FORBIDDEN);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        ErrorCode errorCode = PasswordChangeGate.isPending(authentication)
+                ? ErrorCode.PASSWORD_CHANGE_REQUIRED
+                : ErrorCode.FORBIDDEN;
+        errorResponseWriter.write(request, response, errorCode);
     }
 }

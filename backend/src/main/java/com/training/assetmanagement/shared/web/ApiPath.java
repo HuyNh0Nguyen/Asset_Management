@@ -45,6 +45,8 @@ public final class ApiPath {
 
     // ---------- Đường dẫn đầy đủ: Dùng ngoài controller (security, OpenAPI) ----------
     public static final String AUTH_LOGIN = AUTH + LOGIN;
+    public static final String AUTH_LOGOUT = AUTH + LOGOUT;
+    public static final String AUTH_CHANGE_PASSWORD = AUTH + CHANGE_PASSWORD;
     public static final String API_DOCS = API + "/v3/api-docs";
     public static final String SWAGGER_UI = API + "/swagger-ui";
     public static final String SWAGGER_UI_ENTRY = API + "/docs";

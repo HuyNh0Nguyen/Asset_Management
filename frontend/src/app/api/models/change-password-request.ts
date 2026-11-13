@@ -7,6 +7,5 @@
  */
 export interface ChangePasswordRequest {
   confirmPassword: string;
-  currentPassword: string;
   newPassword: string;
 }

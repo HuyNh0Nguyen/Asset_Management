@@ -17,3 +17,5 @@ export type { RefreshStorageProbeUrl$Params as RefreshStorageProbeUrl$Params } f
 export { refreshStorageProbeUrl as refreshStorageProbeUrl } from './fn/dev-tools/refresh-storage-probe-url';
 export type { GetMe$Params as GetMe$Params } from './fn/me/get-me';
 export { getMe as getMe } from './fn/me/get-me';
+export type { ResetUserPassword$Params as ResetUserPassword$Params } from './fn/users/reset-user-password';
+export { resetUserPassword as resetUserPassword } from './fn/users/reset-user-password';
