@@ -8,8 +8,8 @@ html {
   @include mat.theme(
     (
       color: (
-        primary: mat.$red-palette,
-        tertiary: mat.$azure-palette,
+        primary: mat.$azure-palette,
+        tertiary: mat.$cyan-palette,
       ),
       typography: (
         plain-family: $font-family,
@@ -22,9 +22,9 @@ html {
     )
   );
 
-  // Ghi đè màu hệ thống của Material sang đỏ Viettel
-  --mat-sys-primary: var(--vt-primary);
+  // Ghi đè màu hệ thống của Material sang màu chủ đạo ứng dụng
+  --mat-sys-primary: var(--app-primary);
   --mat-sys-on-primary: #ffffff;
-  --mat-sys-primary-container: var(--vt-primary-soft);
-  --mat-sys-on-primary-container: var(--vt-primary-dark);
+  --mat-sys-primary-container: var(--app-primary-soft);
+  --mat-sys-on-primary-container: var(--app-primary-dark);
 }

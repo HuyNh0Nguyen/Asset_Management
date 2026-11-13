@@ -10,7 +10,7 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--vt-primary);
+  background: var(--app-primary);
   color: var(--mat-sys-on-primary);
 
   // Mọi nút icon trên header (menu, sau này: chuông, avatar) dùng màu trắng thay vì xám mặc định
@@ -55,18 +55,18 @@
 
 .shell-sidenav {
   width: 260px;
-  border-right: 1px solid var(--vt-border);
+  border-right: 1px solid var(--app-border);
 }
 
-// Mục menu đang chọn: chữ đỏ, nền đỏ nhạt
+// Mục menu đang chọn: chữ xanh đậm, nền xanh nhạt
 .shell-nav-active {
-  background: var(--vt-primary-soft);
-  color: var(--vt-primary-dark);
+  background: var(--app-primary-soft);
+  color: var(--app-primary-dark);
 }
 
 .shell-content {
   padding: 24px;
-  background: var(--vt-background);
+  background: var(--app-background);
 }
 
 // iPad (768–1279px)

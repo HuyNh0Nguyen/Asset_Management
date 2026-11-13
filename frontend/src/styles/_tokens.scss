@@ -1,17 +1,17 @@
-// Bảng màu theo nhận diện Viettel: đỏ chủ đạo, nền trắng, xám trung tính
+// Bảng màu giao diện: xanh dương chủ đạo (Modern Blue), nền xám sáng, xám trung tính
 :root {
-  --vt-primary: #ee0033;
-  --vt-primary-dark: #b8002a;
-  --vt-primary-soft: #ffe8ee;
-  --vt-text: #1f2328;
-  --vt-text-muted: #5f6368;
-  --vt-border: #e3e5e8;
-  --vt-surface: #ffffff;
-  --vt-background: #f5f6f8;
-  --vt-success: #1e8e3e;
-  --vt-warning: #e37400;
-  --vt-error: #d93025;
-  --vt-info: #1a73e8;
-  --vt-radius: 8px;
-  --vt-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --app-primary: #1a56db;
+  --app-primary-dark: #1e40af;
+  --app-primary-soft: #eff6ff;
+  --app-text: #1e293b;
+  --app-text-muted: #64748b;
+  --app-border: #e2e8f0;
+  --app-surface: #ffffff;
+  --app-background: #f8fafc;
+  --app-success: #16a34a;
+  --app-warning: #ea580c;
+  --app-error: #dc2626;
+  --app-info: #0284c7;
+  --app-radius: 8px;
+  --app-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }

@@ -8,8 +8,8 @@ body {
 
 body {
   margin: 0;
-  background-color: var(--vt-background);
-  color: var(--vt-text);
+  background-color: var(--app-background);
+  color: var(--app-text);
   font: var(--mat-sys-body-medium);
 }
 
@@ -20,9 +20,9 @@ body {
 }
 
 .page-card {
-  background: var(--vt-surface);
-  border: 1px solid var(--vt-border);
-  border-radius: var(--vt-radius);
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius);
   padding: 24px;
   margin-bottom: 16px;
 }
