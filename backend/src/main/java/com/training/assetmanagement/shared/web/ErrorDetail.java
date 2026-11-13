@@ -10,6 +10,7 @@ import java.util.List;
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
 // Chỉ để chẩn đoán; fieldErrors chỉ có ở 400 do @Valid
+@Schema(name = "ErrorDetail", description = "Error response with timestamp, status, error message, request path, and optional field errors")
 public record ErrorDetail(
     @Schema(requiredMode = REQUIRED) OffsetDateTime timestamp,
     @Schema(requiredMode = REQUIRED) int status,

@@ -16,8 +16,13 @@ public enum ErrorCode {
 
     // 401/403 - xác thực, phân quyền
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "Authentication required"),
+    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "Invalid username or password"),
+    ACCOUNT_LOCKED(HttpStatus.UNAUTHORIZED, "Account is temporarily locked"),
+    ACCOUNT_DISABLED(HttpStatus.UNAUTHORIZED, "Account is disabled"),
+    SESSION_EXPIRED(HttpStatus.UNAUTHORIZED, "Session expired or revoked"),
     FORBIDDEN(HttpStatus.FORBIDDEN, "Access denied"),
     FIELD_GROUP_FORBIDDEN(HttpStatus.FORBIDDEN, "Field group not permitted"),
+    PASSWORD_CHANGE_REQUIRED(HttpStatus.FORBIDDEN, "Password change required before continuing"),
 
     // 404/405/409/415
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "Resource not found"),
@@ -29,6 +34,7 @@ public enum ErrorCode {
     FILE_TOO_LARGE(HttpStatus.UNPROCESSABLE_CONTENT, "File exceeds the maximum allowed size"),
     UNSUPPORTED_FILE_TYPE(HttpStatus.UNPROCESSABLE_CONTENT, "Unsupported file type"),
     PASSWORD_SAME_AS_CURRENT(HttpStatus.UNPROCESSABLE_CONTENT, "New password must differ from the current password"),
+    USER_NOT_ACTIVE(HttpStatus.UNPROCESSABLE_CONTENT, "User account is not active"),
 
     // 5xx
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected server error"),

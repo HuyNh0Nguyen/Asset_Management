@@ -10,6 +10,8 @@
   } ],
   "security" : [ {
     "bearerAuth" : [ ]
+  }, {
+    "bearerAuth" : [ ]
   } ],
   "tags" : [ {
     "description" : "APIs for development and testing purposes",
@@ -772,6 +774,97 @@
         "summary" : "Get the current authenticated user's information",
         "tags" : [ "Me" ]
       }
+    },
+    "/api/users/{id}/reset-password" : {
+      "post" : {
+        "operationId" : "resetUserPassword",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description" : "Unauthorized"
+          },
+          "403" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description" : "Forbidden"
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description" : "Not Found"
+          },
+          "409" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description" : "Conflict"
+          },
+          "422" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description" : "Unprocessable Content"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Reset a user's password",
+        "tags" : [ "Users" ]
+      }
     }
   },
   "components" : {
@@ -862,16 +955,14 @@
             "type" : "string",
             "minLength" : 1
           },
-          "currentPassword" : {
-            "type" : "string",
-            "minLength" : 1
-          },
           "newPassword" : {
             "type" : "string",
-            "minLength" : 1
+            "maxLength" : 72,
+            "minLength" : 8,
+            "pattern" : "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9])[\\x21-\\x7E]+$"
           }
         },
-        "required" : [ "confirmPassword", "currentPassword", "newPassword" ]
+        "required" : [ "confirmPassword", "newPassword" ]
       },
       "DataScope" : {
         "type" : "string",
@@ -895,9 +986,10 @@
       },
       "ErrorCode" : {
         "type" : "string",
-        "enum" : [ "VALIDATION_FAILED", "MALFORMED_REQUEST", "UNKNOWN_FIELD", "UNAUTHORIZED", "FORBIDDEN", "FIELD_GROUP_FORBIDDEN", "RESOURCE_NOT_FOUND", "METHOD_NOT_ALLOWED", "CONFLICT", "UNSUPPORTED_MEDIA_TYPE", "FILE_TOO_LARGE", "UNSUPPORTED_FILE_TYPE", "PASSWORD_SAME_AS_CURRENT", "INTERNAL_ERROR", "STORAGE_ERROR", "NOT_IMPLEMENTED" ]
+        "enum" : [ "VALIDATION_FAILED", "MALFORMED_REQUEST", "UNKNOWN_FIELD", "UNAUTHORIZED", "INVALID_CREDENTIALS", "ACCOUNT_LOCKED", "ACCOUNT_DISABLED", "SESSION_EXPIRED", "FORBIDDEN", "FIELD_GROUP_FORBIDDEN", "PASSWORD_CHANGE_REQUIRED", "RESOURCE_NOT_FOUND", "METHOD_NOT_ALLOWED", "CONFLICT", "UNSUPPORTED_MEDIA_TYPE", "FILE_TOO_LARGE", "UNSUPPORTED_FILE_TYPE", "PASSWORD_SAME_AS_CURRENT", "USER_NOT_ACTIVE", "INTERNAL_ERROR", "STORAGE_ERROR", "NOT_IMPLEMENTED" ]
       },
       "ErrorDetail" : {
+        "description" : "Error response with timestamp, status, error message, request path, and optional field errors",
         "properties" : {
           "error" : {
             "type" : "string"
@@ -923,6 +1015,7 @@
         "required" : [ "error", "path", "status", "timestamp" ]
       },
       "FieldErrorDetail" : {
+        "description" : "Detail of a field validation error",
         "properties" : {
           "field" : {
             "type" : "string"

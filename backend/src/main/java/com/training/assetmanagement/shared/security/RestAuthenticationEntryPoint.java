@@ -21,6 +21,8 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-        errorResponseWriter.write(request, response, ErrorCode.UNAUTHORIZED);
+        // Có token nhưng hỏng -> SESSION_EXPIRED; không gửi token -> UNAUTHORIZED
+        ErrorCode errorCode = AuthFailure.of(request).orElse(ErrorCode.UNAUTHORIZED);
+        errorResponseWriter.write(request, response, errorCode);
     }
 }

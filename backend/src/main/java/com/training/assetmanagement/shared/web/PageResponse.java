@@ -9,6 +9,7 @@ import java.util.function.Function;
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 
 // Mọi danh sách tra cứu trả về dạng trang; page đếm từ 0 (khớp MatPaginator)
+@Schema(name = "PageResponse", description = "Paginated response with items and pagination info")
 public record PageResponse<T>(
         @Schema(requiredMode = REQUIRED) List<T> items,
         @Schema(requiredMode = REQUIRED) int page,

@@ -21,6 +21,7 @@ public class EmailPublisherImpl implements EmailPublisher {
 
     private final ApplicationEventPublisher eventPublisher;
     private final RabbitTemplate rabbitTemplate;
+    private final EmailLogService emailLogService;
 
     @Override
     public void publishAfterCommit(EmailMessage message) {
@@ -34,8 +35,23 @@ public class EmailPublisherImpl implements EmailPublisher {
         try {
             rabbitTemplate.convertAndSend(EmailQueue.EXCHANGE, EmailQueue.ROUTING_KEY, message);
         } catch (AmqpException ex) {
-            // Phase 2: Đánh dấu email_logs FAILED + last_error trong giao dịch REQUIRES_NEW
-            log.error("Failed to send email {} to {} on RabbitMQ", message.eventType(), message.recipientEmail(), ex);
+            // Không log nguyên message: templateVars có thể chứa mật khẩu tạm
+            log.error("Failed to send email {} ({}) to {} on RabbitMQ",
+                message.emailLogId(), message.eventType(), message.recipientEmail(), ex);
+            markFailed(message, ex);
+        }
+    }
+
+    // Dòng email_logs thành FAILED để tra được; in-app (nếu có) đã nằm trong CSDL
+    private void markFailed(EmailMessage message, AmqpException ex) {
+        // Email thử của phase 0 không có dùng email_logs
+        if (message.emailLogId() == null) {
+            return;
+        }
+        try {
+            emailLogService.markFailed(message.emailLogId(), ex.getClass().getSimpleName() + ": " + ex.getMessage());
+        } catch (RuntimeException markException) {
+            log.error("Failed to mark email log {} as FAILED", message.emailLogId(), markException);
         }
     }
 }

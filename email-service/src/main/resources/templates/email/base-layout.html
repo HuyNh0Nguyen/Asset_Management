@@ -3,34 +3,52 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!--/* Giao diện sáng như color-scheme: light của _theme.scss */-->
+  <meta name="color-scheme" content="light" />
+  <meta name="supported-color-schemes" content="light" />
   <title th:text="${subject}">Quản lý tài sản</title>
+  <!--/* Điện thoại: thẻ thư phủ toàn chiều ngang, thu hẹp lề */-->
+  <style>
+    @media (max-width: 620px) {
+      .email-outer { padding: 0 !important; }
+      .email-card { border-radius: 0 !important; border-left: 0 !important; border-right: 0 !important; }
+      .email-header, .email-body, .email-footer { padding-left: 16px !important; padding-right: 16px !important; }
+    }
+  </style>
 </head>
-<body style="margin:0;padding:0;background:#f5f6f8;font-family:Arial,Helvetica,sans-serif;color:#1f2328;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f6f8;padding:24px 0;">
+<body style="margin:0;padding:0;background:#f8fafc;color:#1e293b;font-family:Roboto,'Segoe UI',Arial,Helvetica,sans-serif;">
+<table role="presentation" class="email-outer" width="100%" cellpadding="0" cellspacing="0" bgcolor="#f8fafc"
+       style="background:#f8fafc;padding:24px 12px;">
   <tr>
     <td align="center">
-      <table role="presentation" width="600" cellpadding="0" cellspacing="0"
-             style="max-width:600px;width:100%;background:#ffffff;border-radius:8px;overflow:hidden;">
-        <!-- Đầu thư: đỏ Viettel -->
+      <table role="presentation" class="email-card" width="600" cellpadding="0" cellspacing="0" bgcolor="#ffffff"
+             style="max-width:600px;width:100%;background:#ffffff;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.08);">
+        <!--/* Đầu thư: màu chủ đạo --app-primary, viền --app-primary-dark */-->
         <tr>
-          <td style="background:#ee0033;color:#ffffff;padding:16px 24px;font-size:18px;font-weight:bold;">
+          <td class="email-header" bgcolor="#1a56db"
+              style="background:#1a56db;color:#ffffff;padding:16px 24px;border-bottom:3px solid #1e40af;font-size:18px;line-height:24px;font-weight:600;">
             Quản lý tài sản
           </td>
         </tr>
         <tr>
-          <td style="padding:24px;font-size:14px;line-height:1.6;">
-            <p style="margin:0 0 16px;">Xin chào <b th:text="${recipientName}">Nguyễn Văn An</b>,</p>
+          <td class="email-body" style="padding:24px;font-size:14px;line-height:22px;color:#1e293b;">
+            <p style="margin:0 0 16px;">Xin chào <strong th:text="${recipientName}">Nguyễn Văn An</strong>,</p>
             <div th:replace="${content}">Nội dung riêng của từng sự kiện</div>
-            <p th:if="${link}" style="margin:24px 0 0;">
-              <a th:href="${link}"
-                 style="display:inline-block;background:#ee0033;color:#ffffff;text-decoration:none;padding:10px 20px;border-radius:6px;">
-                Mở hệ thống
-              </a>
-            </p>
+            <!--/* Nút bấm: nhãn mặc định "Mở hệ thống", sự kiện tự đặt qua biến linkLabel */-->
+            <table th:if="${link}" role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0 0;">
+              <tr>
+                <td bgcolor="#1a56db" style="background:#1a56db;border-radius:8px;">
+                  <a th:href="${link}" th:text="${linkLabel} ?: 'Mở hệ thống'" href="#"
+                     style="display:inline-block;padding:12px 24px;color:#ffffff;text-decoration:none;font-size:14px;line-height:20px;font-weight:600;border-radius:8px;">Mở hệ thống</a>
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
+        <!--/* Chân thư: chữ phụ --app-text-muted trên nền --app-background */-->
         <tr>
-          <td style="padding:16px 24px;font-size:12px;color:#5f6368;border-top:1px solid #e3e5e8;">
+          <td class="email-footer" bgcolor="#f8fafc"
+              style="padding:16px 24px;font-size:12px;line-height:18px;color:#64748b;background:#f8fafc;border-top:1px solid #e2e8f0;">
             Email tự động từ hệ thống Quản lý tài sản — vui lòng không trả lời.
           </td>
         </tr>
