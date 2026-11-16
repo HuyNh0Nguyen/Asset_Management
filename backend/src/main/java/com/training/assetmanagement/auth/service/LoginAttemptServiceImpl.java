@@ -74,7 +74,7 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
         // Đang khóa: Không kiểm mật khẩu, kể cả đúng
         if (LoginLockPolicy.isLocked(user.lockedUntil(), now)) {
             auditFailure(actor, user, reasonOnly(LoginFailureReason.LOCKED));
-            return new LoginOutcome.Locked();
+            return new LoginOutcome.Locked(LoginLockPolicy.remainingLockSeconds(user.lockedUntil(), now));
         }
 
         int failedCount = user.failedLoginCount();
@@ -114,7 +114,9 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
         }
         auditFailure(actor, user, newValue);
         // Lần sai thứ 5 -> Báo khóa luôn
-        return lockedUntil != null ? new LoginOutcome.Locked() : new LoginOutcome.InvalidCredentials();
+        return lockedUntil != null
+            ? new LoginOutcome.Locked(LoginLockPolicy.remainingLockSeconds(lockedUntil, now))
+            : new LoginOutcome.InvalidCredentials();
     }
 
     private void auditFailure(AuditActor actor, UserCredential user, Map<String, Object> newValue) {

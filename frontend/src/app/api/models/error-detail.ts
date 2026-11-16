@@ -10,6 +10,7 @@ export interface ErrorDetail {
   error: string;
   fieldErrors?: Array<FieldErrorDetail>;
   path: string;
+  retryAfterSeconds?: number;
   status: number;
   timestamp: string;
 }

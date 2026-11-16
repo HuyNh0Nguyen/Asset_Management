@@ -5,28 +5,15 @@ import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.media.Content;
-import io.swagger.v3.oas.models.media.MediaType;
-import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.responses.ApiResponse;
-import io.swagger.v3.oas.models.responses.ApiResponses;
 import org.springdoc.core.customizers.GlobalOpenApiCustomizer;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
 
-// Gắn phản hồi lỗi ApiErrorResponse vào MỌI operation; phản hồi 2xx giữ là DTO trần
+// Chỉ đăng ký schema lỗi vào components để FE sinh model (ApiErrorResponse, ErrorCode...).
+// Không gắn phản hồi lỗi vào từng operation: Swagger UI chỉ hiện mẫu phản hồi thành công (2xx)
 @Component
 public class ApiEnvelopeCustomizer implements GlobalOpenApiCustomizer {
-
-    private static final String ERROR_SCHEMA = "ApiErrorResponse";
-
-    private static final List<HttpStatus> ERROR_STATUSES = List.of(
-        HttpStatus.BAD_REQUEST, HttpStatus.UNAUTHORIZED, HttpStatus.FORBIDDEN, HttpStatus.NOT_FOUND,
-        HttpStatus.CONFLICT, HttpStatus.UNPROCESSABLE_CONTENT, HttpStatus.INTERNAL_SERVER_ERROR
-    );
 
     @Override
     public void customise(OpenAPI openApi) {
@@ -35,21 +22,6 @@ public class ApiEnvelopeCustomizer implements GlobalOpenApiCustomizer {
         // Sinh schema ApiErrorResponse, ErrorDetail, FieldErrorDetail, ErrorCode (enum)
         ModelConverters.getInstance()
             .readAll(new AnnotatedType(ApiErrorResponse.class))
-            .forEach(openApi.getComponents()::addSchemas);
-
-        if (openApi.getPaths() == null) {
-            return;
-        }
-        Content errorContent = new Content().addMediaType(
-            org.springframework.http.MediaType.APPLICATION_JSON_VALUE,
-            new MediaType().schema(new Schema<>().$ref(ERROR_SCHEMA))
-        );
-
-        openApi.getPaths().values().forEach(pathItem -> pathItem.readOperations().forEach(operation -> {
-            ApiResponses responses = Optional.ofNullable(operation.getResponses()).orElseGet(ApiResponses::new);
-            ERROR_STATUSES.forEach(status -> responses.addApiResponse(String.valueOf(status.value()),
-                new ApiResponse().description(status.getReasonPhrase()).content(errorContent)));
-            operation.setResponses(responses);
-        }));
+            .forEach(components::addSchemas);
     }
 }

@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
         if (ex.getErrorCode().getStatus().is5xxServerError()) {
             log.error("Error {} at {}: {}", ex.getErrorCode(), request.getRequestURI(), ex.getMessage(), ex);
         }
-        return build(ex.getErrorCode(), request, null);
+        return build(ex.getErrorCode(), request, null, ex.getRetryAfterSeconds());
     }
 
     // 400 do @Valid trên body - chỉ ở đây mới có fieldErrors
@@ -118,7 +118,12 @@ public class GlobalExceptionHandler {
 
     private ResponseEntity<ApiResponse<ErrorDetail>> build(ErrorCode code, HttpServletRequest request,
                                                            List<FieldErrorDetail> fieldErrors) {
-        ErrorDetail detail = ErrorDetail.of(code, request.getRequestURI(), clock, fieldErrors);
+        return build(code, request, fieldErrors, null);
+    }
+
+    private ResponseEntity<ApiResponse<ErrorDetail>> build(ErrorCode code, HttpServletRequest request,
+                                                           List<FieldErrorDetail> fieldErrors, Long retryAfterSeconds) {
+        ErrorDetail detail = ErrorDetail.of(code, request.getRequestURI(), clock, fieldErrors, retryAfterSeconds);
         return ResponseEntity.status(code.getStatus()).body(ApiResponse.error(code, detail));
     }
 }
