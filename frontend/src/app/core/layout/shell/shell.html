@@ -9,13 +9,29 @@
     <span>Quản lý tài sản</span>
   </a>
   <span class="shell-spacer"></span>
-  <!-- GĐ2: chuông thông báo, ảnh đại diện, đăng xuất -->
+  
+  <!-- Tài khoản: họ tên + Đổi mật khẩu / Đăng xuất -->
+  <button mat-button type="button" class="shell-user" [matMenuTriggerFor]="userMenu" aria-label="Tài khoản">
+    <mat-icon>account_circle</mat-icon>
+    <span class="shell-user-name">{{ fullName() }}</span>
+    <mat-icon class="shell-user-caret">expand_more</mat-icon>
+  </button>
+  <mat-menu #userMenu="matMenu" xPosition="before">
+    <a mat-menu-item [routerLink]="changePasswordUrl">
+      <mat-icon>lock_reset</mat-icon>
+      <span>Đổi mật khẩu</span>
+    </a>
+    <button mat-menu-item type="button" [disabled]="loggingOut()" (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Đăng xuất</span>
+    </button>
+  </mat-menu>
 </mat-toolbar>
 
 <mat-sidenav-container class="shell-body">
   <mat-sidenav #drawer class="shell-sidenav" [mode]="isDesktop() ? 'side' : 'over'" [opened]="isDesktop()">
     <mat-nav-list>
-      @for (item of menuItems; track item.url) {
+      @for (item of menuItems(); track item.url) {
         <a mat-list-item [routerLink]="item.url" routerLinkActive="shell-nav-active" (click)="onNavigate(drawer)">
           <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
           <span matListItemTitle>{{ item.label }}</span>

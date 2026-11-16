@@ -1,0 +1,192 @@
+// Khung chung cho trang đăng nhập / đổi mật khẩu (ngoài Shell)
+.auth-page {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  box-sizing: border-box;
+  background: linear-gradient(160deg, var(--app-primary-soft) 0%, var(--app-background) 60%);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 32px;
+  box-sizing: border-box;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius);
+  box-shadow: var(--app-shadow);
+}
+
+.auth-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.auth-title {
+  margin: 0;
+  font: var(--mat-sys-headline-small);
+  color: var(--app-text);
+}
+
+.auth-subtitle {
+  margin: 0;
+  font: var(--mat-sys-body-medium);
+  color: var(--app-text-muted);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.auth-field {
+  width: 100%;
+}
+
+.auth-submit {
+  width: 100%;
+  height: 44px;
+  margin-top: 8px;
+}
+
+// Hộp thông báo: lỗi dưới form, nhắc bắt buộc đổi mật khẩu
+.auth-error,
+.auth-notice {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: var(--app-radius);
+  font: var(--mat-sys-body-medium);
+}
+
+.auth-error {
+  color: var(--app-error);
+  background: color-mix(in srgb, var(--app-error) 8%, transparent);
+}
+
+.auth-notice {
+  color: var(--app-warning);
+  background: color-mix(in srgb, var(--app-warning) 10%, transparent);
+}
+
+// Tạm khóa đăng nhập: Icon + câu + đồng hồ; icon và chữ chung chiều cao dòng để thẳng hàng
+.auth-lock {
+  --auth-lock-line: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border-left: 3px solid var(--app-error);
+}
+
+// Ghép hai class: style của MatIcon (24px) nạp sau stylesheet toàn cục
+.auth-lock .auth-lock-icon {
+  flex-shrink: 0;
+  width: var(--auth-lock-line);
+  height: var(--auth-lock-line);
+  font-size: var(--auth-lock-line);
+  line-height: var(--auth-lock-line);
+}
+
+.auth-lock-text {
+  line-height: var(--auth-lock-line);
+}
+
+// Chữ số cùng bề rộng: đồng hồ không rung khi đổi giây
+.auth-countdown {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.auth-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.auth-link {
+  padding: 4px;
+  border: 0;
+  background: none;
+  color: var(--app-primary);
+  font: var(--mat-sys-label-large);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+.auth-hint {
+  margin: 0;
+  text-align: center;
+  font: var(--mat-sys-body-small);
+  color: var(--app-text-muted);
+}
+
+// Danh sách quy tắc mật khẩu, đánh dấu khi đạt
+.auth-rules {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 12px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+// Icon và chữ dùng chung một chiều cao dòng -> thẳng hàng; chữ xuống dòng thì icon giữ ở dòng đầu
+.auth-rule {
+  --auth-rule-line: 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font: var(--mat-sys-body-small);
+  color: var(--app-text-muted);
+}
+
+// Ghép hai class: style của MatIcon (24px) nạp sau stylesheet toàn cục, một class đơn sẽ bị ghi đè
+.auth-rule .auth-rule-icon {
+  flex-shrink: 0;
+  width: var(--auth-rule-line);
+  height: var(--auth-rule-line);
+  font-size: var(--auth-rule-line);
+  line-height: var(--auth-rule-line);
+}
+
+.auth-rule-label {
+  line-height: var(--auth-rule-line);
+}
+
+.auth-rule-met {
+  color: var(--app-success);
+}
+
+// Điện thoại: thẻ phủ toàn màn hình, quy tắc một cột
+@media (max-width: 599.98px) {
+  .auth-page {
+    align-items: stretch;
+    padding: 0;
+    background: var(--app-surface);
+  }
+
+  .auth-card {
+    max-width: none;
+    padding: 32px 20px;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .auth-rules {
+    grid-template-columns: 1fr;
+  }
+}

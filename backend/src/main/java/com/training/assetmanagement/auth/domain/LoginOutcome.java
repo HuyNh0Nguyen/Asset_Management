@@ -10,7 +10,8 @@ public sealed interface LoginOutcome
 
     record InvalidCredentials() implements LoginOutcome {}
 
-    record Locked() implements LoginOutcome {}
+    // retryAfterSeconds: Thời gian còn lại tới khi mở khóa, FE dùng để đếm ngược
+    record Locked(long retryAfterSeconds) implements LoginOutcome {}
 
     record Disabled() implements LoginOutcome {}
 }

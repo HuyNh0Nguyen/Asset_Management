@@ -1,0 +1,53 @@
+<main class="auth-page">
+  <section class="auth-card">
+    <header class="auth-header">
+      <img class="auth-logo" [src]="brandLogo" alt="" width="48" height="48" />
+      <h1 class="auth-title">Đăng nhập</h1>
+      <p class="auth-subtitle">Hệ thống quản lý tài sản</p>
+    </header>
+
+    <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      @if (locked()) {
+        <!-- Đồng hồ đổi mỗi giây: aria-live="off" để trình đọc màn hình chỉ đọc một lần -->
+        <p class="auth-error auth-lock" role="alert">
+          <mat-icon class="auth-lock-icon">lock_clock</mat-icon>
+          <span class="auth-lock-text">
+            {{ lockedMessage }} <span class="auth-countdown" aria-live="off">{{ lockCountdown() }}</span>
+          </span>
+        </p>
+      } @else if (errorMessage(); as message) {
+        <p class="auth-error" role="alert">{{ message }}</p>
+      }
+
+      <mat-form-field appearance="outline" class="auth-field">
+        <mat-label>Tên đăng nhập</mat-label>
+        <input matInput formControlName="username" autocomplete="username" autocapitalize="none" />
+        @if (form.controls.username.hasError('required')) {
+          <mat-error>Vui lòng nhập tên đăng nhập</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="auth-field">
+        <mat-label>Mật khẩu</mat-label>
+        <input matInput formControlName="password" autocomplete="current-password"
+               [type]="passwordVisible() ? 'text' : 'password'" />
+        <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisible()"
+                [attr.aria-label]="passwordVisible() ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'">
+          <mat-icon>{{ passwordVisible() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (form.controls.password.hasError('required')) {
+          <mat-error>Vui lòng nhập mật khẩu</mat-error>
+        }
+      </mat-form-field>
+
+      <button mat-flat-button type="submit" class="auth-submit" [disabled]="submitting() || locked()">
+        {{ submitting() ? 'Đang đăng nhập...' : 'Đăng nhập' }}
+      </button>
+    </form>
+
+    <!-- Không có tự phục hồi qua email: Luôn hiện hướng dẫn liên hệ quản trị viên -->
+    <div class="auth-footer">
+      <p class="auth-hint">{{ forgotPasswordHint }}</p>
+    </div>
+  </section>
+</main>

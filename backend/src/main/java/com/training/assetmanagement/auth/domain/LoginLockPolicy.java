@@ -23,5 +23,11 @@ public final class LoginLockPolicy {
         return failedLoginCount >= MAX_FAILED_ATTEMPTS ? now.plus(LOCK_DURATION) : null;
     }
 
+    // Số giây còn khóa, làm tròn LÊN - FE đếm ngược về 0 thì backend chắc chắn đã mở khóa
+    public static long remainingLockSeconds(LocalDateTime lockedUntil, LocalDateTime now) {
+        Duration remaining = Duration.between(now, lockedUntil);
+        return remaining.getSeconds() + (remaining.getNano() > 0 ? 1 : 0);
+    }
+
     private LoginLockPolicy() {}
 }

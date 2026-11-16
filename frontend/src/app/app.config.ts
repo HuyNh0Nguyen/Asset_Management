@@ -7,6 +7,7 @@ import { errorInterceptor } from '@core/http/error.interceptor';
 import { unwrapInterceptor } from '@core/http/unwrap.interceptor';
 import { provideApiConfiguration } from '@api/api-configuration';
 import { MatIconRegistry } from '@angular/material/icon';
+import { authInterceptor } from '@core/auth/auth.interceptor';
 
 // Font biểu tượng đang nạp trong index.html
 
@@ -17,7 +18,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
     // Thứ tự: errorInterceptor bọc ngoài, unwrapInterceptor gần backend nhất
-    provideHttpClient(withInterceptors([errorInterceptor, unwrapInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor, unwrapInterceptor])),
     // Đường dẫn trong hợp đồng đã có tiền tố /api - gọi tương đối, cùng origin
     provideApiConfiguration(''),
     provideAppInitializer(() => {

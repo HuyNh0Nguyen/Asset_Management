@@ -8,8 +8,6 @@ import com.training.assetmanagement.auth.web.dto.request.LoginRequest;
 import com.training.assetmanagement.auth.web.dto.response.LoginResponse;
 import com.training.assetmanagement.shared.web.ApiPath;
 import com.training.assetmanagement.shared.web.ApiTag;
-import com.training.assetmanagement.shared.web.BusinessException;
-import com.training.assetmanagement.shared.web.ErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

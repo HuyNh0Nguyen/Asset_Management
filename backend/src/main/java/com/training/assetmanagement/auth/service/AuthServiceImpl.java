@@ -22,13 +22,14 @@ public class AuthServiceImpl implements AuthService {
         if (outcome instanceof LoginOutcome.Success success) {
             return new LoginResult(jwtService.issue(success.userId()), success.mustChangePassword());
         }
+        // Đang khóa (kể cả mật khẩu đúng): Kèm số giây còn khóa để FE đếm ngược
+        if (outcome instanceof LoginOutcome.Locked locked) {
+            throw BusinessException.retryAfter(ErrorCode.ACCOUNT_LOCKED, locked.retryAfterSeconds());
+        }
         throw new BusinessException(toErrorCode(outcome));
     }
 
     private static ErrorCode toErrorCode(LoginOutcome outcome) {
-        if (outcome instanceof LoginOutcome.Locked) {
-            return ErrorCode.ACCOUNT_LOCKED;
-        }
         if (outcome instanceof LoginOutcome.Disabled) {
             return ErrorCode.ACCOUNT_DISABLED;
         }

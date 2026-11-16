@@ -69,6 +69,17 @@
   background: var(--app-background);
 }
 
+// Nút tài khoản trên header
+.shell-user {
+  max-width: 280px;
+}
+
+.shell-user-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 // iPad (768–1279px)
 @media (max-width: 1279.98px) {
   .shell-content {
@@ -98,5 +109,10 @@
   .shell-brand-logo {
     width: 28px;
     height: 28px;
+  }
+
+  .shell-user-name,
+  .shell-user-caret {
+    display: none;
   }
 }
