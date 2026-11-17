@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -114,6 +115,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<ErrorDetail>> handleUnexpected(Exception ex, HttpServletRequest request) {
         log.error("Unexpected error at {}: {}", request.getRequestURI(), ex.getMessage(), ex);
         return build(ErrorCode.INTERNAL_ERROR, request, null);
+    }
+
+    // Deadlock (1213) / quá hạn chờ khóa (1205) của MariaDB -> 409, FE nạp lại dữ liệu
+    @ExceptionHandler(PessimisticLockingFailureException.class)
+    public ResponseEntity<ApiResponse<ErrorDetail>> handleLockFailure(PessimisticLockingFailureException ex,
+                                                                      HttpServletRequest request) {
+        log.warn("Lock failure at {}: {}", request.getRequestURI(), ex.getMostSpecificCause().getMessage());
+        return build(ErrorCode.CONFLICT, request, null);
     }
 
     private ResponseEntity<ApiResponse<ErrorDetail>> build(ErrorCode code, HttpServletRequest request,

@@ -13,7 +13,7 @@ public class CurrentActorImpl implements CurrentActor {
     @Override
     public ActorContext get() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof  ActorContext actor) {
+        if (authentication != null && authentication.getPrincipal() instanceof ActorContext actor) {
             return actor;
         }
         throw new BusinessException(ErrorCode.UNAUTHORIZED);

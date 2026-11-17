@@ -43,6 +43,12 @@ public final class ApiPath {
     public static final String AVATAR = "/avatar";
     public static final String USER_AVATAR = BY_ID + AVATAR;
 
+    // Tổ chức
+    public static final String DELETION_CHECK = BY_ID + "/deletion-check";
+    public static final String MOVE = BY_ID + "/move";
+    public static final String MOVE_CHECK = BY_ID + "/move-check";
+    public static final String HEAD_CANDIDATES = BY_ID + "/head-candidates";
+
     // ---------- Đường dẫn đầy đủ: Dùng ngoài controller (security, OpenAPI) ----------
     public static final String AUTH_LOGIN = AUTH + LOGIN;
     public static final String AUTH_LOGOUT = AUTH + LOGOUT;

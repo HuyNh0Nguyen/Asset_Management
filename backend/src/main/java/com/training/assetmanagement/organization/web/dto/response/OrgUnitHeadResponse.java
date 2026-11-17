@@ -1,0 +1,10 @@
+package com.training.assetmanagement.organization.web.dto.response;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+
+import java.util.UUID;
+
+// Khai ở organization vì web không được dùng DTO của miền user; hàng Ảnh đại diện sẽ thêm avatarUrl
+@Schema(name = "OrgUnitHeadResponse", description = "Response for organizational unit head information")
+public record OrgUnitHeadResponse(UUID id, String username, String fullName, String orgUnitName) {
+}

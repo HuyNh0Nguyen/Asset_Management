@@ -1,6 +1,7 @@
 package com.training.assetmanagement.auth.web;
 
 import com.training.assetmanagement.auth.service.PasswordService;
+import com.training.assetmanagement.shared.web.ApiAuthority;
 import com.training.assetmanagement.shared.web.ApiPath;
 import com.training.assetmanagement.shared.web.ApiTag;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,7 +26,7 @@ public class PasswordResetController {
     private final PasswordService passwordService;
 
     @PostMapping(ApiPath.RESET_PASSWORD)
-    @PreAuthorize("hasAuthority('USER_MANAGE')")
+    @PreAuthorize(ApiAuthority.USER_MANAGE)
     @Operation(operationId = "resetUserPassword", summary = "Reset a user's password")
     public void resetPassword(@PathVariable UUID id) {
         passwordService.resetPassword(id);

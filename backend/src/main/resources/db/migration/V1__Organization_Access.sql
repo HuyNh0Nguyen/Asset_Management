@@ -20,7 +20,9 @@ CREATE TABLE ranks (
                      updated_at  DATETIME(6)  NOT NULL,
                      CONSTRAINT pk_ranks PRIMARY KEY (id),
                      CONSTRAINT uk_ranks_code UNIQUE (code),
-                     CONSTRAINT uk_ranks_seniority UNIQUE (seniority)
+                     CONSTRAINT uk_ranks_seniority UNIQUE (seniority),
+                     -- Mã chỉ chữ in hoa, số, gạch dưới; BINARY để REGEXP phân biệt hoa / thường
+                     CONSTRAINT ck_ranks_code_format CHECK (CAST(code AS BINARY) REGEXP '^[A-Z0-9_]+$')
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 -- Đơn vị — cây COMPANY → BRANCH → DEPARTMENT
@@ -45,7 +47,9 @@ CREATE TABLE org_units (
                          CONSTRAINT ck_org_units_root_parent CHECK ((unit_type = 'COMPANY') = (parent_id IS NULL)),
                          CONSTRAINT ck_org_units_not_self_parent CHECK (parent_id IS NULL OR parent_id <> id),
                           -- Gốc luôn ACTIVE
-                         CONSTRAINT ck_org_units_root_active CHECK (unit_type <> 'COMPANY' OR status = 'ACTIVE')
+                         CONSTRAINT ck_org_units_root_active CHECK (unit_type <> 'COMPANY' OR status = 'ACTIVE'),
+                         -- Mã chỉ chữ in hoa, số, gạch dưới; BINARY để REGEXP phân biệt hoa / thường
+                         CONSTRAINT ck_org_units_code_format CHECK (CAST(code AS BINARY) REGEXP '^[A-Z0-9_]+$')
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 -- Người dùng — không bao giờ xóa dòng, chỉ INACTIVE
@@ -93,7 +97,9 @@ CREATE TABLE roles (
                      CONSTRAINT pk_roles PRIMARY KEY (id),
                      CONSTRAINT uk_roles_code UNIQUE (code),
                      CONSTRAINT fk_roles_created_by FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE RESTRICT,
-                     CONSTRAINT fk_roles_updated_by FOREIGN KEY (updated_by) REFERENCES users (id) ON DELETE RESTRICT
+                     CONSTRAINT fk_roles_updated_by FOREIGN KEY (updated_by) REFERENCES users (id) ON DELETE RESTRICT,
+                     -- Mã chỉ chữ in hoa, số, gạch dưới; BINARY để REGEXP phân biệt hoa / thường
+                     CONSTRAINT ck_roles_code_format CHECK (CAST(code AS BINARY) REGEXP '^[A-Z0-9_]+$')
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 -- Ô của ma trận quyền: (vai trò, mã quyền) → phạm vi

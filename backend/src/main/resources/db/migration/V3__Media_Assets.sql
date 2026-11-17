@@ -52,7 +52,9 @@ CREATE TABLE assets (
                       CONSTRAINT ck_assets_status CHECK (status IN ('AVAILABLE', 'ALLOCATED', 'IN_MAINTENANCE', 'RECALLED', 'DISPOSED')),
                       CONSTRAINT ck_assets_attributes_object CHECK (JSON_TYPE(attributes_json) = 'OBJECT'),
                       CONSTRAINT ck_assets_original_cost CHECK (original_cost >= 0),
-                      CONSTRAINT ck_assets_depreciation_months CHECK (depreciation_months > 0)
+                      CONSTRAINT ck_assets_depreciation_months CHECK (depreciation_months > 0),
+                      -- Mã chỉ chữ in hoa, số, gạch dưới; BINARY để REGEXP phân biệt hoa / thường
+                      CONSTRAINT ck_assets_code_format CHECK (CAST(code AS BINARY) REGEXP '^[A-Z0-9_]+$')
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 CREATE INDEX idx_assets_status ON assets (status);
@@ -102,7 +104,9 @@ CREATE TABLE asset_batches (
                              CONSTRAINT ck_asset_batches_not_self_split CHECK (split_from_batch_id IS NULL OR split_from_batch_id <> id),
                              CONSTRAINT ck_asset_batches_attributes_object CHECK (JSON_TYPE(attributes_json) = 'OBJECT'),
                              CONSTRAINT ck_asset_batches_unit_cost CHECK (unit_cost >= 0),
-                             CONSTRAINT ck_asset_batches_depreciation_months CHECK (depreciation_months > 0)
+                             CONSTRAINT ck_asset_batches_depreciation_months CHECK (depreciation_months > 0),
+                             -- Mã chỉ chữ in hoa, số, gạch dưới; BINARY để REGEXP phân biệt hoa / thường
+                             CONSTRAINT ck_asset_batches_code_format CHECK (CAST(code AS BINARY) REGEXP '^[A-Z0-9_]+$')
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 -- Ảnh tài sản — cung loại trừ asset_id / batch_id
