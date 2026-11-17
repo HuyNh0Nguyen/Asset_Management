@@ -39,7 +39,7 @@ INSERT INTO org_units (id, code, name, unit_type, parent_id, head_user_id, statu
                        created_by, updated_by, created_at, updated_at)
 VALUES (@org_company,    'ROOT',   'Công ty',       'COMPANY',    NULL,         NULL, 'ACTIVE', @admin_id, @admin_id, @now, @now),
        (@org_hq,         'HQ',     'Trụ sở chính',  'BRANCH',     @org_company, NULL, 'ACTIVE', @admin_id, @admin_id, @now, @now),
-       (@org_admin_dept, 'HQ-ADM', 'Ban quản trị',  'DEPARTMENT', @org_hq,      NULL, 'ACTIVE', @admin_id, @admin_id, @now, @now);
+       (@org_admin_dept, 'HQ_ADM', 'Ban quản trị',  'DEPARTMENT', @org_hq,      NULL, 'ACTIVE', @admin_id, @admin_id, @now, @now);
 
 -- ---------------------------------------------------------------------
 -- 4. Cấp bậc (chèn trước người dùng vì users.rank_id)
@@ -130,11 +130,11 @@ VALUES ('00000000-0000-7000-8000-000000000501', @admin_id, @role_admin, @admin_i
 -- ---------------------------------------------------------------------
 INSERT INTO workflows (id, code, name, description, request_type, priority, is_default, status,
                        min_value, max_value, created_by, updated_by, created_at, updated_at)
-VALUES ('00000000-0000-7000-8000-000000000701', 'WF-DEFAULT-ALLOCATION', 'Mặc định — Cấp phát',
+VALUES ('00000000-0000-7000-8000-000000000701', 'WF_DEFAULT_ALLOCATION', 'Mặc định — Cấp phát',
         'Áp dụng khi không quy trình nào khác khớp', 'ALLOCATION', 0, TRUE, 'ACTIVE', NULL, NULL, @admin_id, @admin_id, @now, @now),
-       ('00000000-0000-7000-8000-000000000702', 'WF-DEFAULT-LOAN', 'Mặc định — Mượn',
+       ('00000000-0000-7000-8000-000000000702', 'WF_DEFAULT_LOAN', 'Mặc định — Mượn',
         'Áp dụng khi không quy trình nào khác khớp', 'LOAN', 0, TRUE, 'ACTIVE', NULL, NULL, @admin_id, @admin_id, @now, @now),
-       ('00000000-0000-7000-8000-000000000703', 'WF-DEFAULT-DISPOSAL', 'Mặc định — Thanh lý',
+       ('00000000-0000-7000-8000-000000000703', 'WF_DEFAULT_DISPOSAL', 'Mặc định — Thanh lý',
         'Áp dụng khi không quy trình nào khác khớp', 'DISPOSAL', 0, TRUE, 'ACTIVE', NULL, NULL, @admin_id, @admin_id, @now, @now);
 
 INSERT INTO workflow_stages (id, workflow_id, stage_order, name, completion_policy, sla_days,

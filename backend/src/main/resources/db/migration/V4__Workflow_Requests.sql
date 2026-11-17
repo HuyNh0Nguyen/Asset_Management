@@ -32,7 +32,9 @@ CREATE TABLE workflows (
                          CONSTRAINT ck_workflows_value_range CHECK (min_value IS NULL OR max_value IS NULL OR min_value < max_value),
                           -- Mặc định: luôn ACTIVE, không ngưỡng
                          CONSTRAINT ck_workflows_default CHECK (
-                           is_default = FALSE OR (status = 'ACTIVE' AND min_value IS NULL AND max_value IS NULL))
+                           is_default = FALSE OR (status = 'ACTIVE' AND min_value IS NULL AND max_value IS NULL)),
+                         -- Mã chỉ chữ in hoa, số, gạch dưới; BINARY để REGEXP phân biệt hoa / thường
+                         CONSTRAINT ck_workflows_code_format CHECK (CAST(code AS BINARY) REGEXP '^[A-Z0-9_]+$')
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 -- Điều kiện cấp bậc — không có dòng = không điều kiện
@@ -202,7 +204,9 @@ CREATE TABLE requests (
                             OR (desired_receive_date IS NOT NULL AND due_date IS NOT NULL)),
                         CONSTRAINT ck_requests_due_after_receive CHECK (
                           due_date IS NULL OR desired_receive_date IS NULL OR due_date >= desired_receive_date),
-                        CONSTRAINT ck_requests_disposal_date CHECK (disposal_date IS NULL OR disposal_date >= DATE(approved_at))
+                        CONSTRAINT ck_requests_disposal_date CHECK (disposal_date IS NULL OR disposal_date >= DATE(approved_at)),
+                        -- Mã chỉ chữ in hoa, số, gạch dưới; BINARY để REGEXP phân biệt hoa / thường
+                        CONSTRAINT ck_requests_code_format CHECK (CAST(code AS BINARY) REGEXP '^[A-Z0-9_]+$')
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 CREATE INDEX idx_requests_status ON requests (status, approved_at);

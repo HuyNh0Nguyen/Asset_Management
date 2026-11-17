@@ -1,9 +1,7 @@
 package com.training.assetmanagement.shared.config;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -17,7 +15,8 @@ public record AppProperties(
         @Valid @NotNull Storage storage,
         @Valid @NotNull Jwt jwt,
         @NotBlank String publicBaseUrl,
-        boolean seedDemo
+        boolean seedDemo,
+        @Valid Demo demo
 ) {
     public record Db(@NotBlank String host) {}
 
@@ -36,4 +35,13 @@ public record AppProperties(
         @NotBlank @Size(min = 32) String secret,
         @NotNull Duration ttl
     ) {}
+
+    // Hộp thư Gmail nhận thư của người dùng demo qua bí danh
+    public record Demo(@Email String mailbox) {}
+
+    // Bật seed demo thì bắt buộc có hộp thư - ứng dụng dừng khi khởi động
+    @AssertTrue(message = "app.demo.mailbox is required when app.seed-demo=true")
+    public boolean isDemoMailboxConfigured() {
+        return !seedDemo || (demo != null && demo.mailbox() != null && !demo.mailbox().isBlank());
+    }
 }

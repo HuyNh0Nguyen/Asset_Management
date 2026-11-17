@@ -83,5 +83,7 @@ CREATE TABLE suppliers (
                          CONSTRAINT uk_suppliers_code UNIQUE (code),
                          CONSTRAINT fk_suppliers_created_by FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE RESTRICT,
                          CONSTRAINT fk_suppliers_updated_by FOREIGN KEY (updated_by) REFERENCES users (id) ON DELETE RESTRICT,
-                         CONSTRAINT ck_suppliers_status CHECK (status IN ('ACTIVE', 'INACTIVE'))
+                         CONSTRAINT ck_suppliers_status CHECK (status IN ('ACTIVE', 'INACTIVE')),
+                         -- Mã chỉ chữ in hoa, số, gạch dưới; BINARY để REGEXP phân biệt hoa / thường
+                         CONSTRAINT ck_suppliers_code_format CHECK (CAST(code AS BINARY) REGEXP '^[A-Z0-9_]+$')
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;

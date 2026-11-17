@@ -2,7 +2,9 @@ package com.training.assetmanagement.user.repository;
 
 import com.training.assetmanagement.user.domain.User;
 import com.training.assetmanagement.user.domain.UserAuthSnapshot;
+import com.training.assetmanagement.user.domain.UserStatus;
 import jakarta.persistence.LockModeType;
+import org.springframework.data.domain.Limit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
@@ -10,6 +12,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -61,4 +65,21 @@ public interface UserRepository extends JpaRepository<User, UUID> {
                        @Param("validFrom") LocalDateTime validFrom,
                        @Param("updatedBy") UUID updatedBy,
                        @Param("updatedAt") LocalDateTime updatedAt);
+
+    // Vướng ngừng hoạt động / xóa đơn vị
+    long countByOrgUnitIdAndStatus(UUID orgUnitId, UserStatus status);
+
+    long countByOrgUnitId(UUID orgUnitId);
+
+    List<User> findByOrgUnitIdAndStatusOrderByUsernameAsc(UUID orgUnitId, UserStatus status, Limit limit);
+
+    List<User> findByOrgUnitIdOrderByUsernameAsc(UUID orgUnitId, Limit limit);
+
+    // Ứng viên trưởng đơn vị: người ACTIVE trong cây con
+    List<User> findByOrgUnitIdInAndStatusOrderByFullNameAsc(Collection<UUID> orgUnitIds, UserStatus status);
+
+    // Khóa đọc theo id tăng dần - va với khóa ghi dòng users khi đổi đơn vị / vô hiệu hóa
+    @Lock(LockModeType.PESSIMISTIC_READ)
+    @Query("SELECT u FROM User u WHERE u.id IN :ids ORDER BY u.id")
+    List<User> findAllByIdForShare(@Param("ids") Collection<UUID> ids);
 }

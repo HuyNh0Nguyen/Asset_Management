@@ -29,12 +29,28 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "HTTP method not allowed"),
     CONFLICT(HttpStatus.CONFLICT, "Resource state conflict"),
     UNSUPPORTED_MEDIA_TYPE(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Unsupported content type"),
+    ORG_UNIT_CODE_DUPLICATE(HttpStatus.CONFLICT, "Org unit code already exists"),
+    RANK_CODE_DUPLICATE(HttpStatus.CONFLICT, "Rank code already exists"),
+    RANK_SENIORITY_DUPLICATE(HttpStatus.CONFLICT, "Rank seniority already used"),
 
     // 422
     FILE_TOO_LARGE(HttpStatus.UNPROCESSABLE_CONTENT, "File exceeds the maximum allowed size"),
     UNSUPPORTED_FILE_TYPE(HttpStatus.UNPROCESSABLE_CONTENT, "Unsupported file type"),
     PASSWORD_SAME_AS_CURRENT(HttpStatus.UNPROCESSABLE_CONTENT, "New password must differ from the current password"),
     USER_NOT_ACTIVE(HttpStatus.UNPROCESSABLE_CONTENT, "User account is not active"),
+    ORG_UNIT_COMPANY_NOT_ALLOWED(HttpStatus.UNPROCESSABLE_CONTENT, "Cannot create another COMPANY org unit"),
+    ORG_UNIT_INVALID_PARENT_TYPE(HttpStatus.UNPROCESSABLE_CONTENT, "Parent type does not match the org unit type"),
+    ORG_UNIT_PARENT_CYCLE(HttpStatus.UNPROCESSABLE_CONTENT, "New parent is inside the moved subtree"),
+    ORG_UNIT_PARENT_INACTIVE(HttpStatus.UNPROCESSABLE_CONTENT, "Parent org unit is inactive"),
+    ORG_UNIT_ROOT_IMMUTABLE(HttpStatus.UNPROCESSABLE_CONTENT, "Root org unit cannot be changed this way"),
+    ORG_UNIT_HEAD_NOT_ACTIVE(HttpStatus.UNPROCESSABLE_CONTENT, "Org unit head must be an active user"),
+    ORG_UNIT_HEAD_OUTSIDE_SUBTREE(HttpStatus.UNPROCESSABLE_CONTENT, "Org unit head must belong to the unit subtree"),
+    ORG_UNIT_MOVE_DETACHES_HEAD(HttpStatus.UNPROCESSABLE_CONTENT, "Move would detach the head of a former ancestor"),
+    ORG_UNIT_NOT_EMPTY(HttpStatus.UNPROCESSABLE_CONTENT, "Org unit still has active users, units or assets"),
+    ORG_UNIT_IN_USE(HttpStatus.UNPROCESSABLE_CONTENT, "Org unit is still referenced"),
+    ORG_UNIT_INACTIVE(HttpStatus.UNPROCESSABLE_CONTENT, "Org unit is inactive"),
+    ORG_UNIT_TYPE_NOT_ALLOWED(HttpStatus.UNPROCESSABLE_CONTENT, "Org unit type not allowed here"),
+    RANK_IN_USE(HttpStatus.UNPROCESSABLE_CONTENT, "Rank is still in use"),
 
     // 5xx
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected server error"),
