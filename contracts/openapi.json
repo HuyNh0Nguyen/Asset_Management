@@ -215,6 +215,416 @@
         "tags" : [ "Me" ]
       }
     },
+    "/api/org-units" : {
+      "post" : {
+        "operationId" : "createOrgUnit",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateOrgUnitRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OrgUnitNodeResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Create a branch or department",
+        "tags" : [ "Organization" ]
+      }
+    },
+    "/api/org-units/tree" : {
+      "get" : {
+        "operationId" : "getOrgUnitTree",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/OrgUnitNodeResponse"
+                  }
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Flat pre-ordered org unit tree",
+        "tags" : [ "Organization" ]
+      }
+    },
+    "/api/org-units/{id}" : {
+      "delete" : {
+        "operationId" : "deleteOrgUnit",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "summary" : "Delete an unused org unit",
+        "tags" : [ "Organization" ]
+      },
+      "put" : {
+        "operationId" : "updateOrgUnit",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UpdateOrgUnitRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OrgUnitNodeResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Rename org unit or change its head",
+        "tags" : [ "Organization" ]
+      }
+    },
+    "/api/org-units/{id}/deactivate" : {
+      "post" : {
+        "operationId" : "deactivateOrgUnit",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "summary" : "Deactivate an empty org unit",
+        "tags" : [ "Organization" ]
+      }
+    },
+    "/api/org-units/{id}/deactivation-check" : {
+      "get" : {
+        "operationId" : "checkOrgUnitDeactivation",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OrgUnitBlockersResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "List what blocks deactivating the org unit",
+        "tags" : [ "Organization" ]
+      }
+    },
+    "/api/org-units/{id}/deletion-check" : {
+      "get" : {
+        "operationId" : "checkOrgUnitDeletion",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OrgUnitBlockersResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "List what blocks deleting the org unit",
+        "tags" : [ "Organization" ]
+      }
+    },
+    "/api/org-units/{id}/head-candidates" : {
+      "get" : {
+        "operationId" : "listOrgUnitHeadCandidates",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/OrgUnitHeadResponse"
+                  }
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Active users in the unit subtree",
+        "tags" : [ "Organization" ]
+      }
+    },
+    "/api/org-units/{id}/move" : {
+      "post" : {
+        "operationId" : "moveOrgUnit",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MoveOrgUnitRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "summary" : "Move a department under a new parent",
+        "tags" : [ "Organization" ]
+      }
+    },
+    "/api/org-units/{id}/move-check" : {
+      "get" : {
+        "operationId" : "checkOrgUnitMove",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "in" : "query",
+          "name" : "parentId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MoveCheckResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Check whether a department can move under a new parent",
+        "tags" : [ "Organization" ]
+      }
+    },
+    "/api/org-units/{id}/reactivate" : {
+      "post" : {
+        "operationId" : "reactivateOrgUnit",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "summary" : "Reactivate an org unit whose parent is active",
+        "tags" : [ "Organization" ]
+      }
+    },
+    "/api/ranks" : {
+      "get" : {
+        "operationId" : "listRanks",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/RankResponse"
+                  }
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "All ranks ordered by seniority",
+        "tags" : [ "Organization" ]
+      },
+      "post" : {
+        "operationId" : "createRank",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateRankRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RankResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Create a rank",
+        "tags" : [ "Organization" ]
+      }
+    },
+    "/api/ranks/{id}" : {
+      "delete" : {
+        "operationId" : "deleteRank",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "summary" : "Delete an unused rank",
+        "tags" : [ "Organization" ]
+      },
+      "put" : {
+        "operationId" : "updateRank",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UpdateRankRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RankResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Rename a rank or change its seniority",
+        "tags" : [ "Organization" ]
+      }
+    },
     "/api/users/{id}/reset-password" : {
       "post" : {
         "operationId" : "resetUserPassword",
@@ -313,6 +723,26 @@
         },
         "required" : [ "code", "label" ]
       },
+      "BlockingHeadResponse" : {
+        "type" : "object",
+        "description" : "Response indicating that the head of the organizational unit is blocking certain operations",
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "head" : {
+            "$ref" : "#/components/schemas/OrgUnitHeadResponse"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "unitId" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        },
+        "required" : [ "code", "head", "name", "unitId" ]
+      },
       "CatalogStatus" : {
         "type" : "string",
         "enum" : [ "ACTIVE", "INACTIVE" ]
@@ -333,6 +763,54 @@
           }
         },
         "required" : [ "confirmPassword", "newPassword" ]
+      },
+      "CreateOrgUnitRequest" : {
+        "type" : "object",
+        "description" : "Request payload for creating a new organizational unit",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "maxLength" : 50,
+            "minLength" : 0,
+            "pattern" : "^[A-Z0-9_]+$"
+          },
+          "name" : {
+            "type" : "string",
+            "maxLength" : 255,
+            "minLength" : 0
+          },
+          "parentId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "unitType" : {
+            "$ref" : "#/components/schemas/OrgUnitType"
+          }
+        },
+        "required" : [ "code", "name", "parentId", "unitType" ]
+      },
+      "CreateRankRequest" : {
+        "type" : "object",
+        "description" : "Request payload for creating a new rank",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "maxLength" : 50,
+            "minLength" : 0,
+            "pattern" : "^[A-Z0-9_]+$"
+          },
+          "name" : {
+            "type" : "string",
+            "maxLength" : 255,
+            "minLength" : 0
+          },
+          "seniority" : {
+            "type" : "integer",
+            "format" : "int32",
+            "exclusiveMinimum" : 0
+          }
+        },
+        "required" : [ "code", "name", "seniority" ]
       },
       "DataScope" : {
         "type" : "string",
@@ -356,7 +834,7 @@
       },
       "ErrorCode" : {
         "type" : "string",
-        "enum" : [ "VALIDATION_FAILED", "MALFORMED_REQUEST", "UNKNOWN_FIELD", "UNAUTHORIZED", "INVALID_CREDENTIALS", "ACCOUNT_LOCKED", "ACCOUNT_DISABLED", "SESSION_EXPIRED", "FORBIDDEN", "FIELD_GROUP_FORBIDDEN", "PASSWORD_CHANGE_REQUIRED", "RESOURCE_NOT_FOUND", "METHOD_NOT_ALLOWED", "CONFLICT", "UNSUPPORTED_MEDIA_TYPE", "FILE_TOO_LARGE", "UNSUPPORTED_FILE_TYPE", "PASSWORD_SAME_AS_CURRENT", "USER_NOT_ACTIVE", "INTERNAL_ERROR", "STORAGE_ERROR", "NOT_IMPLEMENTED" ]
+        "enum" : [ "VALIDATION_FAILED", "MALFORMED_REQUEST", "UNKNOWN_FIELD", "UNAUTHORIZED", "INVALID_CREDENTIALS", "ACCOUNT_LOCKED", "ACCOUNT_DISABLED", "SESSION_EXPIRED", "FORBIDDEN", "FIELD_GROUP_FORBIDDEN", "PASSWORD_CHANGE_REQUIRED", "RESOURCE_NOT_FOUND", "METHOD_NOT_ALLOWED", "CONFLICT", "UNSUPPORTED_MEDIA_TYPE", "ORG_UNIT_CODE_DUPLICATE", "RANK_CODE_DUPLICATE", "RANK_SENIORITY_DUPLICATE", "FILE_TOO_LARGE", "UNSUPPORTED_FILE_TYPE", "PASSWORD_SAME_AS_CURRENT", "USER_NOT_ACTIVE", "ORG_UNIT_COMPANY_NOT_ALLOWED", "ORG_UNIT_INVALID_PARENT_TYPE", "ORG_UNIT_PARENT_CYCLE", "ORG_UNIT_PARENT_INACTIVE", "ORG_UNIT_ROOT_IMMUTABLE", "ORG_UNIT_HEAD_NOT_ACTIVE", "ORG_UNIT_HEAD_OUTSIDE_SUBTREE", "ORG_UNIT_MOVE_DETACHES_HEAD", "ORG_UNIT_NOT_EMPTY", "ORG_UNIT_IN_USE", "ORG_UNIT_INACTIVE", "ORG_UNIT_TYPE_NOT_ALLOWED", "RANK_IN_USE", "INTERNAL_ERROR", "STORAGE_ERROR", "NOT_IMPLEMENTED" ]
       },
       "ErrorDetail" : {
         "description" : "Error response with timestamp, status, error message, request path, and optional field errors",
@@ -466,6 +944,155 @@
         },
         "required" : [ "email", "fullName", "id", "mustChangePassword", "orgUnit", "permissions", "rankName", "username" ]
       },
+      "MoveCheckResponse" : {
+        "type" : "object",
+        "description" : "Response indicating whether an organizational unit can be moved, including any blocking heads",
+        "properties" : {
+          "blockingHeads" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/BlockingHeadResponse"
+            }
+          }
+        },
+        "required" : [ "blockingHeads" ]
+      },
+      "MoveOrgUnitRequest" : {
+        "type" : "object",
+        "description" : "Request to move an organizational unit to a new parent unit",
+        "properties" : {
+          "parentId" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        },
+        "required" : [ "parentId" ]
+      },
+      "OrgUnitAction" : {
+        "type" : "string",
+        "enum" : [ "ADD_CHILD", "EDIT", "MOVE", "DELETE", "DEACTIVATE", "REACTIVATE" ]
+      },
+      "OrgUnitBlockerItemResponse" : {
+        "type" : "object",
+        "description" : "A response object representing a single item that blocks an organizational unit from being deactivated or deleted",
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "inactive" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "code", "id", "inactive", "name" ]
+      },
+      "OrgUnitBlockerKind" : {
+        "type" : "string",
+        "enum" : [ "ACTIVE_USER", "USER", "ACTIVE_CHILD_UNIT", "CHILD_UNIT", "LIVE_ASSET", "ASSET", "LIVE_BATCH", "BATCH" ]
+      },
+      "OrgUnitBlockerResponse" : {
+        "type" : "object",
+        "description" : "A response containing a list of organizational unit blockers",
+        "properties" : {
+          "kind" : {
+            "$ref" : "#/components/schemas/OrgUnitBlockerKind"
+          },
+          "samples" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/OrgUnitBlockerItemResponse"
+            }
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        },
+        "required" : [ "kind", "samples", "total" ]
+      },
+      "OrgUnitBlockersResponse" : {
+        "type" : "object",
+        "description" : "A response containing a list of blockers for an organizational unit",
+        "properties" : {
+          "blockers" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/OrgUnitBlockerResponse"
+            }
+          }
+        },
+        "required" : [ "blockers" ]
+      },
+      "OrgUnitHeadResponse" : {
+        "type" : "object",
+        "description" : "Response for organizational unit head information",
+        "properties" : {
+          "fullName" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "orgUnitName" : {
+            "type" : "string"
+          },
+          "username" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "fullName", "id", "orgUnitName", "username" ]
+      },
+      "OrgUnitNodeResponse" : {
+        "type" : "object",
+        "description" : "A node in the flattened organizational unit list, used for reconstructing the tree structure on the front-end",
+        "properties" : {
+          "allowedActions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/OrgUnitAction"
+            }
+          },
+          "childUnitType" : {
+            "$ref" : "#/components/schemas/OrgUnitType"
+          },
+          "code" : {
+            "type" : "string"
+          },
+          "depth" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "head" : {
+            "type" : "null",
+            "$ref" : "#/components/schemas/OrgUnitHeadResponse"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "parentId" : {
+            "type" : [ "string", "null" ],
+            "format" : "uuid"
+          },
+          "status" : {
+            "$ref" : "#/components/schemas/OrgUnitStatus"
+          },
+          "unitType" : {
+            "$ref" : "#/components/schemas/OrgUnitType"
+          }
+        },
+        "required" : [ "allowedActions", "childUnitType", "code", "depth", "id", "name", "status", "unitType" ]
+      },
       "OrgUnitRefResponse" : {
         "type" : "object",
         "description" : "Response for organization unit reference",
@@ -482,6 +1109,14 @@
           }
         },
         "required" : [ "code", "id", "name" ]
+      },
+      "OrgUnitStatus" : {
+        "type" : "string",
+        "enum" : [ "ACTIVE", "INACTIVE" ]
+      },
+      "OrgUnitType" : {
+        "type" : "string",
+        "enum" : [ "COMPANY", "BRANCH", "DEPARTMENT" ]
       },
       "Permission" : {
         "type" : "string",
@@ -500,6 +1135,27 @@
         },
         "required" : [ "code", "scope" ]
       },
+      "RankResponse" : {
+        "type" : "object",
+        "description" : "Response object for rank-related operations",
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "seniority" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        },
+        "required" : [ "code", "id", "name", "seniority" ]
+      },
       "StorageProbeResponse" : {
         "type" : "object",
         "description" : "Response for storage probe operations",
@@ -517,6 +1173,39 @@
           }
         },
         "required" : [ "expiresAt", "probeId", "url" ]
+      },
+      "UpdateOrgUnitRequest" : {
+        "type" : "object",
+        "description" : "Request payload for updating an organizational unit",
+        "properties" : {
+          "headUserId" : {
+            "type" : [ "string", "null" ],
+            "format" : "uuid",
+            "description" : "null = leave empty"
+          },
+          "name" : {
+            "type" : "string",
+            "maxLength" : 255,
+            "minLength" : 0
+          }
+        },
+        "required" : [ "name" ]
+      },
+      "UpdateRankRequest" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "maxLength" : 255,
+            "minLength" : 0
+          },
+          "seniority" : {
+            "type" : "integer",
+            "format" : "int32",
+            "exclusiveMinimum" : 0
+          }
+        },
+        "required" : [ "name", "seniority" ]
       }
     },
     "securitySchemes" : {

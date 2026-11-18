@@ -25,6 +25,7 @@ export const routes: Routes = [
         runGuardsAndResolvers: 'always',
         children: [
             { path: '', pathMatch: 'full', canActivate: [homeGuard], children: [] },
+            { path: RoutePath.ORGANIZATION, loadChildren: () => import('@features/organization/organization.routes') },
             { path: RoutePath.DEV_TOOLS, loadChildren: () => import('@features/dev-tools/dev-tools.routes') },
         ],
     },

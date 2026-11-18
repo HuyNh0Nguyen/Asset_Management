@@ -1,0 +1,24 @@
+<mat-form-field appearance="outline" class="form-field-full">
+  <mat-label>{{ label() }}</mat-label>
+  <input matInput type="text" autocomplete="off" placeholder="Gõ tên hoặc mã để tìm"
+         [formControl]="textControl" [matAutocomplete]="unitAuto" (blur)="onBlur()" />
+  <mat-autocomplete #unitAuto="matAutocomplete" [displayWith]="displayWith" (optionSelected)="onSelected($event)">
+    @for (option of options(); track option.node.id) {
+      <mat-option [value]="option.node" [disabled]="!option.selectable"
+                  [style.padding-left.px]="indentOf(option.node.depth)">
+        <span class="picker-option-name">{{ option.node.name }}</span>
+        <span class="picker-option-code">{{ option.node.code }}</span>
+        @if (option.node.status === inactiveStatus) {
+          <span class="picker-option-muted">{{ inactiveSuffix }}</span>
+        }
+      </mat-option>
+    } @empty {
+      @if (nodes().length > 0) {
+        <mat-option disabled>Không có đơn vị phù hợp</mat-option>
+      }
+    }
+  </mat-autocomplete>
+  @if (hint()) {
+    <mat-hint>{{ hint() }}</mat-hint>
+  }
+</mat-form-field>

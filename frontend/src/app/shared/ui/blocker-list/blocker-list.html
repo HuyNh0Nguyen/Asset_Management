@@ -1,0 +1,29 @@
+<ul class="blocker-groups">
+  @for (group of groups(); track group.key) {
+    <li class="blocker-group">
+      <div class="blocker-group-header">
+        <span class="blocker-group-label">{{ group.label }}</span>
+        <span class="blocker-group-count">{{ group.total }}</span>
+      </div>
+      @if (group.hint) {
+        <p class="blocker-group-hint">{{ group.hint }}</p>
+      }
+      <ul class="blocker-items">
+        @for (item of group.items; track item.key) {
+          <li class="blocker-item" [class.blocker-item-inactive]="item.inactive">
+            <span class="blocker-item-primary">{{ item.primary }}</span>
+            @if (item.secondary) {
+              <span class="blocker-item-secondary">{{ item.secondary }}</span>
+            }
+            @if (item.inactive) {
+              <app-status-chip [label]="inactiveLabel()" [tone]="mutedTone" />
+            }
+          </li>
+        }
+      </ul>
+      @if (group.total > group.items.length) {
+        <p class="blocker-more">và {{ group.total - group.items.length }} mục khác</p>
+      }
+    </li>
+  }
+</ul>

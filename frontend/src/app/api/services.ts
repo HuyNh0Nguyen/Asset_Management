@@ -5,4 +5,5 @@ export { CatalogService } from './services/catalog.service';
 export { AuthService } from './services/auth.service';
 export { DevToolsService } from './services/dev-tools.service';
 export { MeService } from './services/me.service';
+export { OrganizationService } from './services/organization.service';
 export { UsersService } from './services/users.service';

@@ -1,0 +1,50 @@
+<h2 mat-dialog-title>Đổi đơn vị cha</h2>
+
+<mat-dialog-content class="dialog-form">
+  <p class="dialog-message">
+    Chuyển <strong>{{ unit.name }}</strong> ({{ unit.code }}) cùng toàn bộ đơn vị con sang đơn vị cha mới
+  </p>
+
+  <app-org-unit-picker [formControl]="parentControl" [nodes]="pickerNodes()" [mode]="pickerMode"
+                       [selectable]="selectable" label="Đơn vị cha mới"
+                       hint="Chỉ hiện đơn vị đang hoạt động nhận được phòng ban con"
+                       (focusin)="initPickerNodes()" (click)="initPickerNodes()" />
+
+  @if (checking()) {
+    <div class="dialog-loading">
+      <mat-progress-spinner mode="indeterminate" diameter="24" />
+      <span>Đang kiểm tra...</span>
+    </div>
+  } @else if (blockingHeads(); as heads) {
+    @if (heads.length > 0) {
+      <div class="dialog-alert" role="alert">
+        <p class="dialog-alert-text">
+          Không thể chuyển: đơn vị này đang chứa trưởng của đơn vị cấp trên.
+          Hãy chỉ định trưởng khác cho các đơn vị dưới đây trước
+        </p>
+        <ul class="dialog-list">
+          @for (item of heads; track item.unitId) {
+            <li class="dialog-list-item">
+              <span class="dialog-list-text">
+                <strong>{{ item.name }}</strong> — trưởng đơn vị <strong>{{ item.head.username }}</strong>
+                ({{ item.head.fullName }}) đang ngồi trong đơn vị này
+              </span>
+              <button mat-stroked-button type="button" (click)="editHead(item)">Sửa trưởng đơn vị</button>
+            </li>
+          }
+        </ul>
+      </div>
+    } @else {
+      <p class="dialog-success" role="status">Có thể chuyển đơn vị</p>
+    }
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close cdkFocusInitial>Hủy</button>
+  @if (!hasBlockingHeads()) {
+    <button mat-flat-button type="button" [disabled]="!canMove()" (click)="move()">
+      {{ moving() ? 'Đang chuyển...' : 'Chuyển' }}
+    </button>
+  }
+</mat-dialog-actions>

@@ -1,0 +1,56 @@
+<h2 mat-dialog-title>{{ isCreate ? 'Thêm cấp bậc' : 'Sửa cấp bậc' }}</h2>
+
+<mat-dialog-content>
+  <form id="rankForm" class="dialog-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    @if (isCreate) {
+      <mat-form-field appearance="outline" class="form-field-full">
+        <mat-label>Mã cấp bậc</mat-label>
+        <input matInput formControlName="code" autocomplete="off" [maxlength]="codeMaxLength"
+               (input)="upperCaseCode()" />
+        <mat-hint>{{ codeHint }}</mat-hint>
+        @if (form.controls.code.hasError('required')) {
+          <mat-error>Vui lòng nhập mã cấp bậc</mat-error>
+        } @else if (form.controls.code.hasError(errorKey.DUPLICATE)) {
+          <mat-error>Mã cấp bậc đã tồn tại</mat-error>
+        } @else {
+          <mat-error>{{ codeHint }}, tối đa {{ codeMaxLength }} ký tự</mat-error>
+        }
+      </mat-form-field>
+    } @else {
+      <dl class="dialog-readonly">
+        <dt>Mã cấp bậc</dt>
+        <dd>{{ rank?.code }}</dd>
+      </dl>
+    }
+
+    <mat-form-field appearance="outline" class="form-field-full">
+      <mat-label>Tên cấp bậc</mat-label>
+      <input matInput formControlName="name" autocomplete="off" [maxlength]="nameMaxLength" />
+      @if (form.controls.name.hasError('required')) {
+        <mat-error>Vui lòng nhập tên cấp bậc</mat-error>
+      } @else {
+        <mat-error>Tên cấp bậc không hợp lệ</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field-full">
+      <mat-label>Số thứ bậc</mat-label>
+      <input matInput type="number" inputmode="numeric" min="1" step="1" formControlName="seniority" />
+      <mat-hint>Số lớn hơn là bậc cao hơn; mỗi cấp bậc một số riêng</mat-hint>
+      @if (form.controls.seniority.hasError('required')) {
+        <mat-error>Vui lòng nhập số thứ bậc</mat-error>
+      } @else if (form.controls.seniority.hasError(errorKey.DUPLICATE)) {
+        <mat-error>Số thứ bậc đã được dùng cho cấp bậc khác</mat-error>
+      } @else {
+        <mat-error>Số thứ bậc phải là số nguyên dương</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close>Hủy</button>
+  <button mat-flat-button type="submit" form="rankForm" [disabled]="submitting()">
+    {{ submitting() ? 'Đang lưu...' : (isCreate ? 'Thêm' : 'Lưu') }}
+  </button>
+</mat-dialog-actions>
