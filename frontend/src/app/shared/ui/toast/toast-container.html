@@ -1,13 +1,20 @@
 <div class="toast-container" aria-live="polite">
-  @for (toast of toastService.toasts(); track toast.id) {
+  @for (toast of displayToasts(); track toast.id) {
     <div
       class="toast-item"
       [class]="toastClass[toast.type]"
+      [class.is-leaving]="toast.isLeaving"
       [attr.role]="toast.type === ToastType.ERROR ? 'alert' : 'status'"
     >
       <mat-icon class="toast-icon">{{ toastIcon[toast.type] }}</mat-icon>
       <span class="toast-message">{{ toast.message }}</span>
-      <button mat-icon-button type="button" aria-label="Đóng thông báo" (click)="toastService.dismiss(toast.id)">
+      <button
+        mat-icon-button
+        type="button"
+        class="toast-close-button"
+        aria-label="Đóng thông báo"
+        (click)="dismiss(toast.id)"
+      >
         <mat-icon>close</mat-icon>
       </button>
     </div>

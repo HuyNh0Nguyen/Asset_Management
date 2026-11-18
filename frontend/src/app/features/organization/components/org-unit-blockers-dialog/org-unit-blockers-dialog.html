@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+
+<mat-dialog-content class="dialog-form">
+  @if (loading()) {
+    <div class="dialog-loading">
+      <mat-progress-spinner mode="indeterminate" diameter="24" />
+      <span>Đang kiểm tra dữ liệu liên quan...</span>
+    </div>
+  } @else if (groups(); as list) {
+    @if (list.length > 0) {
+      <p class="dialog-alert" role="alert">
+        Không thể {{ verb }} <strong>{{ unit.name }}</strong> vì còn dữ liệu liên quan:
+      </p>
+      <app-blocker-list [groups]="list" />
+      @if (suggestDeactivate) {
+        <p class="dialog-note">{{ deactivateHint }}</p>
+      }
+    } @else {
+      <p class="dialog-message">
+        @if (isDelete) {
+          Xóa vĩnh viễn <strong>{{ unit.name }}</strong> ({{ unit.code }})? Thao tác không thể hoàn tác
+        } @else {
+          Ngừng hoạt động <strong>{{ unit.name }}</strong> ({{ unit.code }})? Đơn vị vẫn hiện trên cây và trong tra cứu,
+          nhưng không còn chọn được khi gán người dùng hay tài sản
+        }
+      </p>
+    }
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close>{{ canConfirm() ? 'Hủy' : 'Đóng' }}</button>
+  @if (canConfirm()) {
+    <button mat-flat-button type="button" class="button-danger" [disabled]="submitting()" (click)="confirm()">
+      {{ submitting() ? 'Đang xử lý...' : (isDelete ? 'Xóa' : 'Ngừng hoạt động') }}
+    </button>
+  }
+</mat-dialog-actions>

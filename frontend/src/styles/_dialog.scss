@@ -1,0 +1,122 @@
+// Hộp thoại dùng chung - panelClass 'app-dialog-panel' (shared/ui/dialog/app-dialog-config.ts)
+
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.dialog-message {
+  margin: 0 0 8px;
+  font: var(--mat-sys-body-medium);
+  color: var(--app-text);
+  line-height: 1.5;
+}
+
+.dialog-note {
+  margin: 4px 0 0;
+  font: var(--mat-sys-body-small);
+  color: var(--app-text-muted);
+}
+
+// Thông tin chỉ đọc dạng nhãn - giá trị
+.dialog-readonly {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 16px;
+  margin: 0 0 8px;
+}
+
+.dialog-readonly dt {
+  color: var(--app-text-muted);
+}
+
+.dialog-readonly dd {
+  margin: 0;
+  font-weight: 500;
+}
+
+.dialog-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  color: var(--app-text-muted);
+}
+
+// Khối cảnh báo / thành công trong hộp thoại
+.dialog-alert,
+.dialog-success {
+  margin: 0 0 16px;
+  padding: 12px;
+  border-radius: var(--app-radius);
+}
+
+.dialog-alert {
+  margin-bottom: 16px;
+  border-left: 3px solid var(--app-warning);
+  background: color-mix(in srgb, var(--app-warning) 8%, transparent);
+}
+
+.dialog-alert-text {
+  margin: 0;
+}
+
+.dialog-alert.dialog-alert-text {
+  margin-bottom: 16px;
+}
+
+.dialog-success {
+  margin-bottom: 16px;
+  color: var(--app-success);
+  background: color-mix(in srgb, var(--app-success) 8%, transparent);
+}
+
+app-blocker-list {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.dialog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dialog-list-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.dialog-list-text {
+  flex: 1 1 240px;
+}
+
+// Điện thoại: hộp thoại phủ toàn màn hình
+@media (max-width: 599.98px) {
+  .app-dialog-panel {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100%;
+    --mat-dialog-container-shape: 0;
+  }
+
+  .app-dialog-panel .mat-mdc-dialog-container {
+    height: 100%;
+  }
+
+  .dialog-readonly {
+    grid-template-columns: 1fr;
+  }
+
+  .dialog-readonly dd {
+    margin-bottom: 8px;
+  }
+}

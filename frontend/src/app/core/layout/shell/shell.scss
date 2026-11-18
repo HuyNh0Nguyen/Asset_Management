@@ -25,6 +25,19 @@
         ),
     )
   );
+
+  // Nút tài khoản trên header dùng màu trắng nổi bật trên nền xanh
+  @include mat.button-overrides(
+    (
+      text-label-text-color: var(--mat-sys-on-primary),
+      text-state-layer-color: var(--mat-sys-on-primary),
+      text-ripple-color: color-mix(
+          in srgb,
+          var(--mat-sys-on-primary) calc(var(--mat-sys-pressed-state-layer-opacity) * 100%),
+          transparent
+        ),
+    )
+  );
 }
 
 // Logo + tên ứng dụng: thẻ <a> giữ chỗ, chưa trỏ tới trang nào
@@ -33,7 +46,7 @@
   align-items: center;
   gap: 12px;
   margin-left: 8px;
-  color: inherit;
+  color: var(--mat-sys-on-primary);
   text-decoration: none;
   font-weight: 500;
   cursor: pointer;
@@ -72,9 +85,18 @@
 // Nút tài khoản trên header
 .shell-user {
   max-width: 280px;
+  color: var(--mat-sys-on-primary);
+  font-weight: 500;
+
+  .mat-icon,
+  .material-symbols-outlined,
+  .shell-user-caret {
+    color: var(--mat-sys-on-primary);
+  }
 }
 
 .shell-user-name {
+  color: var(--mat-sys-on-primary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

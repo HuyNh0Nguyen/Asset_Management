@@ -1,0 +1,125 @@
+// Bố cục trang dùng chung trong Shell: tiêu đề + nút, thanh công cụ, trạng thái tải / rỗng, bảng
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.page-header .page-title {
+  margin: 0;
+  font-weight: 600;
+}
+
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.page-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.page-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.page-search {
+  flex: 1 1 280px;
+  max-width: 440px;
+
+  .mat-mdc-text-field-wrapper {
+    background-color: var(--app-background);
+    border-radius: var(--app-radius);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  &:focus-within .mat-mdc-text-field-wrapper {
+    background-color: var(--app-surface);
+    box-shadow: 0 0 0 1px var(--app-primary);
+  }
+
+  .mat-icon {
+    color: var(--app-text-muted);
+  }
+}
+
+.page-hint {
+  margin: 0 0 12px;
+  font: var(--mat-sys-body-small);
+  color: var(--app-text-muted);
+}
+
+// Đang tải / rỗng
+.page-state {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  padding: 32px 16px;
+  color: var(--app-text-muted);
+  text-align: center;
+}
+
+// Bảng cuộn ngang trên màn hình hẹp
+.table-scroll {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+}
+
+.cell-code {
+  font-family: ui-monospace, 'Roboto Mono', monospace;
+  white-space: nowrap;
+}
+
+.cell-number {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.cell-actions {
+  width: 1%;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.form-field-full {
+  width: 100%;
+}
+
+// iPad dọc trở xuống: ô tìm kiếm giãn hết hàng
+@media (max-width: 1023.98px) {
+  .page-search {
+    max-width: none;
+  }
+}
+
+// Điện thoại: nút tiêu đề chia đều bề ngang
+@media (max-width: 599.98px) {
+  .page-actions {
+    width: 100%;
+  }
+
+  .page-actions > button {
+    flex: 1 1 0;
+  }
+
+  .page-search {
+    flex-basis: 100%;
+  }
+}

@@ -1,0 +1,136 @@
+// Kiểu của component dùng chung: status-chip, blocker-list, gợi ý bộ chọn, nút nguy hiểm
+
+// ---------- status-chip ----------
+.status-chip {
+  --status-chip-color: var(--app-text-muted);
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font: var(--mat-sys-label-small);
+  font-style: normal;
+  white-space: nowrap;
+  color: var(--status-chip-color);
+  background: color-mix(in srgb, var(--status-chip-color) 12%, transparent);
+}
+
+.status-chip-success {
+  --status-chip-color: var(--app-success);
+}
+
+.status-chip-info {
+  --status-chip-color: var(--app-info);
+}
+
+.status-chip-warning {
+  --status-chip-color: var(--app-warning);
+}
+
+.status-chip-error {
+  --status-chip-color: var(--app-error);
+}
+
+.status-chip-muted {
+  --status-chip-color: var(--app-text-muted);
+}
+
+// ---------- blocker-list ----------
+app-blocker-list {
+  display: block;
+}
+
+.blocker-groups,
+.blocker-items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.blocker-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.blocker-group {
+  padding: 12px;
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius);
+}
+
+.blocker-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.blocker-group-label {
+  font: var(--mat-sys-title-small);
+}
+
+.blocker-group-count {
+  min-width: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  text-align: center;
+  font: var(--mat-sys-label-medium);
+  color: var(--app-warning);
+  background: color-mix(in srgb, var(--app-warning) 12%, transparent);
+}
+
+.blocker-group-hint,
+.blocker-more {
+  margin: 4px 0 0;
+  font: var(--mat-sys-body-small);
+  color: var(--app-text-muted);
+}
+
+.blocker-items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.blocker-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+.blocker-item-secondary {
+  font: var(--mat-sys-body-small);
+  color: var(--app-text-muted);
+}
+
+.blocker-item-inactive .blocker-item-primary {
+  color: var(--app-text-muted);
+}
+
+// ---------- gợi ý trong bộ chọn (đơn vị, trưởng đơn vị) ----------
+.picker-option-name {
+  margin-right: 8px;
+}
+
+.picker-option-code,
+.picker-option-muted {
+  font: var(--mat-sys-body-small);
+  color: var(--app-text-muted);
+}
+
+// ---------- thao tác nguy hiểm ----------
+.button-danger {
+  --mat-button-filled-container-color: var(--app-error);
+  --mat-button-filled-label-text-color: #ffffff;
+}
+
+.menu-item-danger,
+.icon-danger {
+  color: var(--app-error);
+}
+
+.menu-item-danger .mat-icon {
+  color: var(--app-error);
+}

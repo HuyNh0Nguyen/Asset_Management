@@ -1,0 +1,56 @@
+<header class="page-header">
+  <h1 class="page-title">Cấp bậc</h1>
+  <div class="page-actions">
+    <button mat-flat-button type="button" (click)="openCreate()">
+      <mat-icon>add</mat-icon>
+      Thêm cấp bậc
+    </button>
+  </div>
+</header>
+
+<section class="page-card">
+  <p class="page-hint">Số thứ bậc lớn hơn là bậc cao hơn; cấp bậc dùng làm điều kiện chọn quy trình duyệt</p>
+
+  @if (loading() && !loaded()) {
+    <div class="page-state">
+      <mat-progress-spinner mode="indeterminate" diameter="32" />
+    </div>
+  } @else if (ranks().length === 0) {
+    <p class="page-state">Chưa có cấp bậc nào</p>
+  } @else {
+    <div class="table-scroll">
+      <table mat-table class="data-table" [dataSource]="ranks()">
+        <ng-container [matColumnDef]="column.CODE">
+          <th mat-header-cell *matHeaderCellDef>Mã</th>
+          <td mat-cell *matCellDef="let rank" class="cell-code">{{ rank.code }}</td>
+        </ng-container>
+
+        <ng-container [matColumnDef]="column.NAME">
+          <th mat-header-cell *matHeaderCellDef>Tên</th>
+          <td mat-cell *matCellDef="let rank">{{ rank.name }}</td>
+        </ng-container>
+
+        <ng-container [matColumnDef]="column.SENIORITY">
+          <th mat-header-cell *matHeaderCellDef class="cell-number">Số thứ bậc</th>
+          <td mat-cell *matCellDef="let rank" class="cell-number">{{ rank.seniority }}</td>
+        </ng-container>
+
+        <ng-container [matColumnDef]="column.ACTIONS">
+          <th mat-header-cell *matHeaderCellDef class="cell-actions"></th>
+          <td mat-cell *matCellDef="let rank" class="cell-actions">
+            <button mat-icon-button type="button" matTooltip="Sửa" aria-label="Sửa" (click)="openEdit(rank)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button type="button" matTooltip="Xóa" aria-label="Xóa" class="icon-danger"
+                    (click)="remove(rank)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns"></tr>
+      </table>
+    </div>
+  }
+</section>

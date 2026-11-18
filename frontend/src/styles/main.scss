@@ -1,6 +1,10 @@
 @use 'tokens';
 @use 'theme';
 @use 'auth-page';
+@use 'page-layout';
+@use 'dialog';
+@use 'components';
+@use 'org-tree';
 
 html,
 body {
@@ -18,6 +22,7 @@ body {
 .page-title {
   margin: 0 0 16px;
   font: var(--mat-sys-headline-small);
+  font-weight: 600;
 }
 
 .page-card {

@@ -1,0 +1,205 @@
+// Cây đơn vị - thụt lề theo --org-depth (gắn ở từng dòng), --org-indent theo kích thước màn hình
+
+.org-tree {
+  --org-indent: 28px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.org-node {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px 6px calc(var(--org-depth, 0) * var(--org-indent));
+  border-bottom: 1px solid var(--app-border);
+  box-sizing: border-box;
+  overflow: hidden;
+  animation: org-node-enter 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background: var(--app-background);
+  }
+
+  &.org-node-collapsing {
+    animation: org-node-collapse 180ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    pointer-events: none;
+  }
+}
+
+.org-node:last-child {
+  border-bottom: 0;
+}
+
+// Đơn vị ngừng hoạt động: mờ, chữ nghiêng - vẫn mở được menu thao tác
+.org-node-inactive .org-node-main,
+.org-node-inactive .org-node-icon {
+  opacity: 0.55;
+  font-style: italic;
+}
+
+// Dòng khớp từ khóa tìm kiếm
+.org-node-match {
+  background: var(--app-primary-soft);
+}
+
+.org-node-toggle-hidden {
+  visibility: hidden;
+}
+
+.org-node-toggle {
+  .org-node-toggle-icon {
+    display: inline-block;
+    transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    transform: rotate(-90deg);
+  }
+
+  &[aria-expanded='true'] .org-node-toggle-icon {
+    transform: rotate(0deg);
+  }
+}
+
+.org-node .org-node-icon {
+  flex-shrink: 0;
+  color: var(--app-primary);
+}
+
+.org-node-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.org-node-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+.org-node-name {
+  font: var(--mat-sys-title-small);
+  overflow-wrap: anywhere;
+}
+
+.org-node-code {
+  font-family: ui-monospace, 'Roboto Mono', monospace;
+  font-size: 12px;
+  color: var(--app-text-muted);
+}
+
+.org-node-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 16px;
+  margin-top: 2px;
+  font: var(--mat-sys-body-small);
+  color: var(--app-text-muted);
+}
+
+.org-node-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+// Ghép hai class: style của MatIcon (24px) nạp sau stylesheet toàn cục
+.org-node .org-node-meta-icon {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+  line-height: 16px;
+}
+
+.org-node-menu {
+  flex-shrink: 0;
+}
+
+// Hiệu ứng xuất hiện khi mở rộng nút
+@keyframes org-node-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Hiệu ứng biến mất khi thu gọn nút
+@keyframes org-node-collapse {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 64px;
+  }
+  40% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-color: transparent;
+  }
+}
+
+// iPad: thụt lề nhỏ hơn
+@media (max-width: 1023.98px) {
+  .org-tree {
+    --org-indent: 20px;
+  }
+}
+
+// Điện thoại: thụt lề tối thiểu, ẩn icon loại để nhường chỗ cho tên
+@media (max-width: 599.98px) {
+  .org-tree {
+    --org-indent: 12px;
+  }
+
+  .org-node {
+    gap: 4px;
+    padding-right: 0;
+  }
+
+  .org-node .org-node-icon {
+    display: none;
+  }
+}
+
+// Chế độ giảm chuyển động
+@media (prefers-reduced-motion: reduce) {
+  .org-node {
+    animation: none !important;
+    transition: none !important;
+
+    &.org-node-collapsing {
+      display: none !important;
+    }
+  }
+
+  .org-node-toggle .org-node-toggle-icon {
+    transition: none !important;
+  }
+}
+
+
+// Chế độ giảm chuyển động
+@media (prefers-reduced-motion: reduce) {
+  .org-node {
+    animation: none !important;
+    transition: none !important;
+
+    &.org-node-collapsing {
+      display: none !important;
+    }
+  }
+
+  .org-node-toggle .org-node-toggle-icon {
+    transition: none !important;
+  }
+}

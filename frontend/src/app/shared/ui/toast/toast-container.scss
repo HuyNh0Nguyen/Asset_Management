@@ -9,6 +9,7 @@
   gap: 8px;
   width: 380px;
   max-width: calc(100vw - 48px);
+  pointer-events: none;
 }
 
 .toast-item {
@@ -21,11 +22,47 @@
   background: var(--app-surface);
   box-shadow: var(--app-shadow);
   color: var(--app-text);
+  pointer-events: auto;
+  overflow: hidden;
+  box-sizing: border-box;
+  will-change: transform, opacity, max-height;
+  animation: toast-enter 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  &.is-leaving {
+    animation: toast-exit 250ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    pointer-events: none;
+  }
+}
+
+.toast-icon {
+  flex-shrink: 0;
+  animation: toast-icon-pop 320ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
 }
 
 .toast-message {
   flex: 1;
   line-height: 1.4;
+  word-break: break-word;
+}
+
+.toast-close-button {
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
 }
 
 .toast-success {
@@ -56,6 +93,89 @@
   color: var(--app-info);
 }
 
+// Hiệu ứng xuất hiện và biến mất trên desktop
+@keyframes toast-enter {
+  0% {
+    opacity: 0;
+    transform: translateX(40px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes toast-exit {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    max-height: 120px;
+    margin-bottom: 0;
+  }
+  40% {
+    opacity: 0;
+    transform: translateX(40px) scale(0.95);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(40px) scale(0.9);
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: -8px;
+    border-width: 0;
+  }
+}
+
+// Hiệu ứng biểu tượng nảy nhẹ khi xuất hiện
+@keyframes toast-icon-pop {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// Hiệu ứng trượt từ dưới lên trên thiết bị di động
+@keyframes toast-enter-mobile {
+  0% {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toast-exit-mobile {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    max-height: 120px;
+    margin-bottom: 0;
+  }
+  40% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.9);
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: -8px;
+    border-width: 0;
+  }
+}
+
 @media (max-width: 599.98px) {
   .toast-container {
     right: 12px;
@@ -63,5 +183,39 @@
     bottom: 12px;
     width: auto;
     max-width: none;
+  }
+
+  .toast-item {
+    animation-name: toast-enter-mobile;
+
+    &.is-leaving {
+      animation-name: toast-exit-mobile;
+    }
+  }
+}
+
+// Hỗ trợ chế độ giảm chuyển động cho người dùng nhạy cảm
+@media (prefers-reduced-motion: reduce) {
+  .toast-item {
+    animation: none !important;
+    transition: none !important;
+
+    &.is-leaving {
+      opacity: 0;
+      max-height: 0;
+      padding: 0;
+      margin-bottom: -8px;
+      border: 0;
+      animation: none !important;
+    }
+  }
+
+  .toast-icon {
+    animation: none !important;
+  }
+
+  .toast-close-button {
+    transition: none !important;
+    transform: none !important;
   }
 }

@@ -24,6 +24,22 @@ export const ERROR_MESSAGES_VI: Record<ErrorCode, string> = {
     [ErrorCode.INTERNAL_ERROR]: 'Hệ thống gặp lỗi, vui lòng thử lại sau',
     [ErrorCode.STORAGE_ERROR]: 'Không lưu được tệp, vui lòng thử lại sau',
     [ErrorCode.NOT_IMPLEMENTED]: 'Chức năng đang được xây dựng',
+    [ErrorCode.ORG_UNIT_CODE_DUPLICATE]: 'Mã đơn vị đã tồn tại',
+    [ErrorCode.RANK_CODE_DUPLICATE]: 'Mã cấp bậc đã tồn tại',
+    [ErrorCode.RANK_SENIORITY_DUPLICATE]: 'Số thứ bậc đã được dùng cho cấp bậc khác',
+    [ErrorCode.ORG_UNIT_COMPANY_NOT_ALLOWED]: 'Không thể tạo thêm đơn vị cấp Công ty',
+    [ErrorCode.ORG_UNIT_INVALID_PARENT_TYPE]: 'Đơn vị cha không phù hợp với loại đơn vị',
+    [ErrorCode.ORG_UNIT_PARENT_CYCLE]: 'Không thể chuyển đơn vị vào chính nó hoặc đơn vị con của nó',
+    [ErrorCode.ORG_UNIT_PARENT_INACTIVE]: 'Đơn vị cha đang ngừng hoạt động',
+    [ErrorCode.ORG_UNIT_ROOT_IMMUTABLE]: 'Không thể thực hiện thao tác này với đơn vị gốc',
+    [ErrorCode.ORG_UNIT_HEAD_NOT_ACTIVE]: 'Trưởng đơn vị phải là người dùng đang hoạt động',
+    [ErrorCode.ORG_UNIT_HEAD_OUTSIDE_SUBTREE]: 'Trưởng đơn vị phải thuộc đơn vị này hoặc một đơn vị con',
+    [ErrorCode.ORG_UNIT_MOVE_DETACHES_HEAD]: 'Đơn vị này đang chứa trưởng của đơn vị cấp trên - hãy chỉ định trưởng khác cho đơn vị đó trước khi chuyển',
+    [ErrorCode.ORG_UNIT_NOT_EMPTY]: 'Đơn vị còn người dùng, đơn vị con hoặc tài sản đang hoạt động',
+    [ErrorCode.ORG_UNIT_IN_USE]: 'Đơn vị còn dữ liệu tham chiếu nên không thể xóa',
+    [ErrorCode.ORG_UNIT_INACTIVE]: 'Đơn vị đã ngừng hoạt động, vui lòng chọn đơn vị khác',
+    [ErrorCode.ORG_UNIT_TYPE_NOT_ALLOWED]: 'Loại đơn vị không phù hợp',
+    [ErrorCode.RANK_IN_USE]: 'Cấp bậc đang được sử dụng, chỉ có thể đổi tên',
 };
 
 export const NETWORK_ERROR_MESSAGE_VI = 'Không kết nối được máy chủ, vui lòng kiểm tra mạng';

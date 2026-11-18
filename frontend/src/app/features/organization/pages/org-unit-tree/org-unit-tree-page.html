@@ -1,0 +1,103 @@
+<header class="page-header">
+  <h1 class="page-title">Cơ cấu tổ chức</h1>
+  <div class="page-actions">
+    <button mat-stroked-button type="button" (click)="expandAll()">
+      <mat-icon>unfold_more</mat-icon>
+      Mở rộng
+    </button>
+    <button mat-stroked-button type="button" (click)="collapseAll()">
+      <mat-icon>unfold_less</mat-icon>
+      Thu gọn
+    </button>
+  </div>
+</header>
+
+<section class="page-card">
+  <div class="page-toolbar">
+    <mat-form-field appearance="outline" class="page-search" subscriptSizing="dynamic">
+      <mat-label>Tìm theo tên hoặc mã</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput type="search" autocomplete="off" [value]="search()" (input)="onSearch($event)" />
+      @if (search()) {
+        <button mat-icon-button matSuffix type="button" aria-label="Xóa tìm kiếm" (click)="search.set('')">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+    <div class="page-toolbar-actions">
+      <mat-slide-toggle [checked]="hideInactive()" (change)="hideInactive.set($event.checked)">
+        Ẩn đơn vị ngừng hoạt động
+      </mat-slide-toggle>
+    </div>
+  </div>
+
+  @if (loading() && !loaded()) {
+    <div class="page-state">
+      <mat-progress-spinner mode="indeterminate" diameter="32" />
+    </div>
+  } @else if (rows().length === 0) {
+    <p class="page-state">{{ search() ? 'Không có đơn vị phù hợp' : 'Chưa có đơn vị nào' }}</p>
+  } @else {
+    <ul class="org-tree" aria-label="Cây đơn vị">
+      @for (row of rows(); track row.node.id) {
+        <!-- Danh sách thường + aria-level: cây chỉ để xem, không phải widget tree điều khiển bằng phím mũi tên -->
+        <li class="org-node"
+            [class.org-node-inactive]="row.node.status === inactiveStatus"
+            [class.org-node-match]="row.match"
+            [class.org-node-collapsing]="row.collapsing"
+            [style.--org-depth]="row.node.depth"
+            [attr.aria-level]="row.node.depth + 1">
+          <button mat-icon-button type="button" class="org-node-toggle"
+                  [class.org-node-toggle-hidden]="!row.hasChildren" [disabled]="!row.hasChildren"
+                  [attr.aria-expanded]="row.hasChildren ? row.expanded : null"
+                  [attr.aria-label]="(row.expanded ? 'Thu gọn ' : 'Mở rộng ') + row.node.name"
+                  (click)="toggle(row.node.id)">
+            <mat-icon class="org-node-toggle-icon">expand_more</mat-icon>
+          </button>
+
+          <mat-icon class="org-node-icon">{{ typeIcons[row.node.unitType] }}</mat-icon>
+
+          <div class="org-node-main">
+            <div class="org-node-title">
+              <span class="org-node-name">{{ row.node.name }}</span>
+              <span class="org-node-code">{{ row.node.code }}</span>
+              @if (row.node.status === inactiveStatus) {
+                <app-status-chip [label]="statusLabels[row.node.status]" [tone]="mutedTone" />
+              }
+            </div>
+            <div class="org-node-meta">
+              <span>{{ typeLabels[row.node.unitType] }}</span>
+              <span class="org-node-head">
+                <mat-icon class="org-node-meta-icon">person</mat-icon>
+                @if (row.node.head; as head) {
+                  {{ head.fullName }} ({{ head.username }})
+                } @else {
+                  {{ noHead }}
+                }
+              </span>
+            </div>
+          </div>
+
+          @if (row.actions.length > 0) {
+            <button mat-icon-button type="button" class="org-node-menu" aria-label="Thao tác"
+                    [matMenuTriggerFor]="actionMenu" [matMenuTriggerData]="{ row: row }">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          }
+        </li>
+      }
+    </ul>
+
+    <mat-menu #actionMenu="matMenu" xPosition="before">
+      <ng-template matMenuContent let-row="row">
+        @for (item of row.actions; track item.action) {
+          <button mat-menu-item type="button" [class.menu-item-danger]="item.danger"
+                  (click)="runAction(item.action, row.node)">
+            <mat-icon>{{ item.icon }}</mat-icon>
+            <span>{{ item.label }}</span>
+          </button>
+        }
+      </ng-template>
+    </mat-menu>
+  }
+</section>

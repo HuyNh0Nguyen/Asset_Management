@@ -1,0 +1,73 @@
+<h2 mat-dialog-title>{{ isCreate ? 'Thêm đơn vị con' : 'Sửa đơn vị' }}</h2>
+
+<mat-dialog-content>
+  <form id="orgUnitForm" class="dialog-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <dl class="dialog-readonly">
+      @if (isCreate) {
+        <dt>Đơn vị cha</dt>
+        <dd>{{ target.name }} ({{ target.code }})</dd>
+        <dt>Loại đơn vị</dt>
+        <dd>{{ childTypeLabel }}</dd>
+      } @else {
+        <dt>Mã đơn vị</dt>
+        <dd>{{ target.code }}</dd>
+      }
+    </dl>
+
+    @if (isCreate) {
+      <mat-form-field appearance="outline" class="form-field-full">
+        <mat-label>Mã đơn vị</mat-label>
+        <input matInput formControlName="code" autocomplete="off" [maxlength]="codeMaxLength"
+               (input)="upperCaseCode()" />
+        <mat-hint>{{ codeHint }}</mat-hint>
+        @if (form.controls.code.hasError('required')) {
+          <mat-error>Vui lòng nhập mã đơn vị</mat-error>
+        } @else if (form.controls.code.hasError(errorKey.DUPLICATE)) {
+          <mat-error>Mã đơn vị đã tồn tại</mat-error>
+        } @else {
+          <mat-error>{{ codeHint }}, tối đa {{ codeMaxLength }} ký tự</mat-error>
+        }
+      </mat-form-field>
+    }
+
+    <mat-form-field appearance="outline" class="form-field-full">
+      <mat-label>Tên đơn vị</mat-label>
+      <input matInput formControlName="name" autocomplete="off" [maxlength]="nameMaxLength" />
+      @if (form.controls.name.hasError('required')) {
+        <mat-error>Vui lòng nhập tên đơn vị</mat-error>
+      } @else {
+        <mat-error>Tên đơn vị không hợp lệ</mat-error>
+      }
+    </mat-form-field>
+
+    @if (!isCreate) {
+      <mat-form-field appearance="outline" class="form-field-full">
+        <mat-label>Trưởng đơn vị</mat-label>
+        <input matInput type="text" autocomplete="off" placeholder="Gõ họ tên hoặc username"
+               [formControl]="headControl" [matAutocomplete]="headAuto" />
+        <mat-autocomplete #headAuto="matAutocomplete" [displayWith]="displayHead">
+          <mat-option [value]="null">{{ noHeadOption }}</mat-option>
+          @for (head of filteredCandidates(); track head.id) {
+            <mat-option [value]="head">
+              <span class="picker-option-name">{{ head.fullName }}</span>
+              <span class="picker-option-code">{{ head.username }} · {{ head.orgUnitName }}</span>
+            </mat-option>
+          }
+        </mat-autocomplete>
+        <mat-hint>{{ loadingCandidates() ? 'Đang tải danh sách...' : 'Người dùng đang hoạt động thuộc đơn vị này hoặc đơn vị con' }}</mat-hint>
+        @if (headControl.hasError(errorKey.INVALID_SELECTION)) {
+          <mat-error>Vui lòng chọn từ danh sách</mat-error>
+        } @else if (headControl.hasError(errorKey.SERVER)) {
+          <mat-error>{{ headServerError() }}</mat-error>
+        }
+      </mat-form-field>
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close>Hủy</button>
+  <button mat-flat-button type="submit" form="orgUnitForm" [disabled]="submitting()">
+    {{ submitting() ? 'Đang lưu...' : (isCreate ? 'Thêm' : 'Lưu') }}
+  </button>
+</mat-dialog-actions>

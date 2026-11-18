@@ -12,9 +12,9 @@
   
   <!-- Tài khoản: họ tên + Đổi mật khẩu / Đăng xuất -->
   <button mat-button type="button" class="shell-user" [matMenuTriggerFor]="userMenu" aria-label="Tài khoản">
-    <mat-icon>account_circle</mat-icon>
+    <mat-icon class="material-symbols-outlined">account_circle</mat-icon>
     <span class="shell-user-name">{{ fullName() }}</span>
-    <mat-icon class="shell-user-caret">expand_more</mat-icon>
+    <mat-icon class="shell-user-caret" iconPositionEnd>expand_more</mat-icon>
   </button>
   <mat-menu #userMenu="matMenu" xPosition="before">
     <a mat-menu-item [routerLink]="changePasswordUrl">
