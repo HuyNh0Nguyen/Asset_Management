@@ -2,6 +2,7 @@ package com.training.assetmanagement.organization.service;
 
 import com.training.assetmanagement.access.service.CurrentActor;
 import com.training.assetmanagement.audit.domain.AuditAction;
+import com.training.assetmanagement.audit.domain.AuditChanges;
 import com.training.assetmanagement.audit.domain.AuditTargetType;
 import com.training.assetmanagement.organization.domain.*;
 import com.training.assetmanagement.organization.repository.OrgUnitRepository;
@@ -75,7 +76,7 @@ public class OrgUnitStatusServiceImpl implements OrgUnitStatusService {
         if (updated == 0) {
             throw new BusinessException(ErrorCode.CONFLICT, "Org unit " + node.id() + " status changed concurrently");
         }
-        OrgAuditChanges changes = new OrgAuditChanges().track(OrgAuditField.STATUS, current, next);
+        AuditChanges changes = new AuditChanges().track(OrgAuditField.STATUS, current, next);
         orgAuditService.log(action, AuditTargetType.ORG_UNIT, node.id(), node.code(), changes);
     }
 }

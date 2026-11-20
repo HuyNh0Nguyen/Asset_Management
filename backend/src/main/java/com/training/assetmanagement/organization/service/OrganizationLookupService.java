@@ -31,4 +31,10 @@ public interface OrganizationLookupService {
 
     // Đổi / gỡ trưởng; ghi org_units vẫn do miền chủ
     void replaceHead(UUID unitId, UUID newHeadUserId);
+
+    // MANDATORY: Khóa ghi đơn vị đang làm trưởng - va với Sửa đơn vị
+    List<OrgUnit> lockUnitsHeadedBy(UUID userId);
+
+    // Cấp bậc chỉ vài dòng - danh sách người dùng tra trong bộ nhớ
+    List<Rank> listRanks();
 }

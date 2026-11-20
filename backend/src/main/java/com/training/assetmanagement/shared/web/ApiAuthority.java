@@ -7,6 +7,8 @@ public final class ApiAuthority {
     public static final String ORG_MANAGE = "hasAuthority('ORG_MANAGE')";
     public static final String USER_MANAGE = "hasAuthority('USER_MANAGE')";
     public static final String ORG_OR_USER_MANAGE = "hasAnyAuthority('ORG_MANAGE', 'USER_MANAGE')";
+    public static final String ROLE_MANAGE = "hasAuthority('ROLE_MANAGE')";
+    public static final String ROLE_OR_USER_MANAGE = "hasAnyAuthority('ROLE_MANAGE', 'USER_MANAGE')";
 
     private ApiAuthority() {}
 }

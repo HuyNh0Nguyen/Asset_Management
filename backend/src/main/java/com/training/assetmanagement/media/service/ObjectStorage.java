@@ -9,6 +9,10 @@ public interface ObjectStorage {
 
     void remove(String objectKey);
 
+    // Không ném lỗi - dọn đối tượng sau commit / sau khi ghi dòng thất bại.
+    // Tệp mồ côi vô hại vì không còn dòng nào cấp URL cho nó
+    void removeQuietly(String objectKey);
+
     // URL ký tạm thời - API không bao giờ trả objectKey
     String presignedGetUrl(String objectKey);
 

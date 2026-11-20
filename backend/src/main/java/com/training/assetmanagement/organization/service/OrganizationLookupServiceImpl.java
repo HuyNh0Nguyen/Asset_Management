@@ -76,4 +76,16 @@ public class OrganizationLookupServiceImpl implements OrganizationLookupService 
     public void replaceHead(UUID unitId, UUID newHeadUserId) {
         orgUnitService.replaceHead(unitId, newHeadUserId);
     }
+
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
+    public List<OrgUnit> lockUnitsHeadedBy(UUID userId) {
+        return orgUnitRepository.findByHeadUserIdForUpdate(userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Rank> listRanks() {
+        return rankRepository.findAll();
+    }
 }

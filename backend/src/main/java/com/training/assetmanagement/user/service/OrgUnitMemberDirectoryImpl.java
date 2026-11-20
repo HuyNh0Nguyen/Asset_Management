@@ -1,6 +1,7 @@
-package com.training.assetmanagement.organization.service;
+package com.training.assetmanagement.user.service;
 
 import com.training.assetmanagement.organization.domain.OrgUserRef;
+import com.training.assetmanagement.organization.service.OrgUnitMemberDirectory;
 import com.training.assetmanagement.user.domain.User;
 import com.training.assetmanagement.user.domain.UserStatus;
 import com.training.assetmanagement.user.repository.UserRepository;
@@ -13,12 +14,13 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-// Chỉ tiêm UserRepository - không tiêm service của organization, tránh vòng bean
+// Không tiêm service của organization, tránh vòng bean
 @Service
 @RequiredArgsConstructor
 public class OrgUnitMemberDirectoryImpl implements OrgUnitMemberDirectory {
 
     private final UserRepository userRepository;
+    private final AvatarUrlResolver avatarUrlResolver;
 
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
@@ -26,7 +28,7 @@ public class OrgUnitMemberDirectoryImpl implements OrgUnitMemberDirectory {
         if (userIds.isEmpty()) {
             return Map.of();
         }
-        return toRefs(userRepository.findAllByIdForShare(Set.copyOf(userIds)));
+        return toRefMap(userRepository.findAllByIdForShare(Set.copyOf(userIds)));
     }
 
     @Override
@@ -35,7 +37,7 @@ public class OrgUnitMemberDirectoryImpl implements OrgUnitMemberDirectory {
         if (userIds.isEmpty()) {
             return Map.of();
         }
-        return toRefs(userRepository.findAllById(Set.copyOf(userIds)));
+        return toRefMap(userRepository.findAllById(Set.copyOf(userIds)));
     }
 
     @Override
@@ -44,20 +46,21 @@ public class OrgUnitMemberDirectoryImpl implements OrgUnitMemberDirectory {
         if (unitIds.isEmpty()) {
             return List.of();
         }
-        return userRepository.findByOrgUnitIdInAndStatusOrderByFullNameAsc(Set.copyOf(unitIds), UserStatus.ACTIVE)
-            .stream()
-            .map(OrgUnitMemberDirectoryImpl::toRef)
-            .toList();
+        return toRefs(userRepository.findByOrgUnitIdInAndStatusOrderByFullNameAsc(Set.copyOf(unitIds), UserStatus.ACTIVE));
     }
 
-    private static Map<UUID, OrgUserRef> toRefs(List<User> users) {
+    private Map<UUID, OrgUserRef> toRefMap(List<User> users) {
+        return toRefs(users).stream().collect(Collectors.toMap(OrgUserRef::id, Function.identity()));
+    }
+
+    // URL ảnh theo lô - một truy vấn image_files
+    private List<OrgUserRef> toRefs(List<User> users) {
+        Map<UUID, String> avatars = avatarUrlResolver.urlsFor(users.stream()
+            .map(User::getAvatarImageId).filter(Objects::nonNull).toList());
         return users.stream()
-            .map(OrgUnitMemberDirectoryImpl::toRef)
-            .collect(Collectors.toMap(OrgUserRef::id, Function.identity()));
-    }
-
-    private static OrgUserRef toRef(User user) {
-        return new OrgUserRef(user.getId(), user.getUsername(), user.getFullName(), user.getOrgUnitId(),
-            user.getStatus() == UserStatus.ACTIVE);
+            .map(user -> new OrgUserRef(user.getId(), user.getUsername(), user.getFullName(), user.getOrgUnitId(),
+                user.getStatus() == UserStatus.ACTIVE,
+                user.getAvatarImageId() == null ? null : avatars.get(user.getAvatarImageId())))
+            .toList();
     }
 }
