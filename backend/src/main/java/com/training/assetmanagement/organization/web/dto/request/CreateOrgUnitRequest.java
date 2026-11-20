@@ -1,7 +1,7 @@
 package com.training.assetmanagement.organization.web.dto.request;
 
-import com.training.assetmanagement.organization.domain.OrgCodeFormat;
 import com.training.assetmanagement.organization.domain.OrgUnitType;
+import com.training.assetmanagement.shared.web.CodeFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,12 +14,12 @@ import java.util.UUID;
 @Schema(name = "CreateOrgUnitRequest", description = "Request payload for creating a new organizational unit")
 public record CreateOrgUnitRequest(
     @NotBlank
-    @Size(max = OrgCodeFormat.CODE_MAX_LENGTH)
-    @Pattern(regexp = OrgCodeFormat.PATTERN)
+    @Size(max = CodeFormat.CODE_MAX_LENGTH)
+    @Pattern(regexp = CodeFormat.PATTERN)
     String code,
 
     @NotBlank
-    @Size(max = OrgCodeFormat.NAME_MAX_LENGTH)
+    @Size(max = CodeFormat.NAME_MAX_LENGTH)
     String name,
 
     @NotNull

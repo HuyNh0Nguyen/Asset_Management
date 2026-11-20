@@ -15,7 +15,8 @@ public final class OrganizationResponseMapper {
 
     public static OrgUnitHeadResponse toHead(OrgUnitHead head) {
         return head == null ? null
-            : new OrgUnitHeadResponse(head.id(), head.username(), head.fullName(), head.orgUnitName());
+            : new OrgUnitHeadResponse(head.id(), head.username(), head.fullName(), head.orgUnitName(),
+                head.avatarUrl());
     }
 
     public static MoveCheckResponse toMoveCheck(List<BlockingHead> blockingHeads) {

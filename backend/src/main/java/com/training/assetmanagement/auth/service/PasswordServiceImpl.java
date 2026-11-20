@@ -8,7 +8,7 @@ import com.training.assetmanagement.audit.domain.AuditEvent;
 import com.training.assetmanagement.audit.domain.AuditTargetType;
 import com.training.assetmanagement.audit.service.AuditLogger;
 import com.training.assetmanagement.auth.domain.AuthAuditField;
-import com.training.assetmanagement.auth.domain.TemporaryPasswordGenerator;
+import com.training.assetmanagement.shared.security.TemporaryPasswordGenerator;
 import com.training.assetmanagement.notification.domain.*;
 import com.training.assetmanagement.notification.service.NotificationPublisher;
 import com.training.assetmanagement.shared.config.AppProperties;

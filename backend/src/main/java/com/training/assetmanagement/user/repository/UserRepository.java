@@ -5,10 +5,7 @@ import com.training.assetmanagement.user.domain.UserAuthSnapshot;
 import com.training.assetmanagement.user.domain.UserStatus;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Limit;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
@@ -17,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface UserRepository extends JpaRepository<User, UUID> {
+public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificationExecutor<User> {
 
     @Query("SELECT u.id FROM User u WHERE u.username = :username")
     Optional<UUID> findIdByUsername(@Param("username") String username);
@@ -30,7 +27,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
         """)
     Optional<UserAuthSnapshot> findAuthSnapshotById(@Param("id") UUID id);
 
-    // SELECT ... FOR UPDATE: hai lần sai đồng thời không làm mất một lần đếm
+    // SELECT ... FOR UPDATE: Va với khóa đọc ở Sửa đơn vị / bàn giao / quy trình
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT u FROM User u WHERE u.id = :id")
     Optional<User> findByIdForUpdate(@Param("id") UUID id);
@@ -65,6 +62,66 @@ public interface UserRepository extends JpaRepository<User, UUID> {
                        @Param("validFrom") LocalDateTime validFrom,
                        @Param("updatedBy") UUID updatedBy,
                        @Param("updatedAt") LocalDateTime updatedAt);
+
+    // CAS đổi trạng thái: 0 dòng = đã bị đổi ở nơi khác -> 409
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("""
+        UPDATE User u
+        SET u.status = :to, u.updatedBy = :actorId, u.updatedAt = :now
+        WHERE u.id = :id AND u.status = :from
+        """)
+    int updateStatus(@Param("id") UUID id,
+                     @Param("from") UserStatus from,
+                     @Param("to") UserStatus to,
+                     @Param("actorId") UUID actorId,
+                     @Param("now") LocalDateTime now);
+
+    // Kích hoạt lại trong một lệnh ghi; token_valid_from giữ nguyên (đã đẩy khi vô hiệu hóa)
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("""
+        UPDATE User u
+        SET u.status = :to,
+            u.orgUnitId = :orgUnitId,
+            u.mustChangePassword = :mustChangePassword,
+            u.failedLoginCount = 0,
+            u.lockedUntil = null,
+            u.updatedBy = :actorId,
+            u.updatedAt = :now
+        WHERE u.id = :id AND u.status = :from
+        """)
+    int reactivate(@Param("id") UUID id,
+                   @Param("orgUnitId") UUID orgUnitId,
+                   @Param("mustChangePassword") boolean mustChangePassword,
+                   @Param("from") UserStatus from,
+                   @Param("to") UserStatus to,
+                   @Param("actorId") UUID actorId,
+                   @Param("now") LocalDateTime now);
+
+    boolean existsByUsername(String username);
+
+    // Collation _ci: trùng email không phân biệt hoa thường
+    boolean existsByEmail(String email);
+
+    // Cổng AccessMemberDirectory: chỉ người ACTIVE, kèm đơn vị
+    @Query("""
+        SELECT NEW com.training.assetmanagement.user.repository.UserUnitRow(u.id, u.orgUnitId)
+        FROM User u
+        WHERE u.id IN :ids AND u.status = :status
+        """)
+    List<UserUnitRow> findUnitRows(@Param("ids") Collection<UUID> ids, @Param("status") UserStatus status);
+
+    // avatar_image_id chỉ ghi ở đây, dưới khóa dòng chủ (BR-52).
+    // flushAutomatically: dòng image_files mới phải vào CSDL trước (fk_users_avatar_image)
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("""
+        UPDATE User u
+        SET u.avatarImageId = :imageId, u.updatedBy = :actorId, u.updatedAt = :now
+        WHERE u.id = :id
+        """)
+    int updateAvatar(@Param("id") UUID id,
+                     @Param("imageId") UUID imageId,
+                     @Param("actorId") UUID actorId,
+                     @Param("now") LocalDateTime now);
 
     // Vướng ngừng hoạt động / xóa đơn vị
     long countByOrgUnitIdAndStatus(UUID orgUnitId, UserStatus status);

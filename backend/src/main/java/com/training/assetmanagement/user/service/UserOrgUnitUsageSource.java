@@ -1,8 +1,9 @@
-package com.training.assetmanagement.organization.service;
+package com.training.assetmanagement.user.service;
 
 import com.training.assetmanagement.organization.domain.OrgUnitBlocker;
 import com.training.assetmanagement.organization.domain.OrgUnitBlockerItem;
 import com.training.assetmanagement.organization.domain.OrgUnitBlockerKind;
+import com.training.assetmanagement.organization.service.OrgUnitUsageSource;
 import com.training.assetmanagement.user.domain.User;
 import com.training.assetmanagement.user.domain.UserStatus;
 import com.training.assetmanagement.user.repository.UserRepository;

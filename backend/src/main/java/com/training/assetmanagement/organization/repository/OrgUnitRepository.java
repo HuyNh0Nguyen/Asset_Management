@@ -56,4 +56,10 @@ public interface OrgUnitRepository extends JpaRepository<OrgUnit, UUID> {
                      @Param("nextStatus") OrgUnitStatus nextStatus,
                      @Param("actorId") UUID actorId,
                      @Param("changedAt") LocalDateTime changedAt);
+
+    // Khóa ghi các đơn vị người này đang làm trưởng, id tăng dần.
+    // Chỉ mục của fk_org_units_head_user giới hạn khóa vào đúng các dòng đó
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT u FROM OrgUnit u WHERE u.headUserId = :userId ORDER BY u.id")
+    List<OrgUnit> findByHeadUserIdForUpdate(@Param("userId") UUID userId);
 }

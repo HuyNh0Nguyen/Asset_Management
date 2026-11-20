@@ -42,6 +42,7 @@ public final class ApiPath {
     public static final String RESET_PASSWORD = BY_ID + "/reset-password";
     public static final String AVATAR = "/avatar";
     public static final String USER_AVATAR = BY_ID + AVATAR;
+    public static final String UNIT_CHANGE_CHECK = BY_ID + "/unit-change-check";
 
     // Tổ chức
     public static final String DELETION_CHECK = BY_ID + "/deletion-check";

@@ -14,10 +14,12 @@ public record MeResponse(
         @Schema(requiredMode = REQUIRED) String username,
         @Schema(requiredMode = REQUIRED) String fullName,
         @Schema(requiredMode = REQUIRED) String email,
+        String phoneNumber,
         String avatarUrl,                               // URL ký; null khi chưa có ảnh
         @Schema(requiredMode = REQUIRED) boolean mustChangePassword,
         @Schema(requiredMode = REQUIRED) OrgUnitRefResponse orgUnit,
         @Schema(requiredMode = REQUIRED) String rankName,
+        @Schema(requiredMode = REQUIRED) List<RoleRefResponse> roles,
         @Schema(requiredMode = REQUIRED) List<PermissionGrantResponse> permissions
 ) {
 }

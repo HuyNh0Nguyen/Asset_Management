@@ -1,4 +1,4 @@
-package com.training.assetmanagement.auth.domain;
+package com.training.assetmanagement.shared.security;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;

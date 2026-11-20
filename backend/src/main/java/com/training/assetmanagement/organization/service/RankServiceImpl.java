@@ -2,8 +2,8 @@ package com.training.assetmanagement.organization.service;
 
 import com.training.assetmanagement.access.service.CurrentActor;
 import com.training.assetmanagement.audit.domain.AuditAction;
+import com.training.assetmanagement.audit.domain.AuditChanges;
 import com.training.assetmanagement.audit.domain.AuditTargetType;
-import com.training.assetmanagement.organization.domain.OrgAuditChanges;
 import com.training.assetmanagement.organization.domain.OrgAuditField;
 import com.training.assetmanagement.organization.domain.OrgConstraint;
 import com.training.assetmanagement.organization.domain.Rank;
@@ -50,7 +50,7 @@ public class RankServiceImpl implements RankService {
             currentActor.get().userId(), LocalDateTime.now(clock));
         saveAndFlush(rank);
 
-        OrgAuditChanges changes = new OrgAuditChanges()
+        AuditChanges changes = new AuditChanges()
             .putNew(OrgAuditField.CODE, rank.getCode())
             .putNew(OrgAuditField.NAME, rank.getName())
             .putNew(OrgAuditField.SENIORITY, rank.getSeniority());
@@ -63,7 +63,7 @@ public class RankServiceImpl implements RankService {
     public Rank update(UUID id, String name, int seniority) {
         Rank rank = rankRepository.findByIdForUpdate(id).orElseThrow(RankServiceImpl::notFound);
         String newName= name.strip();
-        OrgAuditChanges changes = new OrgAuditChanges()
+        AuditChanges changes = new AuditChanges()
             .track(OrgAuditField.NAME, rank.getName(), newName)
             .track(OrgAuditField.SENIORITY, rank.getSeniority(), seniority);
         if (changes.isEmpty()) {
@@ -86,7 +86,7 @@ public class RankServiceImpl implements RankService {
     public void delete(UUID id) {
         Rank rank = rankRepository.findByIdForUpdate(id).orElseThrow(RankServiceImpl::notFound);
         // Audit trước lệnh xóa, cùng giao dịch: Bản chụp toàn dòng
-        OrgAuditChanges snapshot = new OrgAuditChanges()
+        AuditChanges snapshot = new AuditChanges()
             .putOld(OrgAuditField.CODE, rank.getCode())
             .putOld(OrgAuditField.NAME, rank.getName())
             .putOld(OrgAuditField.SENIORITY, rank.getSeniority());

@@ -3,6 +3,7 @@ package com.training.assetmanagement.organization.service;
 import com.training.assetmanagement.access.domain.Permission;
 import com.training.assetmanagement.access.service.CurrentActor;
 import com.training.assetmanagement.audit.domain.AuditAction;
+import com.training.assetmanagement.audit.domain.AuditChanges;
 import com.training.assetmanagement.audit.domain.AuditTargetType;
 import com.training.assetmanagement.organization.domain.*;
 import com.training.assetmanagement.organization.repository.OrgUnitRepository;
@@ -81,7 +82,7 @@ public class OrgUnitServiceImpl implements OrgUnitService {
             throw ex;
         }
 
-        OrgAuditChanges changes = new OrgAuditChanges()
+        AuditChanges changes = new AuditChanges()
             .putNew(OrgAuditField.CODE, unit.getCode())
             .putNew(OrgAuditField.NAME, unit.getName())
             .putNew(OrgAuditField.UNIT_TYPE, unit.getUnitType())
@@ -180,7 +181,7 @@ public class OrgUnitServiceImpl implements OrgUnitService {
             throw new BusinessException(ErrorCode.ORG_UNIT_MOVE_DETACHES_HEAD);
         }
 
-        OrgAuditChanges changes = new OrgAuditChanges().track(OrgAuditField.PARENT_ID, unit.getParentId(), parentId);
+        AuditChanges changes = new AuditChanges().track(OrgAuditField.PARENT_ID, unit.getParentId(), parentId);
         unit.moveUnder(parentId);
         unit.markUpdated(currentActor.get().userId(), LocalDateTime.now(clock));
         orgAuditService.log(AuditAction.UPDATE, AuditTargetType.ORG_UNIT, unit.getId(), unit.getCode(), changes);
@@ -205,7 +206,7 @@ public class OrgUnitServiceImpl implements OrgUnitService {
         }
 
         // Audit trước lệnh xóa, cùng giao dịch: Bản chụp toàn dòng
-        OrgAuditChanges snapshot = new OrgAuditChanges()
+        AuditChanges snapshot = new AuditChanges()
             .putOld(OrgAuditField.CODE, unit.getCode())
             .putOld(OrgAuditField.NAME, unit.getName())
             .putOld(OrgAuditField.UNIT_TYPE, unit.getUnitType())
@@ -240,7 +241,7 @@ public class OrgUnitServiceImpl implements OrgUnitService {
             throw new BusinessException(ErrorCode.ORG_UNIT_HEAD_OUTSIDE_SUBTREE);
         }
 
-        OrgAuditChanges changes = new OrgAuditChanges()
+        AuditChanges changes = new AuditChanges()
             .track(OrgAuditField.NAME, unit.getName(), name)
             .track(OrgAuditField.HEAD_USER_ID, unit.getHeadUserId(), headUserId);
         if (changes.isEmpty()) {
@@ -275,7 +276,7 @@ public class OrgUnitServiceImpl implements OrgUnitService {
 
     private static OrgUnitHead toHead(OrgTree tree, OrgUserRef user) {
         String orgUnitName = tree.find(user.orgUnitId()).map(OrgNode::name).orElse(null);
-        return new OrgUnitHead(user.id(), user.username(), user.fullName(), orgUnitName);
+        return OrgUnitHead.of(user, orgUnitName);
     }
 
     private static Map<UUID, UUID> seatsByUser(Map<UUID, OrgUserRef> users) {

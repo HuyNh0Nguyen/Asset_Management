@@ -12,6 +12,7 @@ public record OrgUnitHeadResponse(
     @Schema(requiredMode = REQUIRED) UUID id,
     @Schema(requiredMode = REQUIRED) String username,
     @Schema(requiredMode = REQUIRED) String fullName,
-    @Schema(requiredMode = REQUIRED) String orgUnitName
+    @Schema(requiredMode = REQUIRED) String orgUnitName,
+    String avatarUrl                                    // URL ký bản thu nhỏ; null khi chưa có ảnh
 ) {
 }

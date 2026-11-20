@@ -57,9 +57,19 @@ public class ObjectStorageImpl implements ObjectStorage {
     @Override
     public void remove(String objectKey) {
         try {
-            internalClient.removeObject(RemoveObjectArgs.builder().bucket(storage.bucket()).object(objectKey).build());
+            removeObject(objectKey);
         } catch (MinioException | IOException | GeneralSecurityException ex) {
             throw storageError("remove", objectKey, ex);
+        }
+    }
+
+    // Lỗi chỉ ghi warn - không làm hỏng request đã commit
+    @Override
+    public void removeQuietly(String objectKey) {
+        try {
+            removeObject(objectKey);
+        } catch (MinioException | IOException | GeneralSecurityException ex) {
+            log.warn("MinIO remove failed, orphan object left for objectKey={}: {}", objectKey, ex.getMessage());
         }
     }
 
@@ -80,6 +90,10 @@ public class ObjectStorageImpl implements ObjectStorage {
     @Override
     public Duration presignedTtl() {
         return storage.presignedTtl();
+    }
+
+    private void removeObject(String objectKey) throws MinioException, IOException, GeneralSecurityException {
+        internalClient.removeObject(RemoveObjectArgs.builder().bucket(storage.bucket()).object(objectKey).build());
     }
 
     private BusinessException storageError(String operation, String objectKey, Exception ex) {

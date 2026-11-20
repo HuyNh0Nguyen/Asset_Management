@@ -32,6 +32,9 @@ public enum ErrorCode {
     ORG_UNIT_CODE_DUPLICATE(HttpStatus.CONFLICT, "Org unit code already exists"),
     RANK_CODE_DUPLICATE(HttpStatus.CONFLICT, "Rank code already exists"),
     RANK_SENIORITY_DUPLICATE(HttpStatus.CONFLICT, "Rank seniority already used"),
+    USERNAME_DUPLICATE(HttpStatus.CONFLICT, "Username already exists"),
+    EMAIL_DUPLICATE(HttpStatus.CONFLICT, "Email alreadt used by another account"),
+    ROLE_CODE_DUPLICATE(HttpStatus.CONFLICT, "Role code already exists"),
 
     // 422
     FILE_TOO_LARGE(HttpStatus.UNPROCESSABLE_CONTENT, "File exceeds the maximum allowed size"),
@@ -51,6 +54,14 @@ public enum ErrorCode {
     ORG_UNIT_INACTIVE(HttpStatus.UNPROCESSABLE_CONTENT, "Org unit is inactive"),
     ORG_UNIT_TYPE_NOT_ALLOWED(HttpStatus.UNPROCESSABLE_CONTENT, "Org unit type not allowed here"),
     RANK_IN_USE(HttpStatus.UNPROCESSABLE_CONTENT, "Rank is still in use"),
+    LAST_ACTIVE_ADMIN(HttpStatus.UNPROCESSABLE_CONTENT, "At least one active administrator must remain"),
+    USER_DEACTIVATION_BLOCKED(HttpStatus.UNPROCESSABLE_CONTENT, "User still holds assets or is a named approver"),
+    HEAD_REPLACEMENT_MISMATCH(HttpStatus.UNPROCESSABLE_CONTENT, "Head replacements do not match the units to replace"),
+    ROLE_SYSTEM_LOCKED(HttpStatus.UNPROCESSABLE_CONTENT, "System role cannot be modified or deleted"),
+    ROLE_PERMISSION_SCOPE_INVALID(HttpStatus.UNPROCESSABLE_CONTENT, "Scope not allowed for the permission"),
+    ROLE_PERMISSION_ADMIN_ONLY(HttpStatus.UNPROCESSABLE_CONTENT, "Permission is reserved for the system role"),
+    ROLE_IN_USE(HttpStatus.UNPROCESSABLE_CONTENT, "Role is still in use"),
+    IMAGE_DIMENSIONS_TOO_LARGE(HttpStatus.UNPROCESSABLE_CONTENT, "Image pixel count exceeds the allowed limit"),
 
     // 5xx
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected server error"),
