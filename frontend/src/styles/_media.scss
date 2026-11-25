@@ -1,0 +1,108 @@
+// Ảnh đại diện, bộ cắt ảnh, hộp thoại tải ảnh
+
+// ---------- avatar ----------
+.avatar {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--app-primary-soft);
+  color: var(--app-primary-dark);
+  font-weight: 600;
+  line-height: 1;
+  user-select: none;
+}
+
+.avatar-small {
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+}
+
+.avatar-medium {
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+}
+
+.avatar-large {
+  width: 128px;
+  height: 128px;
+  font-size: 48px;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+// Ảnh trên header nền xanh
+.shell-user .avatar {
+  margin-right: 8px;
+  box-shadow: 0 0 0 2px var(--mat-sys-on-primary);
+}
+
+// ---------- image-cropper ----------
+.image-cropper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.image-cropper-canvas {
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 1;
+  border-radius: var(--app-radius);
+  background: var(--app-background);
+  cursor: grab;
+  touch-action: none;
+}
+
+.image-cropper-canvas:active {
+  cursor: grabbing;
+}
+
+.image-cropper-zoom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 320px;
+  color: var(--app-text-muted);
+}
+
+.image-cropper-slider {
+  flex: 1;
+}
+
+// ---------- avatar-upload-dialog ----------
+.avatar-upload-input {
+  display: none;
+}
+
+.avatar-upload-pick {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 32px 16px;
+  border: 2px dashed var(--app-border);
+  border-radius: var(--app-radius);
+  background: var(--app-background);
+  color: var(--app-text-muted);
+  font: var(--mat-sys-body-medium);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--app-primary);
+    color: var(--app-primary-dark);
+  }
+}

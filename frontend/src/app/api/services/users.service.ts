@@ -10,13 +10,353 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { AvatarResponse } from '../models/avatar-response';
+import { changeUserAvatar } from '../fn/users/change-user-avatar';
+import { ChangeUserAvatar$Params } from '../fn/users/change-user-avatar';
+import { checkUserDeactivation } from '../fn/users/check-user-deactivation';
+import { CheckUserDeactivation$Params } from '../fn/users/check-user-deactivation';
+import { checkUserUnitChange } from '../fn/users/check-user-unit-change';
+import { CheckUserUnitChange$Params } from '../fn/users/check-user-unit-change';
+import { createUser } from '../fn/users/create-user';
+import { CreateUser$Params } from '../fn/users/create-user';
+import { deactivateUser } from '../fn/users/deactivate-user';
+import { DeactivateUser$Params } from '../fn/users/deactivate-user';
+import { getUser } from '../fn/users/get-user';
+import { GetUser$Params } from '../fn/users/get-user';
+import { HeadReplacementCheckResponse } from '../models/head-replacement-check-response';
+import { listUsers } from '../fn/users/list-users';
+import { ListUsers$Params } from '../fn/users/list-users';
+import { PageResponseUserResponse } from '../models/page-response-user-response';
+import { reactivateUser } from '../fn/users/reactivate-user';
+import { ReactivateUser$Params } from '../fn/users/reactivate-user';
+import { removeUserAvatar } from '../fn/users/remove-user-avatar';
+import { RemoveUserAvatar$Params } from '../fn/users/remove-user-avatar';
 import { resetUserPassword } from '../fn/users/reset-user-password';
 import { ResetUserPassword$Params } from '../fn/users/reset-user-password';
+import { updateUser } from '../fn/users/update-user';
+import { UpdateUser$Params } from '../fn/users/update-user';
+import { UserDeactivationCheckResponse } from '../models/user-deactivation-check-response';
+import { UserResponse } from '../models/user-response';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
+  }
+
+  /** Path part for operation `listUsers()` */
+  static readonly ListUsersPath = '/api/users';
+
+  /**
+   * Search users with filters and paging.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `listUsers()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  listUsers$Response(params?: ListUsers$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseUserResponse>> {
+    const obs = listUsers(this.http, this.rootUrl, params, context);
+    return obs;
+  }
+
+  /**
+   * Search users with filters and paging.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `listUsers$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  listUsers(params?: ListUsers$Params, context?: HttpContext): Observable<PageResponseUserResponse> {
+    const resp = this.listUsers$Response(params, context);
+    return resp.pipe(
+      map((r: StrictHttpResponse<PageResponseUserResponse>): PageResponseUserResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `createUser()` */
+  static readonly CreateUserPath = '/api/users';
+
+  /**
+   * Create a user and email the temporary password.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `createUser()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createUser$Response(params: CreateUser$Params, context?: HttpContext): Observable<StrictHttpResponse<UserResponse>> {
+    const obs = createUser(this.http, this.rootUrl, params, context);
+    return obs;
+  }
+
+  /**
+   * Create a user and email the temporary password.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `createUser$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createUser(params: CreateUser$Params, context?: HttpContext): Observable<UserResponse> {
+    const resp = this.createUser$Response(params, context);
+    return resp.pipe(
+      map((r: StrictHttpResponse<UserResponse>): UserResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `getUser()` */
+  static readonly GetUserPath = '/api/users/{id}';
+
+  /**
+   * Get a user account.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getUser()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getUser$Response(params: GetUser$Params, context?: HttpContext): Observable<StrictHttpResponse<UserResponse>> {
+    const obs = getUser(this.http, this.rootUrl, params, context);
+    return obs;
+  }
+
+  /**
+   * Get a user account.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getUser$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getUser(params: GetUser$Params, context?: HttpContext): Observable<UserResponse> {
+    const resp = this.getUser$Response(params, context);
+    return resp.pipe(
+      map((r: StrictHttpResponse<UserResponse>): UserResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `updateUser()` */
+  static readonly UpdateUserPath = '/api/users/{id}';
+
+  /**
+   * Update a user, replacing heads of units they leave.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `updateUser()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateUser$Response(params: UpdateUser$Params, context?: HttpContext): Observable<StrictHttpResponse<UserResponse>> {
+    const obs = updateUser(this.http, this.rootUrl, params, context);
+    return obs;
+  }
+
+  /**
+   * Update a user, replacing heads of units they leave.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `updateUser$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateUser(params: UpdateUser$Params, context?: HttpContext): Observable<UserResponse> {
+    const resp = this.updateUser$Response(params, context);
+    return resp.pipe(
+      map((r: StrictHttpResponse<UserResponse>): UserResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `changeUserAvatar()` */
+  static readonly ChangeUserAvatarPath = '/api/users/{id}/avatar';
+
+  /**
+   * Change a user's avatar.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `changeUserAvatar()` instead.
+   *
+   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
+   */
+  changeUserAvatar$Response(params: ChangeUserAvatar$Params, context?: HttpContext): Observable<StrictHttpResponse<AvatarResponse>> {
+    const obs = changeUserAvatar(this.http, this.rootUrl, params, context);
+    return obs;
+  }
+
+  /**
+   * Change a user's avatar.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `changeUserAvatar$Response()` instead.
+   *
+   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
+   */
+  changeUserAvatar(params: ChangeUserAvatar$Params, context?: HttpContext): Observable<AvatarResponse> {
+    const resp = this.changeUserAvatar$Response(params, context);
+    return resp.pipe(
+      map((r: StrictHttpResponse<AvatarResponse>): AvatarResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `removeUserAvatar()` */
+  static readonly RemoveUserAvatarPath = '/api/users/{id}/avatar';
+
+  /**
+   * Remove a user's avatar.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `removeUserAvatar()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  removeUserAvatar$Response(params: RemoveUserAvatar$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    const obs = removeUserAvatar(this.http, this.rootUrl, params, context);
+    return obs;
+  }
+
+  /**
+   * Remove a user's avatar.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `removeUserAvatar$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  removeUserAvatar(params: RemoveUserAvatar$Params, context?: HttpContext): Observable<void> {
+    const resp = this.removeUserAvatar$Response(params, context);
+    return resp.pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `deactivateUser()` */
+  static readonly DeactivateUserPath = '/api/users/{id}/deactivate';
+
+  /**
+   * Deactivate a user and revoke their sessions.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deactivateUser()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deactivateUser$Response(params: DeactivateUser$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    const obs = deactivateUser(this.http, this.rootUrl, params, context);
+    return obs;
+  }
+
+  /**
+   * Deactivate a user and revoke their sessions.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deactivateUser$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  deactivateUser(params: DeactivateUser$Params, context?: HttpContext): Observable<void> {
+    const resp = this.deactivateUser$Response(params, context);
+    return resp.pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `checkUserDeactivation()` */
+  static readonly CheckUserDeactivationPath = '/api/users/{id}/deactivation-check';
+
+  /**
+   * List what blocks deactivating the user.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `checkUserDeactivation()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  checkUserDeactivation$Response(params: CheckUserDeactivation$Params, context?: HttpContext): Observable<StrictHttpResponse<UserDeactivationCheckResponse>> {
+    const obs = checkUserDeactivation(this.http, this.rootUrl, params, context);
+    return obs;
+  }
+
+  /**
+   * List what blocks deactivating the user.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `checkUserDeactivation$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  checkUserDeactivation(params: CheckUserDeactivation$Params, context?: HttpContext): Observable<UserDeactivationCheckResponse> {
+    const resp = this.checkUserDeactivation$Response(params, context);
+    return resp.pipe(
+      map((r: StrictHttpResponse<UserDeactivationCheckResponse>): UserDeactivationCheckResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `reactivateUser()` */
+  static readonly ReactivateUserPath = '/api/users/{id}/reactivate';
+
+  /**
+   * Reactivate a user into an active department.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `reactivateUser()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  reactivateUser$Response(params: ReactivateUser$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    const obs = reactivateUser(this.http, this.rootUrl, params, context);
+    return obs;
+  }
+
+  /**
+   * Reactivate a user into an active department.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `reactivateUser$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  reactivateUser(params: ReactivateUser$Params, context?: HttpContext): Observable<void> {
+    const resp = this.reactivateUser$Response(params, context);
+    return resp.pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
   }
 
   /** Path part for operation `resetUserPassword()` */
@@ -51,6 +391,41 @@ export class UsersService extends BaseService {
     const resp = this.resetUserPassword$Response(params, context);
     return resp.pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `checkUserUnitChange()` */
+  static readonly CheckUserUnitChangePath = '/api/users/{id}/unit-change-check';
+
+  /**
+   * List units needing a new head if the user moves.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `checkUserUnitChange()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  checkUserUnitChange$Response(params: CheckUserUnitChange$Params, context?: HttpContext): Observable<StrictHttpResponse<HeadReplacementCheckResponse>> {
+    const obs = checkUserUnitChange(this.http, this.rootUrl, params, context);
+    return obs;
+  }
+
+  /**
+   * List units needing a new head if the user moves.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `checkUserUnitChange$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  checkUserUnitChange(params: CheckUserUnitChange$Params, context?: HttpContext): Observable<HeadReplacementCheckResponse> {
+    const resp = this.checkUserUnitChange$Response(params, context);
+    return resp.pipe(
+      map((r: StrictHttpResponse<HeadReplacementCheckResponse>): HeadReplacementCheckResponse => r.body)
     );
   }
 

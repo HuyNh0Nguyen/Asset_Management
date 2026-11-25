@@ -3,6 +3,7 @@
 
 import { OrgUnitRefResponse } from '../models/org-unit-ref-response';
 import { PermissionGrantResponse } from '../models/permission-grant-response';
+import { RoleRefResponse } from '../models/role-ref-response';
 
 /**
  * Information for the currently authenticated user
@@ -15,6 +16,8 @@ export interface MeResponse {
   mustChangePassword: boolean;
   orgUnit: OrgUnitRefResponse;
   permissions: Array<PermissionGrantResponse>;
+  phoneNumber?: string;
   rankName: string;
+  roles: Array<RoleRefResponse>;
   username: string;
 }

@@ -72,8 +72,9 @@ export class LoginPage {
             this.form.markAllAsTouched();
             return;
         }
-        const { password } = this.form.getRawValue();
         const username = this.form.controls.username.value.trim();
+        // PasswordPolicy không cho khoảng trắng: Chốt chặn cuối cho kéo-thả, tự điền, gõ thừa dấu cách
+        const password = this.form.controls.password.value.trim();
         this.errorMessage.set(null);
         this.submitting.set(true);
         this.session.login(username, password)
@@ -87,6 +88,25 @@ export class LoginPage {
 
     protected togglePasswordVisible(): void {
         this.passwordVisible.update((visible) => !visible);
+    }
+
+    // Chép từ email có thể kèm "\r\n" ở đầu (Chrome đổi thành dấu cách khi dán): Bỏ ký tự trắng đầu/cuối trước khi chèn
+    protected onPasswordPaste(event: ClipboardEvent): void {
+        const text = event.clipboardData?.getData('text/plain');
+        if (text === undefined) {
+            return;
+        }
+        const cleaned = text.trim();
+        if (cleaned === text) {
+            return;
+        }
+        event.preventDefault();
+        const input = event.target as HTMLInputElement;
+        const start = input.selectionStart ?? input.value.length;
+        const end = input.selectionEnd ?? input.value.length;
+        input.setRangeText(cleaned, start, end, 'end');
+        // setRangeText không phát sự kiện input: Báo cho form control cập nhật giá trị
+        input.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
     // ACCOUNT_LOCKED kèm retryAfterSeconds -> đếm ngược; lỗi khác -> câu theo mã

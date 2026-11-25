@@ -45,9 +45,6 @@ export class OrgUnitMoveDialog {
 
     protected readonly unit = inject<OrgUnitMoveDialogData>(MAT_DIALOG_DATA).unit;
     protected readonly nodes = this.store.nodes;
-    // Chỉ nạp và hiển thị danh sách cây khi người dùng chọn vào ô tìm kiếm
-    protected readonly initialized = signal(false);
-    protected readonly pickerNodes = computed(() => this.initialized() ? this.nodes() : []);
     protected readonly pickerMode = OrgUnitPickerMode.WRITE;
     protected readonly parentControl = new FormControl<string | null>(null);
 
@@ -81,12 +78,6 @@ export class OrgUnitMoveDialog {
         this.parentControl.valueChanges
             .pipe(takeUntilDestroyed())
             .subscribe((parentId) => this.checkRequests.next(parentId));
-    }
-
-    protected initPickerNodes(): void {
-        if (!this.initialized()) {
-            this.initialized.set(true);
-        }
     }
 
     // Mở hộp thoại Sửa của đơn vị vướng; lưu xong thì nạp lại cây và kiểm lại

@@ -1,0 +1,315 @@
+// Màn hình Người dùng, Phân quyền, Tài khoản của tôi
+
+// ---------- bộ lọc danh sách ----------
+.filter-bar {
+  display: grid;
+  grid-template-columns: minmax(240px, 2fr) repeat(3, minmax(160px, 1fr)) auto;
+  gap: 0 12px;
+  align-items: start;
+  margin-bottom: 8px;
+}
+
+.filter-bar .page-search {
+  max-width: none;
+}
+
+.filter-clear {
+  margin-top: 10px;
+}
+
+// ---------- ô người dùng trong bảng ----------
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 4px 0;
+}
+
+.user-cell-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.user-cell-name {
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.user-cell-sub {
+  font: var(--mat-sys-body-small);
+  color: var(--app-text-muted);
+}
+
+// ---------- ô vai trò trong bảng ----------
+.role-name-text {
+  color: var(--app-text);
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--app-primary);
+  }
+}
+
+// Tài khoản đã vô hiệu hóa: mờ như nút đơn vị ngừng hoạt động
+.row-inactive .mat-mdc-cell:not(.cell-actions) {
+  opacity: 0.55;
+  font-style: italic;
+}
+
+// ---------- form trong hộp thoại ----------
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 16px;
+}
+
+app-user-form-dialog {
+  .mat-mdc-dialog-content,
+  .user-dialog-content {
+    min-height: min(520px, calc(100vh - 160px));
+    max-height: 85vh;
+  }
+
+  mat-hint,
+  mat-error,
+  .mat-mdc-form-field-hint,
+  .mat-mdc-form-field-error {
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .mat-mdc-form-field-subscript-wrapper {
+    margin-bottom: 8px;
+  }
+}
+
+.check-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0 16px;
+  margin: 0 0 16px;
+  padding: 8px 12px;
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius);
+}
+
+.check-group-invalid {
+  border-color: var(--app-error);
+}
+
+.check-group-label {
+  padding: 0 4px;
+  font: var(--mat-sys-body-small);
+  color: var(--app-text-muted);
+}
+
+// ---------- chọn trưởng thay thế ----------
+.head-replacement {
+  margin: 8px 0 0;
+  padding: 12px 12px 0;
+  border-left: 3px solid var(--app-primary);
+  border-radius: var(--app-radius);
+  background: var(--app-primary-soft);
+}
+
+.head-replacement-title {
+  margin: 0 0 4px;
+  font: var(--mat-sys-title-small);
+}
+
+// ---------- bảng ma trận (trình sửa vai trò, ma trận tổng) ----------
+.matrix-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.matrix-table th,
+.matrix-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--app-border);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.matrix-table thead th {
+  font: var(--mat-sys-label-medium);
+  color: var(--app-text-muted);
+  background: var(--app-surface);
+}
+
+// Cột quyền dính bên trái khi cuộn ngang
+.matrix-table .matrix-sticky {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  text-align: left;
+  background: var(--app-surface);
+}
+
+.matrix-table .matrix-group-row th {
+  padding-top: 12px;
+  font: var(--mat-sys-title-small);
+  color: var(--app-primary-dark);
+  background: var(--app-background);
+}
+
+.matrix-table .matrix-label {
+  min-width: 220px;
+  max-width: 340px;
+  white-space: normal;
+}
+
+.matrix-label-name {
+  display: block;
+  font-weight: 500;
+}
+
+.matrix-label-desc,
+.matrix-label-note,
+.matrix-cell-note {
+  display: block;
+  font: var(--mat-sys-body-small);
+  color: var(--app-text-muted);
+  white-space: normal;
+}
+
+.matrix-label-note {
+  color: var(--app-warning);
+}
+
+.matrix-cell-empty {
+  color: var(--app-text-muted);
+}
+
+// ---------- trình sửa vai trò ----------
+.role-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 8px 16px;
+
+  mat-hint,
+  mat-error,
+  .mat-mdc-form-field-hint,
+  .mat-mdc-form-field-error {
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .mat-mdc-form-field-subscript-wrapper {
+    margin-bottom: 8px;
+  }
+}
+
+app-role-editor-page {
+  mat-hint,
+  mat-error,
+  .mat-mdc-form-field-hint,
+  .mat-mdc-form-field-error {
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .mat-mdc-form-field-subscript-wrapper {
+    margin-bottom: 8px;
+  }
+}
+
+.role-form-wide {
+  grid-column: 1 / -1;
+}
+
+.section-title {
+  margin: 0 0 4px;
+  font: var(--mat-sys-title-medium);
+}
+
+// ---------- tài khoản của tôi ----------
+.account-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.account-layout .page-card {
+  margin-bottom: 0;
+}
+
+.account-identity {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.account-name {
+  margin: 0;
+  font: var(--mat-sys-title-large);
+}
+
+.account-username {
+  color: var(--app-text-muted);
+}
+
+.account-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.permission-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.permission-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--app-border);
+}
+
+// iPad
+@media (max-width: 1279.98px) {
+  .filter-bar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .filter-bar .page-search {
+    grid-column: 1 / -1;
+  }
+
+  .account-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Điện thoại
+@media (max-width: 599.98px) {
+  .filter-bar,
+  .form-grid,
+  .role-form {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-clear {
+    margin-top: 0;
+  }
+
+  .account-identity {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .account-actions > * {
+    flex: 1 1 auto;
+  }
+}

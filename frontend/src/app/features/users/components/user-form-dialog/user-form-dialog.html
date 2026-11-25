@@ -1,0 +1,112 @@
+<h2 mat-dialog-title>{{ isCreate ? 'Thêm người dùng' : 'Sửa người dùng' }}</h2>
+
+<mat-dialog-content class="user-dialog-content">
+  <form id="userForm" class="dialog-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    @if (user) {
+      <dl class="dialog-readonly">
+        <dt>Tên đăng nhập</dt>
+        <dd>{{ user.username }}</dd>
+        <dt>Email</dt>
+        <dd>{{ user.email }}</dd>
+      </dl>
+    }
+
+    <div class="form-grid">
+      @if (isCreate) {
+        <mat-form-field appearance="outline">
+          <mat-label>Tên đăng nhập</mat-label>
+          <input matInput formControlName="username" autocomplete="off" maxlength="50" (input)="lowerCaseUsername()" />
+          <mat-hint>Chữ thường, số và . _ - (3-50 ký tự)</mat-hint>
+          @if (form.controls.username.hasError('required')) {
+            <mat-error>Vui lòng nhập tên đăng nhập</mat-error>
+          } @else if (form.controls.username.hasError(errorKey.DUPLICATE)) {
+            <mat-error>Tên đăng nhập đã tồn tại</mat-error>
+          } @else {
+            <mat-error>Chỉ gồm chữ thường, số và . _ - (3-50 ký tự)</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" autocomplete="off" [maxlength]="textMaxLength" />
+          <mat-hint>Thông tin đăng nhập được gửi tới địa chỉ này</mat-hint>
+          @if (form.controls.email.hasError('required')) {
+            <mat-error>Vui lòng nhập email</mat-error>
+          } @else if (form.controls.email.hasError(errorKey.DUPLICATE)) {
+            <mat-error>Email đã được dùng cho tài khoản khác</mat-error>
+          } @else {
+            <mat-error>Email không hợp lệ</mat-error>
+          }
+        </mat-form-field>
+      }
+
+      <mat-form-field appearance="outline">
+        <mat-label>Họ tên</mat-label>
+        <input matInput formControlName="fullName" autocomplete="off" [maxlength]="textMaxLength" />
+        @if (form.controls.fullName.hasError('required')) {
+          <mat-error>Vui lòng nhập họ tên</mat-error>
+        } @else {
+          <mat-error>Họ tên không hợp lệ</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Số điện thoại</mat-label>
+        <input matInput type="tel" formControlName="phoneNumber" autocomplete="off" maxlength="16" />
+        <mat-hint>Không bắt buộc</mat-hint>
+        <mat-error>8-15 chữ số, có thể bắt đầu bằng +</mat-error>
+      </mat-form-field>
+    </div>
+
+    <app-org-unit-picker formControlName="orgUnitId" label="Đơn vị công tác" hint="Chỉ chọn được phòng ban"
+                         [nodes]="orgUnits()" [selectable]="selectableUnit" />
+    @if (orgUnitError()) {
+      <p class="field-error">{{ orgUnitError() }}</p>
+    } @else if (showRequired(form.controls.orgUnitId)) {
+      <p class="field-error">Vui lòng chọn đơn vị công tác</p>
+    }
+
+    <mat-form-field appearance="outline" class="form-field-full">
+      <mat-label>Cấp bậc</mat-label>
+      <mat-select formControlName="rankId">
+        @for (rank of ranks(); track rank.id) {
+          <mat-option [value]="rank.id">{{ rank.name }}</mat-option>
+        }
+      </mat-select>
+      <mat-error>Vui lòng chọn cấp bậc</mat-error>
+    </mat-form-field>
+
+    <fieldset class="check-group" [class.check-group-invalid]="rolesError() || showRequired(form.controls.roleIds)">
+      <legend class="check-group-label">Vai trò</legend>
+      @for (role of roles(); track role.id) {
+        <mat-checkbox [checked]="isRoleChecked(role.id)" (change)="toggleRole(role.id, $event.checked)">
+          {{ role.name }}
+        </mat-checkbox>
+      }
+    </fieldset>
+    @if (rolesError()) {
+      <p class="field-error">{{ rolesError() }}</p>
+    } @else if (showRequired(form.controls.roleIds)) {
+      <p class="field-error">Chọn ít nhất một vai trò</p>
+    }
+
+    @if (checkingUnits()) {
+      <div class="dialog-loading">
+        <mat-progress-spinner mode="indeterminate" diameter="20" />
+        <span>{{ unitCheckLoading }}</span>
+      </div>
+    } @else if (user && unitsToReplace().length > 0) {
+      <app-head-replacement-panel [units]="unitsToReplace()" [form]="headForm" [excludeUserId]="user.id"
+                                  [serverError]="headError()" />
+    } @else if (headError()) {
+      <p class="dialog-alert dialog-alert-text">{{ headError() }}</p>
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close>Hủy</button>
+  <button mat-flat-button type="submit" form="userForm" [disabled]="submitting() || checkingUnits()">
+    {{ submitting() ? 'Đang lưu...' : (isCreate ? 'Thêm' : 'Lưu') }}
+  </button>
+</mat-dialog-actions>

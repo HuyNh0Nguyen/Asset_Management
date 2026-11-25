@@ -1,0 +1,38 @@
+<mat-form-field appearance="outline" class="form-field-full" (click)="initPicker()">
+  <mat-label>{{ label() }}</mat-label>
+  <input matInput type="text" autocomplete="off" placeholder="Gõ họ tên hoặc username"
+         [formControl]="textControl" [matAutocomplete]="userAuto" [errorStateMatcher]="errorMatcher"
+         (click)="initPicker()" (keydown)="initPicker()" (blur)="onBlur()" />
+  <mat-autocomplete #userAuto="matAutocomplete" [displayWith]="displayWith" (optionSelected)="onSelected($event)">
+    @if (initialized()) {
+      @if (allowEmpty()) {
+        <mat-option [value]="null">{{ emptyLabel() }}</mat-option>
+      }
+      @for (option of filtered(); track option.id) {
+        <mat-option [value]="option">
+          <span class="picker-option-user">
+            <app-avatar [name]="option.fullName" [url]="option.avatarUrl" [size]="avatarSize" />
+            <span class="picker-option-text">
+              <span class="picker-option-name">{{ option.fullName }}</span>
+              <span class="picker-option-code">{{ option.username }}{{ option.orgUnitName ? ' · ' + option.orgUnitName : '' }}</span>
+            </span>
+          </span>
+        </mat-option>
+      } @empty {
+        @if (!loading()) {
+          <mat-option disabled>Không có người dùng phù hợp</mat-option>
+        }
+      }
+    }
+  </mat-autocomplete>
+  @if (loading()) {
+    <mat-hint>{{ loadingText }}</mat-hint>
+  } @else if (hint()) {
+    <mat-hint>{{ hint() }}</mat-hint>
+  }
+  @if (serverError()) {
+    <mat-error>{{ serverError() }}</mat-error>
+  } @else if (hasError(errorKey.NOT_CHOSEN)) {
+    <mat-error>Vui lòng chọn từ danh sách</mat-error>
+  }
+</mat-form-field>

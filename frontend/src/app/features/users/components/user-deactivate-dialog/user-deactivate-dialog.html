@@ -1,0 +1,35 @@
+<h2 mat-dialog-title>Vô hiệu hóa tài khoản</h2>
+
+<mat-dialog-content>
+  <dl class="dialog-readonly">
+    <dt>Người dùng</dt>
+    <dd>{{ user.fullName }} ({{ user.username }})</dd>
+    <dt>Đơn vị</dt>
+    <dd>{{ user.orgUnit.name }}</dd>
+  </dl>
+
+  @if (checking()) {
+    <div class="dialog-loading">
+      <mat-progress-spinner mode="indeterminate" diameter="20" />
+      <span>Đang kiểm tra...</span>
+    </div>
+  } @else if (blocked()) {
+    <p class="dialog-alert dialog-alert-text">Chưa thể vô hiệu hóa - cần xử lý các mục dưới đây trước</p>
+    <app-blocker-list [groups]="groups()" />
+  } @else {
+    @if (headedUnits().length > 0) {
+      <app-head-replacement-panel [units]="headedUnits()" [form]="headForm" [excludeUserId]="user.id"
+                                  [serverError]="headError()" />
+    }
+    <p class="dialog-message">{{ notice }}</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close cdkFocusInitial>{{ blocked() ? 'Đóng' : 'Hủy' }}</button>
+  @if (!checking() && !blocked()) {
+    <button mat-flat-button type="button" class="button-danger" [disabled]="submitting()" (click)="confirm()">
+      {{ submitting() ? 'Đang xử lý...' : 'Vô hiệu hóa' }}
+    </button>
+  }
+</mat-dialog-actions>

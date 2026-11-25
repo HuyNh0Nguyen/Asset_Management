@@ -1,7 +1,8 @@
-<mat-form-field appearance="outline" class="form-field-full">
+<mat-form-field appearance="outline" class="form-field-full" (click)="initPicker()">
   <mat-label>{{ label() }}</mat-label>
   <input matInput type="text" autocomplete="off" placeholder="Gõ tên hoặc mã để tìm"
-         [formControl]="textControl" [matAutocomplete]="unitAuto" (blur)="onBlur()" />
+         [formControl]="textControl" [matAutocomplete]="unitAuto"
+         (click)="initPicker()" (keydown)="initPicker()" (blur)="onBlur()" />
   <mat-autocomplete #unitAuto="matAutocomplete" [displayWith]="displayWith" (optionSelected)="onSelected($event)">
     @for (option of options(); track option.node.id) {
       <mat-option [value]="option.node" [disabled]="!option.selectable"
@@ -13,7 +14,7 @@
         }
       </mat-option>
     } @empty {
-      @if (nodes().length > 0) {
+      @if (initialized() && nodes().length > 0) {
         <mat-option disabled>Không có đơn vị phù hợp</mat-option>
       }
     }

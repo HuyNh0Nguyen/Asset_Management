@@ -7,3 +7,13 @@ export enum LayoutBreakpoint {
 export enum BrandImage {
     LOGO = 'images/logo.png',
 }
+
+// Ngưỡng responsive - khớp media query trong styles
+export enum ViewportQuery {
+    PHONE = '(max-width: 767.98px)',
+    TABLET = '(max-width: 1279.98px)',
+}
+
+export enum ShellMessage {
+    PERMISSION_CHANGED = 'Quyền của bạn vừa thay đổi - đã chuyển về trang chủ',
+}

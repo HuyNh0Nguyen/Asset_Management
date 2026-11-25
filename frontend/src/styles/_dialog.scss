@@ -1,21 +1,37 @@
 // Hộp thoại dùng chung - panelClass 'app-dialog-panel' (shared/ui/dialog/app-dialog-config.ts)
 
+.app-dialog-panel .mat-mdc-dialog-content {
+  max-height: 85vh;
+}
+
 .dialog-form {
   display: flex;
   flex-direction: column;
   gap: 8px;
   padding-top: 4px;
+
+  mat-hint,
+  mat-error,
+  .mat-mdc-form-field-hint,
+  .mat-mdc-form-field-error {
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .mat-mdc-form-field-subscript-wrapper {
+    margin-bottom: 8px;
+  }
 }
 
 .dialog-message {
-  margin: 0 0 8px;
+  margin: 16px 0 8px;
   font: var(--mat-sys-body-medium);
   color: var(--app-text);
   line-height: 1.5;
 }
 
 .dialog-note {
-  margin: 4px 0 0;
+  margin: 4px 0 12px 0;
   font: var(--mat-sys-body-small);
   color: var(--app-text-muted);
 }
@@ -25,7 +41,7 @@
   display: grid;
   grid-template-columns: max-content 1fr;
   gap: 4px 16px;
-  margin: 0 0 8px;
+  margin: 0 0 16px;
 }
 
 .dialog-readonly dt {

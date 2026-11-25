@@ -1,0 +1,13 @@
+<div class="image-cropper">
+  <canvas #canvas class="image-cropper-canvas" [width]="viewSize" [height]="viewSize"
+          role="img" aria-label="Vùng cắt ảnh - kéo để di chuyển"
+          (pointerdown)="onPointerDown($event)" (pointermove)="onPointerMove($event)"
+          (pointerup)="onPointerUp($event)" (pointercancel)="onPointerUp($event)"></canvas>
+  <div class="image-cropper-zoom">
+    <mat-icon>zoom_out</mat-icon>
+    <mat-slider class="image-cropper-slider" [min]="zoomMin" [max]="zoomMax" [step]="zoomStep">
+      <input matSliderThumb [value]="zoom()" (input)="onZoomInput($event)" aria-label="Thu phóng" />
+    </mat-slider>
+    <mat-icon>zoom_in</mat-icon>
+  </div>
+</div>

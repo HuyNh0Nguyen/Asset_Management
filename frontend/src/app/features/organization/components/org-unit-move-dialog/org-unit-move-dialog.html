@@ -5,10 +5,9 @@
     Chuyển <strong>{{ unit.name }}</strong> ({{ unit.code }}) cùng toàn bộ đơn vị con sang đơn vị cha mới
   </p>
 
-  <app-org-unit-picker [formControl]="parentControl" [nodes]="pickerNodes()" [mode]="pickerMode"
+  <app-org-unit-picker [formControl]="parentControl" [nodes]="nodes()" [mode]="pickerMode"
                        [selectable]="selectable" label="Đơn vị cha mới"
-                       hint="Chỉ hiện đơn vị đang hoạt động nhận được phòng ban con"
-                       (focusin)="initPickerNodes()" (click)="initPickerNodes()" />
+                       hint="Chỉ hiện đơn vị đang hoạt động nhận được phòng ban con" />
 
   @if (checking()) {
     <div class="dialog-loading">

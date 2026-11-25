@@ -26,6 +26,9 @@ export const routes: Routes = [
         children: [
             { path: '', pathMatch: 'full', canActivate: [homeGuard], children: [] },
             { path: RoutePath.ORGANIZATION, loadChildren: () => import('@features/organization/organization.routes') },
+            { path: RoutePath.USERS, loadChildren: () => import('@features/users/users.routes') },
+            { path: RoutePath.ROLES, loadChildren: () => import('@features/roles/roles.routes') },
+            { path: RoutePath.ME, loadChildren: () => import('@features/me/me.routes') },
             { path: RoutePath.DEV_TOOLS, loadChildren: () => import('@features/dev-tools/dev-tools.routes') },
         ],
     },

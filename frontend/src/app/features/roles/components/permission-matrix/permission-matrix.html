@@ -1,0 +1,46 @@
+<div class="table-scroll">
+  <table class="matrix-table">
+    <thead>
+      <tr>
+        <th class="matrix-sticky" scope="col">Quyền</th>
+        <th scope="col">Không cấp</th>
+        @for (scope of scopes; track scope) {
+          <th scope="col">{{ scopeLabels[scope] }}</th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (group of groups(); track group.group) {
+        <tr class="matrix-group-row">
+          <th class="matrix-sticky" [attr.colspan]="scopes.length + 2">{{ group.label }}</th>
+        </tr>
+        @for (definition of group.items; track definition.code) {
+          <tr>
+            <th class="matrix-sticky matrix-label" scope="row">
+              <span class="matrix-label-name">{{ permissionLabels[definition.code] }}</span>
+              <span class="matrix-label-desc">{{ descriptions[definition.code] }}</span>
+              @if (definition.adminOnly) {
+                <span class="matrix-label-note">{{ adminOnlyNote }}</span>
+              }
+            </th>
+            <td>
+              <mat-radio-button [name]="definition.code" [checked]="!scopeOf(definition.code)"
+                                [disabled]="isRowDisabled(definition)" aria-label="Không cấp"
+                                (change)="select(definition.code, null)" />
+            </td>
+            @for (scope of scopes; track scope) {
+              <td>
+                <mat-radio-button [name]="definition.code" [checked]="scopeOf(definition.code) === scope"
+                                  [disabled]="isScopeDisabled(definition, scope)" [aria-label]="scopeLabels[scope]"
+                                  (change)="select(definition.code, scope)" />
+                @if (showSelfNote(definition, scope)) {
+                  <span class="matrix-cell-note">{{ selfNote }}</span>
+                }
+              </td>
+            }
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+</div>

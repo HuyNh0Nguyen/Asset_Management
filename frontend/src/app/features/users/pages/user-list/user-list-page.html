@@ -1,0 +1,129 @@
+<header class="page-header">
+  <h1 class="page-title">Người dùng</h1>
+  <div class="page-actions">
+    <button mat-flat-button type="button" (click)="openCreate()">
+      <mat-icon>person_add</mat-icon>
+      Thêm người dùng
+    </button>
+  </div>
+</header>
+
+<section class="page-card">
+  <div class="filter-bar">
+    <mat-form-field appearance="outline" class="page-search">
+      <mat-icon matPrefix>search</mat-icon>
+      <mat-label>Tìm theo họ tên, username, email</mat-label>
+      <input matInput type="search" autocomplete="off" [formControl]="searchControl" />
+    </mat-form-field>
+
+    <!-- FILTER: giữ đơn vị ngừng hoạt động - tra người đã nghỉ của phòng giải thể -->
+    <app-org-unit-picker label="Đơn vị (gồm đơn vị con)" [formControl]="orgUnitControl" [nodes]="orgUnits()"
+                         [mode]="filterMode" />
+
+    <mat-form-field appearance="outline">
+      <mat-label>Vai trò</mat-label>
+      <mat-select [formControl]="roleControl">
+        <mat-option [value]="null">Tất cả</mat-option>
+        @for (role of roles(); track role.id) {
+          <mat-option [value]="role.id">{{ role.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Trạng thái</mat-label>
+      <mat-select [formControl]="statusControl">
+        <mat-option [value]="null">Tất cả</mat-option>
+        @for (status of statuses; track status) {
+          <mat-option [value]="status">{{ statusLabels[status] }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-button type="button" class="filter-clear" (click)="clearFilters()">Xóa lọc</button>
+  </div>
+
+  <app-server-table [total]="total()" [page]="query().page" [size]="query().size" [loading]="loading()"
+                    emptyText="Không có người dùng phù hợp" (pageChange)="onPage($event)">
+    <table mat-table class="data-table" [dataSource]="users()" matSort
+           [matSortActive]="sort().active" [matSortDirection]="sort().direction" (matSortChange)="onSort($event)">
+
+      <ng-container [matColumnDef]="column.USER">
+        <th mat-header-cell *matHeaderCellDef [mat-sort-header]="sortField.FULL_NAME">Người dùng</th>
+        <td mat-cell *matCellDef="let user">
+          <div class="user-cell">
+            <app-avatar [name]="user.fullName" [url]="user.avatarUrl" [size]="avatarSize" />
+            <div class="user-cell-text">
+              <span class="user-cell-name">{{ user.fullName }}</span>
+              <span class="user-cell-sub">{{ user.username }}</span>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container [matColumnDef]="column.EMAIL">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+      </ng-container>
+
+      <ng-container [matColumnDef]="column.ORG_UNIT">
+        <th mat-header-cell *matHeaderCellDef>Đơn vị</th>
+        <td mat-cell *matCellDef="let user">
+          {{ user.orgUnit.name }}
+          @if (user.orgUnit.status === inactiveUnit) {
+            <span class="picker-option-muted"> · Ngừng hoạt động</span>
+          }
+        </td>
+      </ng-container>
+
+      <ng-container [matColumnDef]="column.RANK">
+        <th mat-header-cell *matHeaderCellDef>Cấp bậc</th>
+        <td mat-cell *matCellDef="let user">{{ user.rank.name }}</td>
+      </ng-container>
+
+      <ng-container [matColumnDef]="column.ROLES">
+        <th mat-header-cell *matHeaderCellDef>Vai trò</th>
+        <td mat-cell *matCellDef="let user">
+          <div class="chip-list">
+            @for (role of user.roles; track role.id) {
+              <app-status-chip [label]="role.name" [tone]="roleTone" />
+            }
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container [matColumnDef]="column.STATUS">
+        <th mat-header-cell *matHeaderCellDef>Trạng thái</th>
+        <td mat-cell *matCellDef="let user">
+          <app-status-chip [label]="statusLabel(user.status)" [tone]="statusTone(user.status)" />
+        </td>
+      </ng-container>
+
+      <ng-container [matColumnDef]="column.ACTIONS">
+        <th mat-header-cell *matHeaderCellDef class="cell-actions"></th>
+        <td mat-cell *matCellDef="let user" class="cell-actions">
+          @if (user.allowedActions.length > 0) {
+            <button mat-icon-button type="button" aria-label="Thao tác"
+                    [matMenuTriggerFor]="rowMenu" [matMenuTriggerData]="{ user: user }">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          }
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+      <tr mat-row *matRowDef="let user; columns: displayedColumns()" [class.row-inactive]="user.status === inactiveStatus"></tr>
+    </table>
+  </app-server-table>
+</section>
+
+<mat-menu #rowMenu="matMenu" xPosition="before">
+  <ng-template matMenuContent let-user="user">
+    @for (action of user.allowedActions; track action) {
+      <button mat-menu-item type="button" [class.menu-item-danger]="isDanger(action)" (click)="runAction(action, user)">
+        <mat-icon>{{ actionIcon(action) }}</mat-icon>
+        <span>{{ actionLabel(action) }}</span>
+      </button>
+    }
+  </ng-template>
+</mat-menu>

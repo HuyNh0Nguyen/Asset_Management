@@ -41,26 +41,9 @@
     </mat-form-field>
 
     @if (!isCreate) {
-      <mat-form-field appearance="outline" class="form-field-full">
-        <mat-label>Trưởng đơn vị</mat-label>
-        <input matInput type="text" autocomplete="off" placeholder="Gõ họ tên hoặc username"
-               [formControl]="headControl" [matAutocomplete]="headAuto" />
-        <mat-autocomplete #headAuto="matAutocomplete" [displayWith]="displayHead">
-          <mat-option [value]="null">{{ noHeadOption }}</mat-option>
-          @for (head of filteredCandidates(); track head.id) {
-            <mat-option [value]="head">
-              <span class="picker-option-name">{{ head.fullName }}</span>
-              <span class="picker-option-code">{{ head.username }} · {{ head.orgUnitName }}</span>
-            </mat-option>
-          }
-        </mat-autocomplete>
-        <mat-hint>{{ loadingCandidates() ? 'Đang tải danh sách...' : 'Người dùng đang hoạt động thuộc đơn vị này hoặc đơn vị con' }}</mat-hint>
-        @if (headControl.hasError(errorKey.INVALID_SELECTION)) {
-          <mat-error>Vui lòng chọn từ danh sách</mat-error>
-        } @else if (headControl.hasError(errorKey.SERVER)) {
-          <mat-error>{{ headServerError() }}</mat-error>
-        }
-      </mat-form-field>
+      <app-user-picker [formControl]="headControl" label="Trưởng đơn vị" [candidates]="candidates()"
+                       [loading]="loadingCandidates()" [emptyLabel]="noHeadOption" [serverError]="headServerError()"
+                       hint="Người dùng đang hoạt động thuộc đơn vị này hoặc đơn vị con" />
     }
   </form>
 </mat-dialog-content>

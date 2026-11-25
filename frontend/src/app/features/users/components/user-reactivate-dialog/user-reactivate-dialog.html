@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>Kích hoạt lại tài khoản</h2>
+
+<mat-dialog-content>
+  <dl class="dialog-readonly">
+    <dt>Người dùng</dt>
+    <dd>{{ user.fullName }} ({{ user.username }})</dd>
+  </dl>
+
+  @if (oldUnitInactive) {
+    <p class="dialog-alert dialog-alert-text">{{ inactiveNotice }}</p>
+  }
+
+  <app-org-unit-picker [formControl]="orgUnitControl" label="Đơn vị công tác" hint="Chỉ chọn được phòng ban đang hoạt động"
+                       [nodes]="nodes()" [selectable]="selectableUnit" />
+  @if (orgUnitError()) {
+    <p class="field-error">{{ orgUnitError() }}</p>
+  } @else if (showRequired()) {
+    <p class="field-error">Vui lòng chọn đơn vị công tác</p>
+  }
+
+  <p class="dialog-note">{{ reactivateNote }}</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close cdkFocusInitial>Hủy</button>
+  <button mat-flat-button type="button" [disabled]="submitting()" (click)="submit()">
+    {{ submitting() ? 'Đang xử lý...' : 'Kích hoạt lại' }}
+  </button>
+</mat-dialog-actions>
