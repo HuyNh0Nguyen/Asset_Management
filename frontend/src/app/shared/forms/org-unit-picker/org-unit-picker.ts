@@ -7,8 +7,9 @@ import { MatInput } from "@angular/material/input";
 import { OrgUnitPickerMode, OrgUnitPickerOption, OrgUnitSelectable } from "./org-unit-picker.model";
 import { OrgUnitNodeResponse, OrgUnitStatus } from "@api/models";
 import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
-import { matchesOrgUnit, normalizeSearchText } from "./org-tree.utils";
+import { matchesOrgUnit } from "./org-tree.utils";
 import { ORG_UNIT_STATUS_LABELS } from "@core/i18n/labels.vi";
+import { normalizeSearchText } from "@shared/text/normalize-search-text";
 
 // Thụt lề mỗi cấp trong danh sách gợi ý (px)
 const DEPTH_INDENT_PX = 16;
@@ -31,6 +32,9 @@ export class OrgUnitPicker implements ControlValueAccessor {
     readonly label = input('Đơn vị');
     readonly hint = input('');
 
+    // Chỉ hiển thị danh sách cây khi người dùng tương tác vào ô tìm kiếm
+    protected readonly initialized = signal(false);
+
     // Ô nhập: chuỗi khi đang gõ, nút khi đã chọn
     protected readonly textControl = new FormControl<string | OrgUnitNodeResponse | null>('');
     private readonly selectedId = signal<string | null>(null);
@@ -42,6 +46,9 @@ export class OrgUnitPicker implements ControlValueAccessor {
     });
 
     protected readonly options = computed<OrgUnitPickerOption[]>(() => {
+        if (!this.initialized()) {
+            return [];
+        }
         const query = this.query();
         const canSelect = this.selectable();
         const writeMode = this.mode() === OrgUnitPickerMode.WRITE;
@@ -61,9 +68,12 @@ export class OrgUnitPicker implements ControlValueAccessor {
     constructor() {
         // Gõ lại sau khi đã chọn -> bỏ lựa chọn cũ
         this.textControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((value) => {
-            if (typeof value === 'string' && this.selectedId() !== null) {
-                this.selectedId.set(null);
-                this.onChange(null);
+            if (typeof value === 'string') {
+                this.initPicker();
+                if (this.selectedId() !== null) {
+                    this.selectedId.set(null);
+                    this.onChange(null);
+                }
             }
         });
         // writeValue có thể tới trước nodes - hiển thị tên khi đủ cả hai
@@ -84,6 +94,12 @@ export class OrgUnitPicker implements ControlValueAccessor {
 
     protected indentOf(depth: number): number {
         return BASE_PADDING_PX + depth * DEPTH_INDENT_PX;
+    }
+
+    protected initPicker(): void {
+        if (!this.initialized()) {
+            this.initialized.set(true);
+        }
     }
 
     protected onSelected(event: MatAutocompleteSelectedEvent): void {

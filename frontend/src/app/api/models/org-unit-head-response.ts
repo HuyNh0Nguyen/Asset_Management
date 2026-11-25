@@ -6,6 +6,7 @@
  * Response for organizational unit head information
  */
 export interface OrgUnitHeadResponse {
+  avatarUrl?: string;
   fullName: string;
   id: string;
   orgUnitName: string;

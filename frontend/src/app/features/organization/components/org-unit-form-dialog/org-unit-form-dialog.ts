@@ -1,7 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from "@angular/core";
-import { AbstractControl, FormControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from "@angular/forms";
-import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from "@angular/material/autocomplete";
-import { MatButton } from "@angular/material/button";
+import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
+import { FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
 import { MatError, MatFormField, MatHint, MatLabel } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
@@ -12,20 +10,14 @@ import { ToastService } from "@shared/ui/toast/toast.service";
 import { OrgUnitFormDialogData, OrgUnitFormField, OrgUnitFormMode } from "./org-unit-form-dialog.model";
 import { ORG_UNIT_TYPE_LABELS } from "@core/i18n/labels.vi";
 import { OrgMessage } from "../../organization-messages";
-import { toSignal } from "@angular/core/rxjs-interop";
-import { normalizeSearchText } from "@shared/forms/org-unit-picker/org-tree.utils";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { finalize, Observable } from "rxjs";
 import { parseHttpError } from "@core/http/parse-http-error";
 import { ERROR_MESSAGES_VI } from "@core/i18n/error-messages.vi";
 import { describeHttpError } from "@core/http/http-error-message";
-
-type HeadValue = OrgUnitHeadResponse | string | null;
-
-// Gõ chữ mà không chọn từ danh sách -> không hợp lệ; ô trống = để trống trưởng
-function headSelectionValidator(control: AbstractControl<HeadValue>): ValidationErrors | null {
-    const value = control.value;
-    return typeof value === 'string' && value.trim() !== '' ? { [OrgFormErrorKey.INVALID_SELECTION]: true } : null;
-}
+import { chosenUserValidator, UserPickerErrorKey, UserPickerValue } from "@shared/forms/user-picker/user-picker.model";
+import { UserPicker } from "@shared/forms/user-picker/user-picker";
+import { MatButton } from "@angular/material/button";
 
 // Thêm: mã + tên, loại và cha chỉ đọc. Sửa: tên + trưởng đơn vị
 @Component({
@@ -41,10 +33,8 @@ function headSelectionValidator(control: AbstractControl<HeadValue>): Validation
         MatHint,
         MatError,
         MatInput,
-        MatAutocomplete,
-        MatAutocompleteTrigger,
-        MatOption,
         MatButton,
+        UserPicker,
     ],
     templateUrl: './org-unit-form-dialog.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -69,26 +59,20 @@ export class OrgUnitFormDialog {
         code: ['', [Validators.required, Validators.maxLength(ORG_CODE_MAX_LENGTH), Validators.pattern(ORG_CODE_PATTERN)]],
         name: [this.isCreate ? '' : this.target.name, [Validators.required, Validators.maxLength(ORG_NAME_MAX_LENGTH)]],
     });
-    protected readonly headControl = new FormControl<HeadValue>(
+    // null = để trống trưởng; gõ chữ mà không chọn -> chưa chọn (không hợp lệ)
+    protected readonly headControl = new FormControl<UserPickerValue>(
         this.isCreate ? null : this.target.head ?? null,
-        headSelectionValidator,
+        chosenUserValidator,
     );
 
     protected readonly submitting = signal(false);
     protected readonly loadingCandidates = signal(false);
     protected readonly headServerError = signal<string | null>(null);
-    private readonly candidates = signal<OrgUnitHeadResponse[]>([]);
-    private readonly headValue = toSignal(this.headControl.valueChanges, { initialValue: this.headControl.value });
-
-    // Lọc ứng viên theo chữ đang gõ (họ tên / username / đơn vị)
-    protected readonly filteredCandidates = computed(() => {
-        const value = this.headValue();
-        const query = typeof value === 'string' ? normalizeSearchText(value) : '';
-        return this.candidates().filter((head) => !query
-            || normalizeSearchText(`${head.fullName} ${head.username} ${head.orgUnitName ?? ''}`).includes(query));
-    });
+    protected readonly candidates = signal<OrgUnitHeadResponse[]>([]);
 
     constructor() {
+        // Đổi lựa chọn -> bỏ lỗi server cũ
+        this.headControl.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.headServerError.set(null));
         if (this.isCreate) {
             return;
         }
@@ -96,9 +80,6 @@ export class OrgUnitFormDialog {
         this.form.controls.code.disable();
         this.loadCandidates();
     }
-
-    protected readonly displayHead = (value: HeadValue): string =>
-        typeof value === 'string' ? value : value ? `${value.fullName} (${value.username})` : '';
 
     // Tự viết hoa khi gõ; server không tự viết hoa
     protected upperCaseCode(): void {
@@ -132,9 +113,7 @@ export class OrgUnitFormDialog {
         if (this.isCreate) {
             return this.store.create({ code, name, unitType: this.target.childUnitType, parentId: this.target.id });
         }
-        const head = this.headControl.value;
-        const headUserId = head && typeof head === 'object' ? head.id : null;
-        return this.store.update(this.target.id, { name, headUserId });
+        return this.store.update(this.target.id, { name, headUserId: this.headControl.value?.id ?? null });
     }
 
     private loadCandidates(): void {
@@ -154,7 +133,7 @@ export class OrgUnitFormDialog {
             case ErrorCode.ORG_UNIT_HEAD_OUTSIDE_SUBTREE:
                 // Ứng viên vừa đổi -> báo dưới ô trưởng, nạp lại danh sách
                 this.headServerError.set(ERROR_MESSAGES_VI[code]);
-                this.headControl.setErrors({ [OrgFormErrorKey.SERVER]: true });
+                this.headControl.setErrors({ [UserPickerErrorKey.SERVER]: true });
                 this.headControl.markAsTouched();
                 this.loadCandidates();
                 return;

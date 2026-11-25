@@ -19,13 +19,14 @@ import { OrgTreeRow } from "../../data/org-tree-row.model";
 import { ORG_UNIT_ACTION_ICONS, ORG_UNIT_ACTION_ORDER, ORG_UNIT_TYPE_ICONS } from "../../data/org-unit-ui";
 import { OrgUnitsStore } from "../../data/org-units.store";
 import { OrgMessage } from "../../organization-messages";
-import { ancestorIds, childCountById, matchesOrgUnit, normalizeSearchText } from "@shared/forms/org-unit-picker/org-tree.utils";
+import { ancestorIds, childCountById, matchesOrgUnit } from "@shared/forms/org-unit-picker/org-tree.utils";
 import { confirmAction } from "@shared/ui/confirm-dialog/confirm-dialog";
 import { appDialogConfig, DialogWidth } from "@shared/ui/dialog/app-dialog-config";
 import { StatusChip } from "@shared/ui/status-chip/status-chip";
 import { StatusTone } from "@shared/ui/status-chip/status-tone";
 import { ToastService } from "@shared/ui/toast/toast.service";
 import { filter, switchMap } from "rxjs";
+import { normalizeSearchText } from "@shared/text/normalize-search-text";
 
 // Thời gian hoạt ảnh thu gọn khớp với SCSS
 const COLLAPSE_ANIMATION_MS = 180;

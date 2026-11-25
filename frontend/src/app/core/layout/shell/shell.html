@@ -10,13 +10,17 @@
   </a>
   <span class="shell-spacer"></span>
   
-  <!-- Tài khoản: họ tên + Đổi mật khẩu / Đăng xuất -->
+  <!-- Tài khoản: ảnh + họ tên -> Tài khoản của tôi / Đổi mật khẩu / Đăng xuất -->
   <button mat-button type="button" class="shell-user" [matMenuTriggerFor]="userMenu" aria-label="Tài khoản">
-    <mat-icon class="material-symbols-outlined">account_circle</mat-icon>
+    <app-avatar [name]="fullName()" [url]="avatarUrl()" [size]="avatarSize" />
     <span class="shell-user-name">{{ fullName() }}</span>
     <mat-icon class="shell-user-caret" iconPositionEnd>expand_more</mat-icon>
   </button>
   <mat-menu #userMenu="matMenu" xPosition="before">
+    <a mat-menu-item [routerLink]="myAccountUrl">
+      <mat-icon>badge</mat-icon>
+      <span>Tài khoản của tôi</span>
+    </a>
     <a mat-menu-item [routerLink]="changePasswordUrl">
       <mat-icon>lock_reset</mat-icon>
       <span>Đổi mật khẩu</span>

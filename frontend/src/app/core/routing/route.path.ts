@@ -8,6 +8,11 @@ export enum RoutePath {
     ORGANIZATION = 'organization',
     ORG_UNITS = 'org-units',
     RANKS = 'ranks',
+    USERS = 'users',
+    ROLES = 'roles',
+    ROLE_NEW = 'new',
+    ROLE_DETAIL = ':id',
+    ME = 'me',
 }
 
 // Đường dẫn tuyệt đối dùng khi điều hướng
@@ -19,14 +24,30 @@ export enum AppUrl {
     ATTRIBUTE_FORM = '/dev-tools/attribute-form',
     ORG_UNITS = '/organization/org-units',
     RANKS = '/organization/ranks',
+    USERS = '/users',
+    ROLES = '/roles',
+    ROLE_NEW = '/roles/new',
+    MY_ACCOUNT = '/me',
 }
 
 // Khóa query param dùng chung
 export enum QueryParamKey {
     RETURN_URL = 'returnUrl',
+    SEARCH = 'q',
+    ORG_UNIT_ID = 'orgUnitId',
+    ROLE_ID = 'roleId',
+    STATUS = 'status',
+    PAGE = 'page',
+    SIZE = 'size',
+    SORT = 'sort',
 }
 
 // Khóa route data dùng chung
 export enum RouteDataKey {
     PERMISSION = 'permission',
+}
+
+// Khóa tham số đường dẫn
+export enum RouteParamKey {
+    ID = 'id',
 }

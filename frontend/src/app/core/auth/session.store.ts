@@ -24,6 +24,7 @@ export class SessionStore {
     // Không lưu me xuống storage - quyền luôn lấy mới từ /api/me
     private readonly meState = signal<MeResponse | null>(null);
     private meRequest: Observable<MeResponse> | null = null;
+    private refreshing = false;
 
     readonly token = this.tokenState.asReadonly();
     readonly me = this.meState.asReadonly();
@@ -87,6 +88,22 @@ export class SessionStore {
             return;
         }
         this.meApi.getMe().subscribe({ next: (me) => this.applyMe(me), error: ignoreError });
+    }
+
+    // Làm mới ngầm mỗi lần điều hướng - giữ me cũ để dựng ngay, thay khi bản mới về
+    refreshMe(): void {
+        if (!this.tokenState() || this.meRequest || this.refreshing) {
+            return;
+        }
+        this.refreshing = true;
+        this.meApi.getMe(undefined, skipErrorToast())
+            .pipe(finalize(() => (this.refreshing = false)))
+            .subscribe({ next: (me) => this.applyMe(me), error: ignoreError });
+    }
+
+    // So "có phải chính tôi" - đặt lại mật khẩu / vô hiệu hóa chính mình thì phiên kết thúc
+    isSelf(userId: string): boolean {
+        return this.meState()?.id == userId;
     }
 
     // Gọi API, bỏ qua lỗi (mạng, token đã bị thu hồi), luôn xóa phiên

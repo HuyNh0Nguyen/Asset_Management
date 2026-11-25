@@ -215,6 +215,51 @@
         "tags" : [ "Me" ]
       }
     },
+    "/api/me/avatar" : {
+      "delete" : {
+        "operationId" : "removeMyAvatar",
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "summary" : "Remove my avatar",
+        "tags" : [ "Me" ]
+      },
+      "put" : {
+        "operationId" : "changeMyAvatar",
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "file" : {
+                    "type" : "string",
+                    "format" : "binary"
+                  }
+                },
+                "required" : [ "file" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AvatarResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Change my avatar",
+        "tags" : [ "Me" ]
+      }
+    },
     "/api/org-units" : {
       "post" : {
         "operationId" : "createOrgUnit",
@@ -519,6 +564,28 @@
         "tags" : [ "Organization" ]
       }
     },
+    "/api/permissions" : {
+      "get" : {
+        "operationId" : "listPermissions",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/PermissionDefinitionResponse"
+                  }
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Permission catalog with allowed scopes",
+        "tags" : [ "Roles" ]
+      }
+    },
     "/api/ranks" : {
       "get" : {
         "operationId" : "listRanks",
@@ -625,6 +692,463 @@
         "tags" : [ "Organization" ]
       }
     },
+    "/api/roles" : {
+      "get" : {
+        "operationId" : "listRoles",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/RoleResponse"
+                  }
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "List roles with their permission matrix",
+        "tags" : [ "Roles" ]
+      },
+      "post" : {
+        "operationId" : "createRole",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateRoleRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RoleResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Create a role",
+        "tags" : [ "Roles" ]
+      }
+    },
+    "/api/roles/{id}" : {
+      "delete" : {
+        "operationId" : "deleteRole",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "summary" : "Delete an unused role",
+        "tags" : [ "Roles" ]
+      },
+      "get" : {
+        "operationId" : "getRole",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RoleResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Get a role with its permission matrix",
+        "tags" : [ "Roles" ]
+      },
+      "put" : {
+        "operationId" : "updateRole",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UpdateRoleRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RoleResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Update role name, description and permission matrix",
+        "tags" : [ "Roles" ]
+      }
+    },
+    "/api/users" : {
+      "get" : {
+        "operationId" : "listUsers",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "q",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "orgUnitId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "in" : "query",
+          "name" : "roleId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "in" : "query",
+          "name" : "status",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/components/schemas/UserStatus"
+          }
+        }, {
+          "description" : "Zero-based page index (0..N)",
+          "in" : "query",
+          "name" : "page",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "default" : 0,
+            "minimum" : 0
+          }
+        }, {
+          "description" : "The size of the page to be returned",
+          "in" : "query",
+          "name" : "size",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "default" : 20,
+            "minimum" : 1
+          }
+        }, {
+          "description" : "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+          "in" : "query",
+          "name" : "sort",
+          "required" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PageResponseUserResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Search users with filters and paging",
+        "tags" : [ "Users" ]
+      },
+      "post" : {
+        "operationId" : "createUser",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateUserRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Create a user and email the temporary password",
+        "tags" : [ "Users" ]
+      }
+    },
+    "/api/users/{id}" : {
+      "get" : {
+        "operationId" : "getUser",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Get a user account",
+        "tags" : [ "Users" ]
+      },
+      "put" : {
+        "operationId" : "updateUser",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UpdateUserRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Update a user, replacing heads of units they leave",
+        "tags" : [ "Users" ]
+      }
+    },
+    "/api/users/{id}/avatar" : {
+      "delete" : {
+        "operationId" : "removeUserAvatar",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "summary" : "Remove a user's avatar",
+        "tags" : [ "Users" ]
+      },
+      "put" : {
+        "operationId" : "changeUserAvatar",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "file" : {
+                    "type" : "string",
+                    "format" : "binary"
+                  }
+                },
+                "required" : [ "file" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AvatarResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Change a user's avatar",
+        "tags" : [ "Users" ]
+      }
+    },
+    "/api/users/{id}/deactivate" : {
+      "post" : {
+        "operationId" : "deactivateUser",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DeactivateUserRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "summary" : "Deactivate a user and revoke their sessions",
+        "tags" : [ "Users" ]
+      }
+    },
+    "/api/users/{id}/deactivation-check" : {
+      "get" : {
+        "operationId" : "checkUserDeactivation",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserDeactivationCheckResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "List what blocks deactivating the user",
+        "tags" : [ "Users" ]
+      }
+    },
+    "/api/users/{id}/reactivate" : {
+      "post" : {
+        "operationId" : "reactivateUser",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ReactivateUserRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "summary" : "Reactivate a user into an active department",
+        "tags" : [ "Users" ]
+      }
+    },
     "/api/users/{id}/reset-password" : {
       "post" : {
         "operationId" : "resetUserPassword",
@@ -643,6 +1167,42 @@
           }
         },
         "summary" : "Reset a user's password",
+        "tags" : [ "Users" ]
+      }
+    },
+    "/api/users/{id}/unit-change-check" : {
+      "get" : {
+        "operationId" : "checkUserUnitChange",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "in" : "query",
+          "name" : "orgUnitId",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/HeadReplacementCheckResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "List units needing a new head if the user moves",
         "tags" : [ "Users" ]
       }
     }
@@ -722,6 +1282,16 @@
           }
         },
         "required" : [ "code", "label" ]
+      },
+      "AvatarResponse" : {
+        "type" : "object",
+        "description" : "Signed thumbmail URL of the new avatar",
+        "properties" : {
+          "avatarUrl" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "avatarUrl" ]
       },
       "BlockingHeadResponse" : {
         "type" : "object",
@@ -812,9 +1382,94 @@
         },
         "required" : [ "code", "name", "seniority" ]
       },
+      "CreateRoleRequest" : {
+        "type" : "object",
+        "description" : "Create a role with its permission matrix",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "maxLength" : 50,
+            "minLength" : 0,
+            "pattern" : "^[A-Z0-9_]+$"
+          },
+          "description" : {
+            "type" : "string",
+            "maxLength" : 2000,
+            "minLength" : 0
+          },
+          "grants" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/RoleGrantRequest"
+            }
+          },
+          "name" : {
+            "type" : "string",
+            "maxLength" : 255,
+            "minLength" : 0
+          }
+        },
+        "required" : [ "code", "grants", "name" ]
+      },
+      "CreateUserRequest" : {
+        "type" : "object",
+        "description" : "Create a user account",
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "format" : "email",
+            "maxLength" : 255,
+            "minLength" : 0
+          },
+          "fullName" : {
+            "type" : "string",
+            "maxLength" : 255,
+            "minLength" : 0
+          },
+          "orgUnitId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "phoneNumber" : {
+            "type" : "string",
+            "pattern" : "^(\\+?[0-9]{8,15})?$"
+          },
+          "rankId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "roleIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "minItems" : 1,
+            "uniqueItems" : true
+          },
+          "username" : {
+            "type" : "string",
+            "minLength" : 1,
+            "pattern" : "^[a-z0-9._-]{3,50}$"
+          }
+        },
+        "required" : [ "email", "fullName", "orgUnitId", "rankId", "roleIds", "username" ]
+      },
       "DataScope" : {
         "type" : "string",
         "enum" : [ "SELF", "DEPARTMENT", "BRANCH", "ALL" ]
+      },
+      "DeactivateUserRequest" : {
+        "type" : "object",
+        "description" : "Deactivate a user and replace the heads of units they lead",
+        "properties" : {
+          "headReplacements" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/HeadReplacementRequest"
+            }
+          }
+        }
       },
       "EmailProbeRequest" : {
         "type" : "object",
@@ -834,7 +1489,7 @@
       },
       "ErrorCode" : {
         "type" : "string",
-        "enum" : [ "VALIDATION_FAILED", "MALFORMED_REQUEST", "UNKNOWN_FIELD", "UNAUTHORIZED", "INVALID_CREDENTIALS", "ACCOUNT_LOCKED", "ACCOUNT_DISABLED", "SESSION_EXPIRED", "FORBIDDEN", "FIELD_GROUP_FORBIDDEN", "PASSWORD_CHANGE_REQUIRED", "RESOURCE_NOT_FOUND", "METHOD_NOT_ALLOWED", "CONFLICT", "UNSUPPORTED_MEDIA_TYPE", "ORG_UNIT_CODE_DUPLICATE", "RANK_CODE_DUPLICATE", "RANK_SENIORITY_DUPLICATE", "FILE_TOO_LARGE", "UNSUPPORTED_FILE_TYPE", "PASSWORD_SAME_AS_CURRENT", "USER_NOT_ACTIVE", "ORG_UNIT_COMPANY_NOT_ALLOWED", "ORG_UNIT_INVALID_PARENT_TYPE", "ORG_UNIT_PARENT_CYCLE", "ORG_UNIT_PARENT_INACTIVE", "ORG_UNIT_ROOT_IMMUTABLE", "ORG_UNIT_HEAD_NOT_ACTIVE", "ORG_UNIT_HEAD_OUTSIDE_SUBTREE", "ORG_UNIT_MOVE_DETACHES_HEAD", "ORG_UNIT_NOT_EMPTY", "ORG_UNIT_IN_USE", "ORG_UNIT_INACTIVE", "ORG_UNIT_TYPE_NOT_ALLOWED", "RANK_IN_USE", "INTERNAL_ERROR", "STORAGE_ERROR", "NOT_IMPLEMENTED" ]
+        "enum" : [ "VALIDATION_FAILED", "MALFORMED_REQUEST", "UNKNOWN_FIELD", "UNAUTHORIZED", "INVALID_CREDENTIALS", "ACCOUNT_LOCKED", "ACCOUNT_DISABLED", "SESSION_EXPIRED", "FORBIDDEN", "FIELD_GROUP_FORBIDDEN", "PASSWORD_CHANGE_REQUIRED", "RESOURCE_NOT_FOUND", "METHOD_NOT_ALLOWED", "CONFLICT", "UNSUPPORTED_MEDIA_TYPE", "ORG_UNIT_CODE_DUPLICATE", "RANK_CODE_DUPLICATE", "RANK_SENIORITY_DUPLICATE", "USERNAME_DUPLICATE", "EMAIL_DUPLICATE", "ROLE_CODE_DUPLICATE", "FILE_TOO_LARGE", "UNSUPPORTED_FILE_TYPE", "PASSWORD_SAME_AS_CURRENT", "USER_NOT_ACTIVE", "ORG_UNIT_COMPANY_NOT_ALLOWED", "ORG_UNIT_INVALID_PARENT_TYPE", "ORG_UNIT_PARENT_CYCLE", "ORG_UNIT_PARENT_INACTIVE", "ORG_UNIT_ROOT_IMMUTABLE", "ORG_UNIT_HEAD_NOT_ACTIVE", "ORG_UNIT_HEAD_OUTSIDE_SUBTREE", "ORG_UNIT_MOVE_DETACHES_HEAD", "ORG_UNIT_NOT_EMPTY", "ORG_UNIT_IN_USE", "ORG_UNIT_INACTIVE", "ORG_UNIT_TYPE_NOT_ALLOWED", "RANK_IN_USE", "LAST_ACTIVE_ADMIN", "USER_DEACTIVATION_BLOCKED", "HEAD_REPLACEMENT_MISMATCH", "ROLE_SYSTEM_LOCKED", "ROLE_PERMISSION_SCOPE_INVALID", "ROLE_PERMISSION_ADMIN_ONLY", "ROLE_IN_USE", "IMAGE_DIMENSIONS_TOO_LARGE", "INTERNAL_ERROR", "STORAGE_ERROR", "NOT_IMPLEMENTED" ]
       },
       "ErrorDetail" : {
         "description" : "Error response with timestamp, status, error message, request path, and optional field errors",
@@ -877,6 +1532,34 @@
           }
         },
         "required" : [ "field", "message" ]
+      },
+      "HeadReplacementCheckResponse" : {
+        "type" : "object",
+        "description" : "Units that need a new head after the unit change",
+        "properties" : {
+          "units" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/OrgUnitRefResponse"
+            }
+          }
+        },
+        "required" : [ "units" ]
+      },
+      "HeadReplacementRequest" : {
+        "type" : "object",
+        "description" : "New head for a unit the user currently heads",
+        "properties" : {
+          "newHeadUserId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "unitId" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        },
+        "required" : [ "unitId" ]
       },
       "LoginRequest" : {
         "type" : "object",
@@ -935,14 +1618,23 @@
               "$ref" : "#/components/schemas/PermissionGrantResponse"
             }
           },
+          "phoneNumber" : {
+            "type" : "string"
+          },
           "rankName" : {
             "type" : "string"
+          },
+          "roles" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/RoleRefResponse"
+            }
           },
           "username" : {
             "type" : "string"
           }
         },
-        "required" : [ "email", "fullName", "id", "mustChangePassword", "orgUnit", "permissions", "rankName", "username" ]
+        "required" : [ "email", "fullName", "id", "mustChangePassword", "orgUnit", "permissions", "rankName", "roles", "username" ]
       },
       "MoveCheckResponse" : {
         "type" : "object",
@@ -1033,6 +1725,9 @@
         "type" : "object",
         "description" : "Response for organizational unit head information",
         "properties" : {
+          "avatarUrl" : {
+            "type" : "string"
+          },
           "fullName" : {
             "type" : "string"
           },
@@ -1106,9 +1801,12 @@
           },
           "name" : {
             "type" : "string"
+          },
+          "status" : {
+            "$ref" : "#/components/schemas/OrgUnitStatus"
           }
         },
-        "required" : [ "code", "id", "name" ]
+        "required" : [ "code", "id", "name", "status" ]
       },
       "OrgUnitStatus" : {
         "type" : "string",
@@ -1118,9 +1816,57 @@
         "type" : "string",
         "enum" : [ "COMPANY", "BRANCH", "DEPARTMENT" ]
       },
+      "PageResponseUserResponse" : {
+        "type" : "object",
+        "description" : "Paginated response with items and pagination info",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/UserResponse"
+            }
+          },
+          "page" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "totalElements" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        },
+        "required" : [ "items", "page", "size", "totalElements", "totalPages" ]
+      },
       "Permission" : {
         "type" : "string",
         "enum" : [ "ASSET_VIEW", "ASSET_CREATE", "ASSET_TECH_EDIT", "ASSET_FINANCE_VIEW", "ASSET_FINANCE_EDIT", "ASSET_OPERATE", "ASSET_TRANSFER", "DISPOSAL_PROPOSE", "REQUEST_CREATE", "REQUEST_VIEW", "CATALOG_MANAGE", "DASHBOARD_VIEW", "WORKFLOW_MANAGE", "TASK_REASSIGN", "ORG_MANAGE", "USER_MANAGE", "ROLE_MANAGE", "AUDIT_VIEW", "SYSTEM_CONFIG" ]
+      },
+      "PermissionDefinitionResponse" : {
+        "type" : "object",
+        "description" : "Permission with its allowed scopes",
+        "properties" : {
+          "adminOnly" : {
+            "type" : "boolean"
+          },
+          "allowedScopes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/DataScope"
+            }
+          },
+          "code" : {
+            "$ref" : "#/components/schemas/Permission"
+          }
+        },
+        "required" : [ "adminOnly", "allowedScopes", "code" ]
       },
       "PermissionGrantResponse" : {
         "type" : "object",
@@ -1134,6 +1880,23 @@
           }
         },
         "required" : [ "code", "scope" ]
+      },
+      "RankRefResponse" : {
+        "type" : "object",
+        "description" : "Short rank reference",
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "code", "id", "name" ]
       },
       "RankResponse" : {
         "type" : "object",
@@ -1155,6 +1918,106 @@
           }
         },
         "required" : [ "code", "id", "name", "seniority" ]
+      },
+      "ReactivateUserRequest" : {
+        "type" : "object",
+        "description" : "Reactivate a user into an active department",
+        "properties" : {
+          "orgUnitId" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        },
+        "required" : [ "orgUnitId" ]
+      },
+      "RoleAction" : {
+        "type" : "string",
+        "enum" : [ "EDIT", "DELETE" ]
+      },
+      "RoleGrantRequest" : {
+        "type" : "object",
+        "description" : "One cell of the permission matrix",
+        "properties" : {
+          "permission" : {
+            "$ref" : "#/components/schemas/Permission"
+          },
+          "scope" : {
+            "$ref" : "#/components/schemas/DataScope"
+          }
+        },
+        "required" : [ "permission", "scope" ]
+      },
+      "RoleGrantResponse" : {
+        "type" : "object",
+        "description" : "Granted permission with its scope",
+        "properties" : {
+          "permission" : {
+            "$ref" : "#/components/schemas/Permission"
+          },
+          "scope" : {
+            "$ref" : "#/components/schemas/DataScope"
+          }
+        },
+        "required" : [ "permission", "scope" ]
+      },
+      "RoleRefResponse" : {
+        "type" : "object",
+        "description" : "Short role reference",
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "code", "id", "name" ]
+      },
+      "RoleResponse" : {
+        "type" : "object",
+        "description" : "Role with its permission matrix",
+        "properties" : {
+          "allowedActions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/RoleAction"
+            }
+          },
+          "code" : {
+            "type" : "string"
+          },
+          "defaultForNewUser" : {
+            "type" : "boolean"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "grants" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/RoleGrantResponse"
+            }
+          },
+          "holderCount" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "system" : {
+            "type" : "boolean"
+          }
+        },
+        "required" : [ "allowedActions", "code", "defaultForNewUser", "grants", "holderCount", "id", "name", "system" ]
       },
       "StorageProbeResponse" : {
         "type" : "object",
@@ -1206,6 +2069,186 @@
           }
         },
         "required" : [ "name", "seniority" ]
+      },
+      "UpdateRoleRequest" : {
+        "type" : "object",
+        "description" : "Update role name, description and permission matrix",
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "maxLength" : 2000,
+            "minLength" : 0
+          },
+          "grants" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/RoleGrantRequest"
+            }
+          },
+          "name" : {
+            "type" : "string",
+            "maxLength" : 255,
+            "minLength" : 0
+          }
+        },
+        "required" : [ "grants", "name" ]
+      },
+      "UpdateUserRequest" : {
+        "type" : "object",
+        "description" : "Update a user account",
+        "properties" : {
+          "fullName" : {
+            "type" : "string",
+            "maxLength" : 255,
+            "minLength" : 0
+          },
+          "headReplacements" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/HeadReplacementRequest"
+            }
+          },
+          "orgUnitId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "phoneNumber" : {
+            "type" : "string",
+            "pattern" : "^(\\+?[0-9]{8,15})?$"
+          },
+          "rankId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "roleIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "format" : "uuid"
+            },
+            "minItems" : 1,
+            "uniqueItems" : true
+          }
+        },
+        "required" : [ "fullName", "orgUnitId", "rankId", "roleIds" ]
+      },
+      "UserAction" : {
+        "type" : "string",
+        "enum" : [ "EDIT", "RESET_PASSWORD", "CHANGE_AVATAR", "REMOVE_AVATAR", "DEACTIVATE", "REACTIVATE" ]
+      },
+      "UserBlockerItemResponse" : {
+        "type" : "object",
+        "description" : "One sample item blocking deactivation",
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "detail" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "code", "id", "name" ]
+      },
+      "UserBlockerKind" : {
+        "type" : "string",
+        "enum" : [ "LAST_ACTIVE_ADMIN", "OPEN_ALLOCATION", "NAMED_APPROVER" ]
+      },
+      "UserBlockerResponse" : {
+        "type" : "object",
+        "description" : "A group of items blocking user deactivation",
+        "properties" : {
+          "kind" : {
+            "$ref" : "#/components/schemas/UserBlockerKind"
+          },
+          "samples" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/UserBlockerItemResponse"
+            }
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        },
+        "required" : [ "kind", "samples", "total" ]
+      },
+      "UserDeactivationCheckResponse" : {
+        "type" : "object",
+        "description" : "Blockers and headed units before deactivation",
+        "properties" : {
+          "blockers" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/UserBlockerResponse"
+            }
+          },
+          "headedUnits" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/OrgUnitRefResponse"
+            }
+          }
+        },
+        "required" : [ "blockers", "headedUnits" ]
+      },
+      "UserResponse" : {
+        "type" : "object",
+        "description" : "User account",
+        "properties" : {
+          "allowedActions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/UserAction"
+            }
+          },
+          "avatarUrl" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "fullName" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "orgUnit" : {
+            "$ref" : "#/components/schemas/OrgUnitRefResponse"
+          },
+          "phoneNumber" : {
+            "type" : "string"
+          },
+          "rank" : {
+            "$ref" : "#/components/schemas/RankRefResponse"
+          },
+          "roles" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/RoleRefResponse"
+            }
+          },
+          "status" : {
+            "$ref" : "#/components/schemas/UserStatus"
+          },
+          "username" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "allowedActions", "email", "fullName", "id", "orgUnit", "rank", "roles", "status", "username" ]
+      },
+      "UserStatus" : {
+        "type" : "string",
+        "enum" : [ "ACTIVE", "INACTIVE" ]
       }
     },
     "securitySchemes" : {

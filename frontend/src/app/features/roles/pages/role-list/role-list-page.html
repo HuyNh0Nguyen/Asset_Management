@@ -1,0 +1,112 @@
+<header class="page-header">
+  <h1 class="page-title">Phân quyền</h1>
+  <div class="page-actions">
+    <mat-button-toggle-group hideSingleSelectionIndicator aria-label="Chế độ xem"
+                             [value]="view()" (change)="onViewChange($event.value)">
+      <mat-button-toggle [value]="viewOption.LIST">Danh sách</mat-button-toggle>
+      <mat-button-toggle [value]="viewOption.MATRIX">Ma trận tổng</mat-button-toggle>
+    </mat-button-toggle-group>
+    <a mat-flat-button [routerLink]="newRoleUrl">
+      <mat-icon>add</mat-icon>
+      Thêm vai trò
+    </a>
+  </div>
+</header>
+
+<section class="page-card">
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (view() === viewOption.LIST) {
+    <div class="table-scroll">
+      <table mat-table class="data-table" [dataSource]="roles()">
+        <ng-container [matColumnDef]="column.NAME">
+          <th mat-header-cell *matHeaderCellDef>Tên vai trò</th>
+          <td mat-cell *matCellDef="let role">
+            <div class="chip-list">
+              <span class="role-name-text" (click)="openRole(role.id)" (keydown.enter)="openRole(role.id)" tabindex="0" role="link">{{ role.name }}</span>
+              @if (role.system) {
+                <app-status-chip [label]="systemChip" [tone]="systemTone" />
+              }
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container [matColumnDef]="column.CODE">
+          <th mat-header-cell *matHeaderCellDef>Mã</th>
+          <td mat-cell *matCellDef="let role" class="cell-code">{{ role.code }}</td>
+        </ng-container>
+
+        <ng-container [matColumnDef]="column.DESCRIPTION">
+          <th mat-header-cell *matHeaderCellDef>Mô tả</th>
+          <td mat-cell *matCellDef="let role">{{ role.description }}</td>
+        </ng-container>
+
+        <ng-container [matColumnDef]="column.HOLDERS">
+          <th mat-header-cell *matHeaderCellDef class="cell-number">Số người giữ</th>
+          <td mat-cell *matCellDef="let role" class="cell-number">{{ role.holderCount }}</td>
+        </ng-container>
+
+        <ng-container [matColumnDef]="column.ACTIONS">
+          <th mat-header-cell *matHeaderCellDef class="cell-actions"></th>
+          <td mat-cell *matCellDef="let role" class="cell-actions">
+            @if (role.allowedActions.length > 0) {
+              <button mat-icon-button type="button" aria-label="Thao tác"
+                      [matMenuTriggerFor]="rowMenu" [matMenuTriggerData]="{ role: role }">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+        <tr mat-row *matRowDef="let role; columns: displayedColumns()"></tr>
+      </table>
+    </div>
+    @if (!loading() && roles().length === 0) {
+      <p class="page-state">Chưa có vai trò nào</p>
+    }
+  } @else {
+    <!-- Hàng = quyền, cột = vai trò - đúng hình -->
+    <p class="page-hint">Mỗi ô là phạm vi vai trò được cấp cho quyền đó; "—" là không cấp</p>
+    <div class="table-scroll">
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th class="matrix-sticky" scope="col">Quyền</th>
+            @for (role of roles(); track role.id) {
+              <th scope="col">{{ role.name }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (group of groups(); track group.group) {
+            <tr class="matrix-group-row">
+              <th class="matrix-sticky" [attr.colspan]="roles().length + 1">{{ group.label }}</th>
+            </tr>
+            @for (definition of group.items; track definition.code) {
+              <tr>
+                <th class="matrix-sticky matrix-label" scope="row">{{ permissionLabels[definition.code] }}</th>
+                @for (role of roles(); track role.id) {
+                  <td [class.matrix-cell-empty]="scopeLabel(role.id, definition.code) === notGranted">{{ scopeLabel(role.id, definition.code) }}</td>
+                }
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+<mat-menu #rowMenu="matMenu" xPosition="before">
+  <ng-template matMenuContent let-role="role">
+    @for (action of role.allowedActions; track action) {
+      <button mat-menu-item type="button" [class.menu-item-danger]="action === deleteAction" (click)="runAction(action, role)">
+        <mat-icon>{{ actionIcon(action) }}</mat-icon>
+        <span>{{ actionLabel(action) }}</span>
+      </button>
+    }
+  </ng-template>
+</mat-menu>

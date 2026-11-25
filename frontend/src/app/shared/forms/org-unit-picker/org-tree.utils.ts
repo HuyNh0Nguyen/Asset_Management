@@ -2,6 +2,7 @@
 // Chỉ cấu trúc cây trên danh sách phẳng tiền thứ tự từ /api/org-units/tree - không chứa quy tắc nghiệp vụ
 
 import { OrgUnitNodeResponse } from "@api/models";
+import { normalizeSearchText } from "@shared/text/normalize-search-text";
 
 // Số đơn vị con trực tiếp của mỗi nút
 export function childCountById(nodes: readonly OrgUnitNodeResponse[]): Map<string, number> {
@@ -35,17 +36,6 @@ export function ancestorIds(byId: ReadonlyMap<string, OrgUnitNodeResponse>, id: 
         parentId = byId.get(parentId)?.parentId ?? null;
     }
     return result;
-}
-
-// Bỏ dấu tiếng Việt, viết thường - tìm "phong ky thuat" vẫn khớp "Phòng Kỹ thuật"
-export function normalizeSearchText(text: string): string {
-    return text
-        .normalize('NFD')
-        .replace(/[̀-ͯ]/g, '')
-        .replace(/đ/g, 'd')
-        .replace(/Đ/g, 'D')
-        .toLowerCase()
-        .trim();
 }
 
 // normalizedQuery đã qua normalizeSearchText

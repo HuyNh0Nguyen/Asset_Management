@@ -1,0 +1,14 @@
+<section class="head-replacement">
+  <h3 class="head-replacement-title">Chọn trưởng thay thế</h3>
+  <p class="dialog-note">Người này đang làm trưởng các đơn vị dưới đây. Chọn người thay hoặc "Để trống" cho từng đơn vị</p>
+  @if (serverError()) {
+    <p class="dialog-alert dialog-alert-text">{{ serverError() }}</p>
+  }
+  @for (unit of units(); track unit.id) {
+    @if (form().contains(unit.id)) {
+      <app-user-picker [formControl]="controlOf(unit.id)" [label]="'Trưởng ' + unit.name"
+                       [candidates]="candidates()[unit.id] ?? []" [loading]="loading()[unit.id] ?? false"
+                       [emptyLabel]="noHeadOption" [explicitChoice]="true" />
+    }
+  }
+</section>

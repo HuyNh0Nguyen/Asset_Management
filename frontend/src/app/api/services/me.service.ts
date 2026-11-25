@@ -10,9 +10,14 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { AvatarResponse } from '../models/avatar-response';
+import { changeMyAvatar } from '../fn/me/change-my-avatar';
+import { ChangeMyAvatar$Params } from '../fn/me/change-my-avatar';
 import { getMe } from '../fn/me/get-me';
 import { GetMe$Params } from '../fn/me/get-me';
 import { MeResponse } from '../models/me-response';
+import { removeMyAvatar } from '../fn/me/remove-my-avatar';
+import { RemoveMyAvatar$Params } from '../fn/me/remove-my-avatar';
 
 @Injectable({ providedIn: 'root' })
 export class MeService extends BaseService {
@@ -52,6 +57,76 @@ export class MeService extends BaseService {
     const resp = this.getMe$Response(params, context);
     return resp.pipe(
       map((r: StrictHttpResponse<MeResponse>): MeResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `changeMyAvatar()` */
+  static readonly ChangeMyAvatarPath = '/api/me/avatar';
+
+  /**
+   * Change my avatar.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `changeMyAvatar()` instead.
+   *
+   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
+   */
+  changeMyAvatar$Response(params?: ChangeMyAvatar$Params, context?: HttpContext): Observable<StrictHttpResponse<AvatarResponse>> {
+    const obs = changeMyAvatar(this.http, this.rootUrl, params, context);
+    return obs;
+  }
+
+  /**
+   * Change my avatar.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `changeMyAvatar$Response()` instead.
+   *
+   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
+   */
+  changeMyAvatar(params?: ChangeMyAvatar$Params, context?: HttpContext): Observable<AvatarResponse> {
+    const resp = this.changeMyAvatar$Response(params, context);
+    return resp.pipe(
+      map((r: StrictHttpResponse<AvatarResponse>): AvatarResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `removeMyAvatar()` */
+  static readonly RemoveMyAvatarPath = '/api/me/avatar';
+
+  /**
+   * Remove my avatar.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `removeMyAvatar()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  removeMyAvatar$Response(params?: RemoveMyAvatar$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    const obs = removeMyAvatar(this.http, this.rootUrl, params, context);
+    return obs;
+  }
+
+  /**
+   * Remove my avatar.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `removeMyAvatar$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  removeMyAvatar(params?: RemoveMyAvatar$Params, context?: HttpContext): Observable<void> {
+    const resp = this.removeMyAvatar$Response(params, context);
+    return resp.pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 

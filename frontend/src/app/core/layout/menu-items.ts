@@ -4,6 +4,8 @@ import { Permission } from "@api/models";
 
 // SessionStore.visibleMenuItems lọc theo mã quyền từ /api/me - không lọc theo tên vai trò
 export const MENU_ITEMS: MenuItem[] = [
+    { label: 'Người dùng', icon: 'group', url: AppUrl.USERS, permission: Permission.USER_MANAGE },
+    { label: 'Phân quyền', icon: 'admin_panel_settings', url: AppUrl.ROLES, permission: Permission.ROLE_MANAGE },
     { label: 'Cơ cấu tổ chức', icon: 'account_tree', url: AppUrl.ORG_UNITS, permission: Permission.ORG_MANAGE },
     { label: 'Cấp bậc', icon: 'military_tech', url: AppUrl.RANKS, permission: Permission.ORG_MANAGE },
     { label: 'Thử ảnh & email', icon: 'science', url: AppUrl.PROBES },

@@ -1,0 +1,13 @@
+<div class="server-table">
+  @if (loading()) {
+    <mat-progress-bar class="server-table-progress" mode="indeterminate" />
+  }
+  <div class="table-scroll">
+    <ng-content />
+  </div>
+  @if (!loading() && total() === 0) {
+    <p class="page-state">{{ emptyText() }}</p>
+  }
+  <mat-paginator [length]="total()" [pageIndex]="page()" [pageSize]="size()" [pageSizeOptions]="pageSizeOptions"
+                 showFirstLastButtons (page)="pageChange.emit($event)" />
+</div>

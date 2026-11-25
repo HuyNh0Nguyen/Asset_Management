@@ -30,7 +30,7 @@
       <mat-form-field appearance="outline" class="auth-field">
         <mat-label>Mật khẩu</mat-label>
         <input matInput formControlName="password" autocomplete="current-password"
-               [type]="passwordVisible() ? 'text' : 'password'" />
+               [type]="passwordVisible() ? 'text' : 'password'" (paste)="onPasswordPaste($event)" />
         <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisible()"
                 [attr.aria-label]="passwordVisible() ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'">
           <mat-icon>{{ passwordVisible() ? 'visibility_off' : 'visibility' }}</mat-icon>

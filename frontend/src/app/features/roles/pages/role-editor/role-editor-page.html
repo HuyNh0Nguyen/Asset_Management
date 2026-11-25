@@ -1,0 +1,63 @@
+<header class="page-header">
+  <h1 class="page-title">{{ isCreate ? 'Thêm vai trò' : (role()?.name ?? 'Vai trò') }}</h1>
+  <div class="page-actions">
+    <a mat-button [routerLink]="listUrl">
+      <mat-icon>arrow_back</mat-icon>
+      Quay lại
+    </a>
+    @if (!isSystem()) {
+      <button mat-flat-button type="submit" form="roleForm" [disabled]="submitting() || loading()">
+        {{ submitting() ? 'Đang lưu...' : 'Lưu' }}
+      </button>
+    }
+  </div>
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+@if (isSystem()) {
+  <p class="dialog-alert dialog-alert-text">{{ systemNotice }}</p>
+}
+
+<form id="roleForm" class="page-card" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <div class="role-form">
+    <mat-form-field appearance="outline">
+      <mat-label>Mã vai trò</mat-label>
+      <input matInput formControlName="code" autocomplete="off" [maxlength]="codeMaxLength" (input)="upperCaseCode()" />
+      <mat-hint>{{ isCreate ? codeHint : 'Mã không đổi được sau khi tạo' }}</mat-hint>
+      @if (form.controls.code.hasError('required')) {
+        <mat-error>Vui lòng nhập mã vai trò</mat-error>
+      } @else if (form.controls.code.hasError(errorKey.DUPLICATE)) {
+        <mat-error>Mã vai trò đã tồn tại</mat-error>
+      } @else {
+        <mat-error>{{ codeHint }}, tối đa {{ codeMaxLength }} ký tự</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Tên vai trò</mat-label>
+      <input matInput formControlName="name" autocomplete="off" [maxlength]="nameMaxLength" />
+      @if (form.controls.name.hasError('required')) {
+        <mat-error>Vui lòng nhập tên vai trò</mat-error>
+      } @else {
+        <mat-error>Tên vai trò không hợp lệ</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="role-form-wide">
+      <mat-label>Mô tả</mat-label>
+      <textarea matInput formControlName="description" rows="2" [maxlength]="descriptionMaxLength"></textarea>
+      <mat-error>Mô tả tối đa {{ descriptionMaxLength }} ký tự</mat-error>
+    </mat-form-field>
+  </div>
+</form>
+
+<section class="page-card">
+  <h2 class="section-title">Ma trận quyền</h2>
+  <p class="page-hint">Phạm vi tính theo đơn vị của người giữ vai trò; phạm vi rộng bao gồm phạm vi hẹp hơn</p>
+  @if (matrixError()) {
+    <p class="dialog-alert dialog-alert-text">{{ matrixError() }}</p>
+  }
+  <app-permission-matrix [formControl]="form.controls.grants" [definitions]="permissions()" [readonly]="isSystem()" />
+</section>
