@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --proxy-config proxy.conf.json",
+    "start": "ng serve",
     "start:mock": "ng serve --proxy-config proxy.conf.mock.json",
     "mock": "prism mock ../contracts/openapi.json --port 4010",
     "gen:api": "ng-openapi-gen --config ng-openapi-gen.json",

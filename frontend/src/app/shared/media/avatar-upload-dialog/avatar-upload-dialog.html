@@ -22,7 +22,7 @@
   @if (bitmap()) {
     <button mat-button type="button" [disabled]="uploading()" (click)="fileInput.click()">Chọn ảnh khác</button>
   }
-  <button mat-button type="button" mat-dialog-close>Hủy</button>
+  <button mat-button type="button" mat-dialog-close [disabled]="uploading()">Hủy</button>
   <button mat-flat-button type="button" [disabled]="!bitmap() || uploading()" (click)="save()">
     {{ uploading() ? 'Đang lưu...' : 'Lưu ảnh' }}
   </button>

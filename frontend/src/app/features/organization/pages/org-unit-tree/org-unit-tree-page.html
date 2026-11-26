@@ -68,10 +68,11 @@
             <div class="org-node-meta">
               <span>{{ typeLabels[row.node.unitType] }}</span>
               <span class="org-node-head">
-                <mat-icon class="org-node-meta-icon">person</mat-icon>
                 @if (row.node.head; as head) {
+                  <app-avatar [name]="head.fullName" [url]="head.avatarUrl" [size]="avatarSize" />
                   {{ head.fullName }} ({{ head.username }})
                 } @else {
+                  <mat-icon class="org-node-meta-icon">person</mat-icon>
                   {{ noHead }}
                 }
               </span>

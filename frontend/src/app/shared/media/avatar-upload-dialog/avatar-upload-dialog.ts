@@ -39,6 +39,9 @@ export class AvatarUploadDialog {
     protected readonly uploading = signal(false);
     private readonly cropper = viewChild(ImageCropper);
 
+    // Tên tệp người dùng chọn - Audit ghi originalFilename
+    private fileName = '';
+
     constructor() {
         inject(DestroyRef).onDestroy(() => this.bitmap()?.close());
     }
@@ -64,6 +67,7 @@ export class AvatarUploadDialog {
             const bitmap = await createImageBitmap(file);
             this.bitmap()?.close();
             this.bitmap.set(bitmap);
+            this.fileName = file.name;
             this.error.set(null);
         } catch {
             this.error.set(AvatarUploadText.UNREADABLE);
@@ -75,22 +79,30 @@ export class AvatarUploadDialog {
         if (!cropper || this.uploading()) {
             return;
         }
-        this.uploading.set(true);
+        this.setUploading(true);
+        this.error.set(null);
         let blob: Blob;
         try {
             blob = await cropper.exportBlob();
         } catch {
-            this.uploading.set(false);
+            this.setUploading(false);
             this.error.set(AvatarUploadText.UNREADABLE);
             return;
         }
-        const file = new File([blob], AvatarUploadText.FILE_NAME, { type: ImageMimeType.JPEG });
+        // Nội dung đã mã hóa JPEG; tên giữ nguyên tên tệp gốc
+        const file = new File([blob], this.fileName, { type: ImageMimeType.JPEG });
         this.data.upload(file)
-            .pipe(finalize(() => this.uploading.set(false)))
+            .pipe(finalize(() => this.setUploading(false)))
             .subscribe({
                 next: () => this.dialogRef.close(true),
                 error: (error: unknown) => this.onFailed(error),
             });
+    }
+
+    // Đang tải: chặn đóng bằng Esc / bấm nền - đóng giữa chừng thì ảnh vẫn lưu mà trang không biết
+    private setUploading(value: boolean): void {
+        this.uploading.set(value);
+        this.dialogRef.disableClose = value;
     }
 
     private onFailed(error: unknown): void {
@@ -103,7 +115,7 @@ export class AvatarUploadDialog {
     }
 }
 
-// Mở hộp thoại, phát truy khi đã lưu ảnh
+// Mở hộp thoại, phát true khi đã lưu ảnh
 export function openAvatarUpload(dialog: MatDialog, data: AvatarUploadDialogData,
                                 viewContainerRef?: ViewContainerRef): Observable<boolean> {
     return dialog

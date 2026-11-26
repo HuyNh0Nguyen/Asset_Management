@@ -1,5 +1,5 @@
 <div class="image-cropper">
-  <canvas #canvas class="image-cropper-canvas" [width]="viewSize" [height]="viewSize"
+  <canvas #canvas class="image-cropper-canvas" [width]="canvasSize" [height]="canvasSize"
           role="img" aria-label="Vùng cắt ảnh - kéo để di chuyển"
           (pointerdown)="onPointerDown($event)" (pointermove)="onPointerMove($event)"
           (pointerup)="onPointerUp($event)" (pointercancel)="onPointerUp($event)"></canvas>
