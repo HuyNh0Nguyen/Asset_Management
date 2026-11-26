@@ -3,7 +3,6 @@ package com.training.assetmanagement.shared.config;
 import lombok.RequiredArgsConstructor;
 import org.flywaydb.core.api.Location;
 import org.flywaydb.core.api.configuration.FluentConfiguration;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.flyway.autoconfigure.FlywayConfigurationCustomizer;
 import org.springframework.stereotype.Component;
 

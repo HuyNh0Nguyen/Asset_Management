@@ -4,6 +4,9 @@ import com.training.assetmanagement.access.service.CurrentActor;
 import com.training.assetmanagement.media.domain.StoredImage;
 import com.training.assetmanagement.media.service.ImageProcessor;
 import com.training.assetmanagement.media.service.PresignedUrlSigner;
+import com.training.assetmanagement.shared.web.BusinessException;
+import com.training.assetmanagement.shared.web.ErrorCode;
+import com.training.assetmanagement.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -11,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
-// Facade KHÔNG giao dịch: Xử lý ảnh + tải MinIO trước, rồi mới mở giao dịch ghi dòng
 @Service
 @RequiredArgsConstructor
 public class AvatarServiceImpl implements AvatarService {
@@ -19,6 +21,7 @@ public class AvatarServiceImpl implements AvatarService {
     private final ImageProcessor imageProcessor;
     private final AvatarWriter avatarWriter;
     private final PresignedUrlSigner presignedUrlSigner;
+    private final UserRepository userRepository;
     private final CurrentActor currentActor;
 
     @Override
@@ -33,6 +36,10 @@ public class AvatarServiceImpl implements AvatarService {
 
     @Override
     public String changeAvatar(UUID userId, MultipartFile file) {
+        // Kiểm sớm: Không xử lý / tải ảnh cho id không tồn tại
+        if (!userRepository.existsById(userId)) {
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "User not found: " + userId);
+        }
         return change(userId, file);
     }
 
@@ -45,14 +52,13 @@ public class AvatarServiceImpl implements AvatarService {
         // Ngoài giao dịch
         StoredImage stored = imageProcessor.process(file);
         try {
-            // Giao dịch ghi dòng
+            // TRONG giao dịch (bean riêng)
             avatarWriter.attach(userId, stored.objectKey(), StringUtils.getFilename(file.getOriginalFilename()));
         } catch (RuntimeException ex) {
             // Ghi dòng thất bại (VD 404, khóa chéo) -> xóa hai đối tượng vừa tải
             imageProcessor.discard(stored);
             throw ex;
         }
-        // Luôn trả URL ký của bản thu nhỏ; không bao giờ trả objectKey
         return presignedUrlSigner.thumbnailUrl(stored.objectKey());
     }
 }

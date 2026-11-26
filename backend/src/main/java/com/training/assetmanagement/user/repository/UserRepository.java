@@ -110,18 +110,20 @@ public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificat
         """)
     List<UserUnitRow> findUnitRows(@Param("ids") Collection<UUID> ids, @Param("status") UserStatus status);
 
-    // avatar_image_id chỉ ghi ở đây, dưới khóa dòng chủ (BR-52).
-    // flushAutomatically: dòng image_files mới phải vào CSDL trước (fk_users_avatar_image)
+    // Đổi / gỡ ảnh là sửa nghiệp vụ - ghi updated_by / updated_at.
+    // flushAutomatically: dòng image_files vừa persist được INSERT trước, FK hợp lệ
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("""
         UPDATE User u
-        SET u.avatarImageId = :imageId, u.updatedBy = :actorId, u.updatedAt = :now
+        SET u.avatarImageId = :avatarImageId,
+            u.updatedBy = :updatedBy,
+            u.updatedAt = :updatedAt
         WHERE u.id = :id
         """)
     int updateAvatar(@Param("id") UUID id,
-                     @Param("imageId") UUID imageId,
-                     @Param("actorId") UUID actorId,
-                     @Param("now") LocalDateTime now);
+                     @Param("avatarImageId") UUID avatarImageId,
+                     @Param("updatedBy") UUID updatedBy,
+                     @Param("updatedAt") LocalDateTime updatedAt);
 
     // Vướng ngừng hoạt động / xóa đơn vị
     long countByOrgUnitIdAndStatus(UUID orgUnitId, UserStatus status);

@@ -7,7 +7,9 @@ import com.training.assetmanagement.media.service.ImageFileService;
 import com.training.assetmanagement.shared.web.BusinessException;
 import com.training.assetmanagement.shared.web.ErrorCode;
 import com.training.assetmanagement.user.domain.User;
+import com.training.assetmanagement.user.domain.UserAction;
 import com.training.assetmanagement.user.domain.UserAuditField;
+import com.training.assetmanagement.user.domain.UserRules;
 import com.training.assetmanagement.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +19,6 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-// Khóa ghi dòng người dùng là câu đầu tiên ("khóa dòng chủ"); được cả với tài khoản INACTIVE
 @Service
 @RequiredArgsConstructor
 public class AvatarWriterImpl implements AvatarWriter {
@@ -31,43 +32,50 @@ public class AvatarWriterImpl implements AvatarWriter {
     @Override
     @Transactional
     public UUID attach(UUID userId, String objectKey, String originalFilename) {
-        User user = userRepository.findByIdForUpdate(userId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND));
+        // Câu đầu tiên là khóa: Hai lần đổi ảnh đồng thời xếp hàng
+        User user = lockUser(userId);
+        UserRules.require(UserAction.CHANGE_AVATAR, user.getStatus());
         UUID oldImageId = user.getAvatarImageId();
-        String username = user.getUsername();
 
         UUID newImageId = imageFileService.register(objectKey);
         userRepository.updateAvatar(userId, newImageId, currentActor.get().userId(), LocalDateTime.now(clock));
-        // Dòng cũ không còn ai trỏ tới -> xóa; tệp MinIO cũ xóa sau commit
         if (oldImageId != null) {
+            // Dòng xóa ngay, tệp MinIO xóa SAU commit
             imageFileService.delete(oldImageId);
         }
 
-        // Tên tệp gốc chỉ ghi lúc thêm
-        AuditChanges changes = new AuditChanges();
+        // IMAGE_ADD: new = {avatarImageId mới, originalFilename}
+        AuditChanges changes = new AuditChanges()
+            .putNew(UserAuditField.AVATAR_IMAGE_ID, newImageId)
+            .putNew(UserAuditField.ORIGINAL_FILENAME, originalFilename);
+        // Đổi lần đầu không có ảnh cũ -> old_value NULL
         if (oldImageId != null) {
             changes.putOld(UserAuditField.AVATAR_IMAGE_ID, oldImageId);
         }
-        changes.putNew(UserAuditField.AVATAR_IMAGE_ID, newImageId)
-            .putNew(UserAuditField.ORIGINAL_FILENAME, originalFilename);
-        userAuditService.log(AuditAction.IMAGE_ADD, userId, username, changes);
+        userAuditService.log(AuditAction.IMAGE_ADD, userId, user.getUsername(), changes);
         return newImageId;
     }
 
     @Override
     @Transactional
     public void detach(UUID userId) {
-        User user = userRepository.findByIdForUpdate(userId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND));
+        User user = lockUser(userId);
         UUID oldImageId = user.getAvatarImageId();
-        // Chưa có ảnh -> trả về, không Audit
         if (oldImageId == null) {
+            // Chưa có ảnh -> không ghi, không Audit
             return;
         }
-        String username = user.getUsername();
+        UserRules.require(UserAction.REMOVE_AVATAR, user.getStatus());
         userRepository.updateAvatar(userId, null, currentActor.get().userId(), LocalDateTime.now(clock));
         imageFileService.delete(oldImageId);
-        userAuditService.log(AuditAction.IMAGE_REMOVE, userId, username, new AuditChanges()
-            .putOld(UserAuditField.AVATAR_IMAGE_ID, oldImageId));
+
+        // IMAGE_REMOVE: Chỉ old = {avatarImageId cũ}; new rỗng -> AuditLogger ghi NULL
+        userAuditService.log(AuditAction.IMAGE_REMOVE, userId, user.getUsername(),
+            new AuditChanges().putOld(UserAuditField.AVATAR_IMAGE_ID, oldImageId));
+    }
+
+    private User lockUser(UUID userId) {
+        return userRepository.findByIdForUpdate(userId)
+            .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "User not found: " + userId));
     }
 }

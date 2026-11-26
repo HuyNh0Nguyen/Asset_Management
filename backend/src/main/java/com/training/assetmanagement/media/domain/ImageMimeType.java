@@ -11,9 +11,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public enum ImageMimeType {
 
-    JPEG("image/jpeg"),
-    PNG("image/png"),
-    WEBP("image/webp");
+    JPEG("image/jpeg");
 
     private final String value;
 

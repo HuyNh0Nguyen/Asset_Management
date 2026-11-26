@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-// Không có tầng phạm vi riêng: Ai thấy tên người dùng thì thấy ảnh
 @Service
 @RequiredArgsConstructor
 public class AvatarUrlResolverImpl implements AvatarUrlResolver {
@@ -15,7 +15,10 @@ public class AvatarUrlResolverImpl implements AvatarUrlResolver {
 
     @Override
     public Map<UUID, String> urlsFor(Collection<UUID> avatarImageIds) {
-        return avatarImageIds.isEmpty() ? Map.of() : imageFileService.thumbnailUrls(avatarImageIds);
+        // Lọc null: thumbnailUrls dùng Set.copyOf (ném NPE với null)
+        Set<UUID> ids = avatarImageIds.stream().filter(Objects::nonNull).collect(Collectors.toSet());
+        // HashMap: Bên gọi get(null) cho người chưa có ảnh mà không bị NPE như Map.of()
+        return ids.isEmpty() ? new HashMap<>() : new HashMap<>(imageFileService.thumbnailUrls(ids));
     }
 
     @Override
@@ -23,6 +26,6 @@ public class AvatarUrlResolverImpl implements AvatarUrlResolver {
         if (avatarImageId == null) {
             return Optional.empty();
         }
-        return Optional.ofNullable(urlsFor(List.of(avatarImageId)).get(avatarImageId));
+        return Optional.ofNullable(imageFileService.thumbnailUrls(Set.of(avatarImageId)).get(avatarImageId));
     }
 }
