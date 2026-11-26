@@ -55,6 +55,7 @@
             ],
             "styles": [
               "node_modules/@fontsource-variable/roboto/index.css",
+              "node_modules/@material-symbols/font-400/outlined.css",
               "src/styles/main.scss"
             ]
           },

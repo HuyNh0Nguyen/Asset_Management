@@ -4,7 +4,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm npm ci
 COPY . .
-# Bản production nhúng font Google vào CSS — máy build cần mạng
+# Font Roboto và Material Symbols tự host qua npm - build không cần mạng ra ngoài
 RUN npm run build
 
 FROM nginx:1.29-alpine
