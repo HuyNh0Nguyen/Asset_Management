@@ -27,6 +27,8 @@ import { StatusTone } from "@shared/ui/status-chip/status-tone";
 import { ToastService } from "@shared/ui/toast/toast.service";
 import { filter, switchMap } from "rxjs";
 import { normalizeSearchText } from "@shared/text/normalize-search-text";
+import { Avatar } from "@shared/media/avatar/avatar";
+import { AvatarSize } from "@shared/media/avatar-size";
 
 // Thời gian hoạt ảnh thu gọn khớp với SCSS
 const COLLAPSE_ANIMATION_MS = 180;
@@ -51,6 +53,7 @@ const COLLAPSE_ANIMATION_MS = 180;
         MatSlideToggle,
         MatProgressSpinner,
         StatusChip,
+        Avatar
     ],
     templateUrl: './org-unit-tree-page.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -76,6 +79,7 @@ export class OrgUnitTreePage {
     protected readonly inactiveStatus = OrgUnitStatus.INACTIVE;
     protected readonly mutedTone = StatusTone.MUTED;
     protected readonly noHead = OrgMessage.NO_HEAD;
+    protected readonly avatarSize = AvatarSize.SMALL;
 
     private readonly childCounts = computed(() => childCountById(this.store.nodes()));
 

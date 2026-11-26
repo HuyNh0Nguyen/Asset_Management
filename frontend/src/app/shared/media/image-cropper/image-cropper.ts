@@ -15,7 +15,8 @@ export class ImageCropper {
 
     readonly source = input.required<ImageBitmap>();
 
-    protected readonly viewSize = CropperSize.VIEW;
+    // Số px thật của canvas xem trước: nhân devicePixelRatio cho nét trên iPad / điện thoại
+    protected readonly canvasSize = Math.round(CropperSize.VIEW * (window.devicePixelRatio || 1));
     protected readonly zoomMin = CropperZoom.MIN;
     protected readonly zoomMax = CropperZoom.MAX;
     protected readonly zoomStep = CropperZoom.STEP;
@@ -42,7 +43,7 @@ export class ImageCropper {
 
     constructor() {
         // Vẽ lại sau render mỗi khi ảnh / tỉ lệ / vị trí đổi
-        afterRenderEffect(() => this.paint(this.canvas().nativeElement, this.source(), this.scale(), this.offset(), true));
+        afterRenderEffect(() => this.render(this.canvas().nativeElement, true));
     }
 
     // Xuất JPEG vuông; nền trắng cho ảnh PNG trong suốt
@@ -50,9 +51,7 @@ export class ImageCropper {
         const output = document.createElement('canvas');
         output.width = CropperSize.OUTPUT;
         output.height = CropperSize.OUTPUT;
-        const ratio = CropperSize.OUTPUT / CropperSize.VIEW;
-        const offset = this.offset();
-        this.paint(output, this.source(), this.scale() * ratio, { x: offset.x * ratio, y: offset.y * ratio }, false);
+        this.render(output, false);
         return new Promise((resolve, reject) => output.toBlob(
             (blob) => (blob ? resolve(blob) : reject(new Error('Cannot export cropped image'))),
             ImageMimeType.JPEG,
@@ -83,7 +82,7 @@ export class ImageCropper {
         if (!this.drag || this.drag.pointerId !== event.pointerId) {
             return;
         }
-        // Đổi px CSS sang px của canvas (canvas co giãn theo bề rộng màn hình)
+        // Đổi px CSS sang px VIEW (canvas co giãn theo bề rộng màn hình)
         const ratio = CropperSize.VIEW / this.canvas().nativeElement.clientWidth;
         this.offset.set(this.clamp({
             x: this.drag.origin.x + (event.clientX - this.drag.start.x) * ratio,
@@ -95,6 +94,13 @@ export class ImageCropper {
         if (this.drag?.pointerId === event.pointerId) {
             this.drag = null;
         }
+    }
+
+    // Tọa độ lưu theo px VIEW; quy đổi theo cỡ thật của canvas đích (xem trước / xuất)
+    private render(canvas: HTMLCanvasElement, withMask: boolean): void {
+        const ratio = canvas.width / CropperSize.VIEW;
+        const offset = this.offset();
+        this.paint(canvas, this.source(), this.scale() * ratio, { x: offset.x * ratio, y: offset.y * ratio }, withMask);
     }
 
     // withMask: phủ mờ ngoài vòng tròn - vùng ảnh đại diện thật sự hiển thị
@@ -110,10 +116,13 @@ export class ImageCropper {
         context.imageSmoothingQuality = 'high';
         context.drawImage(bitmap, offset.x, offset.y, bitmap.width * scale, bitmap.height * scale);
         if (withMask) {
+            const radius = size / 2;
             context.fillStyle = CropperColor.MASK;
             context.beginPath();
             context.rect(0, 0, size, size);
-            context.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+            // Bắt đầu vòng tròn ở mép phải: tránh đường nối thừa từ góc của rect
+            context.moveTo(size, radius);
+            context.arc(radius, radius, radius, 0, Math.PI * 2);
             context.fill('evenodd');
         }
     }

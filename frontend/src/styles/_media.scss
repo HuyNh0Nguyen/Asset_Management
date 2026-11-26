@@ -1,6 +1,12 @@
 // Ảnh đại diện, bộ cắt ảnh, hộp thoại tải ảnh
 
 // ---------- avatar ----------
+// Host là flex: bỏ khoảng trống chân chữ dưới ảnh, căn giữa đúng trong header / bảng / cây
+app-avatar {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
 .avatar {
   display: inline-flex;
   flex-shrink: 0;
@@ -41,8 +47,23 @@
 
 // Ảnh trên header nền xanh
 .shell-user .avatar {
-  margin-right: 8px;
   box-shadow: 0 0 0 2px var(--mat-sys-on-primary);
+}
+
+// Nhãn nút là span inline: ảnh <img> có baseline ở mép dưới nên bị đẩy lên so với tên
+// -> chuyển nhãn sang flex để ảnh và tên căn giữa theo chiều dọc
+.shell-user .mdc-button__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+// Trưởng đơn vị trên dòng cây: thu theo cỡ chữ phụ
+.org-node-head .avatar {
+  width: 20px;
+  height: 20px;
+  font-size: 10px;
 }
 
 // ---------- image-cropper ----------
