@@ -3,7 +3,6 @@ package com.training.assetmanagement.organization.domain;
 import com.training.assetmanagement.shared.persistence.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
