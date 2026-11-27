@@ -8,8 +8,8 @@ public final class EmailQueue {
     public static final String ROUTING_KEY = "email.send";
     public static final String RETRY_ROUTING_KEY = "email.retry";
 
-    // Số lần thử lại đã hẹn - chỉ email-service dùng; phase 2 chuyển sang email_logs.attempt_count
-    public static final String ATTEMPT_HEADER = "x-email-attempt";
+    // Số lần hoãn liên tiếp vì CSDL không tới được; số lần thử lại nằm ở email_logs.attempt_count
+    public static final String DEFERAL_HEADER = "x-email-deferral";
 
     private EmailQueue() {}
 }

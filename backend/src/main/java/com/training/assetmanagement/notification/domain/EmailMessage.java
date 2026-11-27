@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Schema(name = "EmailMessage", description = "Email message to be sent, matching the contract in contracts/email-message.example.json")
 public record EmailMessage(
-        UUID emailLogId,        // Phase 0 để null; từ phase 2 bắt buộc (trỏ dòng email_logs PENDING)
+        UUID emailLogId,        // Bắt buộc với mọi sự kiện, trừ EMAIL_PROBE tới địa chỉ bất kỳ (null - không ghi email_logs)
         EmailEventType eventType,
         String recipientEmail,
         String recipientName,

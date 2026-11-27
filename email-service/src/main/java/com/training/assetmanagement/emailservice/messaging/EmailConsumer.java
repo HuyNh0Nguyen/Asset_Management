@@ -19,12 +19,13 @@ public class EmailConsumer {
 
     @RabbitListener(queues = EmailQueue.QUEUE)
     public void onMessage(EmailMessage message,
-                          @Header(name = EmailQueue.ATTEMPT_HEADER, required = false) Integer attempt) {
+                          @Header(name = EmailQueue.DEFERAL_HEADER, required = false) Integer deferrals) {
         try {
-            deliveryService.deliver(message, attempt == null ? 0 : attempt);
+            deliveryService.deliver(message, deferrals == null ? 0 : deferrals);
         } catch (RuntimeException ex) {
             // KHÔNG BAO GIỜ ném ra ngoài: Mọi nhánh đều ack message
-            log.error("Unexpected error while processing email message {} to {} on RabbitMQ", message.eventType(), message.recipientEmail(), ex);
+            log.error("Unexpected error while processing email log {} ({}) on RabbitMQ",
+                message.emailLogId(), message.eventType(), ex);
         }
     }
 }

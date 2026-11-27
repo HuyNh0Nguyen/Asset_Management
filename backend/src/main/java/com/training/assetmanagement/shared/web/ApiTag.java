@@ -9,6 +9,7 @@ public final class ApiTag {
     public static final String USERS = "Users";
     public static final String ROLES = "Roles";
     public static final String CATALOG = "Catalog";
+    public static final String NOTIFICATIONS = "Notifications";
     public static final String DEV_TOOLS = "Dev Tools";
 
     private ApiTag() {}

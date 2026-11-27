@@ -22,7 +22,7 @@ public enum EmailEventType {
     RECOVERY_EXTENDED,
     HELD_ASSET_MAINTENANCE,
     EXTENSION_REJECTED,
-    // Chỉ endpoint thử của phase 0 dùng; khi viết CHECK của email_logs ở phase 1 nhớ thêm mã này
+    // Email thử tới địa chỉ bất kỳ (emailLogId = null) - không ghi email_logs nên KHÔNG có trong ck_email_logs_event_type
     EMAIL_PROBE;
 
     // Tên tệp mẫu: REQUEST_REJECTED -> email/request-rejected.html

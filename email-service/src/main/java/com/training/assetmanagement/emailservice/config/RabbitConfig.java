@@ -5,6 +5,7 @@ import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.json.JsonMapper;
 
 // Khai giống hệt backend - bên nào khởi động trước cũng tạo đúng một cấu trúc
@@ -41,7 +42,12 @@ public class RabbitConfig {
 
     @Bean
     public MessageConverter jsonMessageConverter(JsonMapper jsonMapper) {
-        JacksonJsonMessageConverter converter = new JacksonJsonMessageConverter(jsonMapper);
+        // Phía nhận dễ tính: Backend thêm trường tùy chọn không làm mọi email bị bỏ âm thầm.
+        // Chỉ áp cho converter này - mapper toàn cục vẫn từ chối trường lạ
+        JsonMapper lenientMapper = jsonMapper.rebuild()
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .build();
+        JacksonJsonMessageConverter converter = new JacksonJsonMessageConverter(lenientMapper);
         // Header __TypeId__ trỏ tới lớp chỉ có trong backend -> bỏ qua, suy kiểu từ tham số listener
         converter.setAlwaysConvertToInferredType(true);
         return converter;
