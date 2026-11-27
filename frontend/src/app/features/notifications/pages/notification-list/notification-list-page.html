@@ -1,0 +1,32 @@
+<div class="page-header">
+  <h1 class="page-title">{{ message.PAGE_TITLE }}</h1>
+  <div class="page-actions">
+    <button mat-flat-button type="button" [disabled]="unreadCount() === 0 || markingAll()" (click)="markAllRead()">
+      <mat-icon>done_all</mat-icon>
+      {{ notificationMessage.MARK_ALL_READ }}
+    </button>
+  </div>
+</div>
+
+<section class="page-card">
+  <div class="page-toolbar">
+    <mat-slide-toggle [checked]="query().unreadOnly" (change)="onUnreadOnlyChange($event.checked)">
+      {{ message.UNREAD_ONLY }}
+    </mat-slide-toggle>
+    <span class="notification-list-summary">{{ summary() }}</span>
+  </div>
+
+  <app-server-table [total]="total()" [page]="query().page" [size]="query().size" [loading]="loading()"
+                    [emptyText]="emptyText()" (pageChange)="onPageChange($event)">
+    <ul class="notification-list">
+      @for (notification of items(); track notification.id) {
+        <li>
+          <button type="button" class="notification-row" [class.notification-row-unread]="!notification.read"
+                  (click)="open(notification)">
+            <app-notification-item [notification]="notification" />
+          </button>
+        </li>
+      }
+    </ul>
+  </app-server-table>
+</section>

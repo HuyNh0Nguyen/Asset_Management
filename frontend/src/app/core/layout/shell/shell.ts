@@ -16,6 +16,8 @@ import { Permission } from "@api/models";
 import { ToastService } from "@shared/ui/toast/toast.service";
 import { Avatar } from "@shared/media/avatar/avatar";
 import { AvatarSize } from "@shared/media/avatar-size";
+import { NotificationBell } from "../notification-bell/notification-bell";
+import { NotificationStore } from "@core/notifications/notification.store";
 
 // Quyền khai ở data của mọi route trên đường dẫn hiện tại
 function requiredPermissions(root: ActivatedRouteSnapshot): Permission[] {
@@ -52,6 +54,7 @@ function requiredPermissions(root: ActivatedRouteSnapshot): Permission[] {
         MatListItemIcon,
         MatListItemTitle,
         Avatar,
+        NotificationBell,
     ],
     templateUrl: './shell.html',
     styleUrl: './shell.scss',
@@ -61,6 +64,7 @@ export class Shell {
 
     private readonly breakpoints = inject(BreakpointObserver);
     private readonly session = inject(SessionStore);
+    private readonly notifications = inject(NotificationStore);
     private readonly router = inject(Router);
     private readonly toast = inject(ToastService);
 
@@ -81,10 +85,13 @@ export class Shell {
     );
 
     constructor() {
-        // Mỗi lần chuyển trang làm mới /api/me; lần điều hướng đầu đã nạp ở authGuard
+        // Mỗi lần chuyển trang làm mới /api/me + số chưa đọc; lần điều hướng đầu đã nạp ở authGuard / polling
         this.router.events
             .pipe(filter((event) => event instanceof NavigationEnd), skip(1), takeUntilDestroyed())
-            .subscribe(() => this.session.refreshMe());
+            .subscribe(() => {
+                this.session.refreshMe();
+                this.notifications.refreshCount();
+            });
         // Quyền vừa mất mà vẫn đứng ở trang cần quyền đó -> về trang chủ
         effect(() => {
             if (this.session.me()) {

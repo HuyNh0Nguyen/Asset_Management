@@ -13,6 +13,7 @@ export enum RoutePath {
     ROLE_NEW = 'new',
     ROLE_DETAIL = ':id',
     ME = 'me',
+    NOTIFICATIONS = 'notifications',
 }
 
 // Đường dẫn tuyệt đối dùng khi điều hướng
@@ -28,6 +29,7 @@ export enum AppUrl {
     ROLES = '/roles',
     ROLE_NEW = '/roles/new',
     MY_ACCOUNT = '/me',
+    NOTIFICATIONS = '/notifications',
 }
 
 // Khóa query param dùng chung
@@ -40,6 +42,7 @@ export enum QueryParamKey {
     PAGE = 'page',
     SIZE = 'size',
     SORT = 'sort',
+    UNREAD = 'unread',
 }
 
 // Khóa route data dùng chung
