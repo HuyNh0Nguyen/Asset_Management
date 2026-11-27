@@ -19,10 +19,15 @@ public record EmailProperties(
         @NotBlank
         String fromName,
 
+        // Số lần thử lại SMTP - tổng tối đa maxRetries + 1 lần gửi
         @Min(0)
         int maxRetries,
 
         @NotNull
-        Duration retryDelay
+        Duration retryDelay,
+
+        // Trần số lần hoãn khi CSDL sập (12 x 5 phút ≈ 1 giờ)
+        @Min(0)
+        int maxDeferrals
 ) {
 }

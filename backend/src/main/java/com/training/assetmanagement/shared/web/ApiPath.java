@@ -17,6 +17,7 @@ public final class ApiPath {
     public static final String ROLES = API + "/roles";
     public static final String PERMISSIONS = API + "/permissions";
     public static final String ASSET_TYPES = API + "/asset-types";
+    public static final String NOTIFICATIONS = API + "/notifications";
     public static final String DEV = API + "/dev";
     public static final String DEV_STORAGE_PROBES = DEV + "/storage/probes";
     public static final String DEV_EMAIL_PROBES = DEV + "/email/probes";
@@ -49,6 +50,11 @@ public final class ApiPath {
     public static final String MOVE = BY_ID + "/move";
     public static final String MOVE_CHECK = BY_ID + "/move-check";
     public static final String HEAD_CANDIDATES = BY_ID + "/head-candidates";
+
+    // Thông báo (khai sau BY_ID - Java cầm tham chiếu tới hằng khai phía dưới)
+    public static final String UNREAD_COUNT = "/unread-count";
+    public static final String MARK_READ = BY_ID + "/read";
+    public static final String READ_ALL = "/read-all";
 
     // ---------- Đường dẫn đầy đủ: Dùng ngoài controller (security, OpenAPI) ----------
     public static final String AUTH_LOGIN = AUTH + LOGIN;

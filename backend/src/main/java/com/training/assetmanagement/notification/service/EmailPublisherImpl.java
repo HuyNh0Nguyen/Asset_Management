@@ -19,6 +19,9 @@ public class EmailPublisherImpl implements EmailPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(EmailPublisherImpl.class);
 
+    // Hạn chờ broker xác nhận - cần spring.rabbitmq.publisher-confirm-type=simple
+    private static final long BROKER_CONFIRM_TIMEOUT_MS = 5_000;
+
     private final ApplicationEventPublisher eventPublisher;
     private final RabbitTemplate rabbitTemplate;
     private final EmailLogService emailLogService;
@@ -33,7 +36,12 @@ public class EmailPublisherImpl implements EmailPublisher {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     public void sendToBroker(EmailMessage message) {
         try {
-            rabbitTemplate.convertAndSend(EmailQueue.EXCHANGE, EmailQueue.ROUTING_KEY, message);
+            // Gửi + chờ xác nhận trên cùng một channel: Broker nhận TCP mà chưa ghi message -> vẫn ra AmqpException
+            rabbitTemplate.invoke(operations -> {
+                operations.convertAndSend(EmailQueue.EXCHANGE, EmailQueue.ROUTING_KEY, message);
+                operations.waitForConfirmsOrDie(BROKER_CONFIRM_TIMEOUT_MS);
+                return Boolean.TRUE;
+            });
         } catch (AmqpException ex) {
             // Không log nguyên message: templateVars có thể chứa mật khẩu tạm
             log.error("Failed to send email {} ({}) to {} on RabbitMQ",
@@ -44,7 +52,7 @@ public class EmailPublisherImpl implements EmailPublisher {
 
     // Dòng email_logs thành FAILED để tra được; in-app (nếu có) đã nằm trong CSDL
     private void markFailed(EmailMessage message, AmqpException ex) {
-        // Email thử của phase 0 không có dùng email_logs
+        // Email thử tới địa chỉ bất kỳ không có dùng email_logs
         if (message.emailLogId() == null) {
             return;
         }
