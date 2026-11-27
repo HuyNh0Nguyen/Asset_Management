@@ -1,0 +1,33 @@
+<button mat-icon-button type="button" [matMenuTriggerFor]="notificationMenu" [attr.aria-label]="ariaLabel()"
+        (menuOpened)="onMenuOpened()">
+  <mat-icon [matBadge]="badgeText()" [matBadgeHidden]="unreadCount() === 0" matBadgeSize="small">notifications</mat-icon>
+</button>
+
+<mat-menu #notificationMenu="matMenu" xPosition="before" class="notification-menu">
+  <div class="notification-menu-header">
+    <span class="notification-menu-title">{{ message.TITLE }}</span>
+    @if (unreadCount() > 0) {
+      <button mat-button type="button" [disabled]="markingAll()" (click)="markAllRead($event)">
+        {{ message.MARK_ALL_READ }}
+      </button>
+    }
+  </div>
+
+  @if (loadingLatest()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (latest().length > 0) {
+    <div class="notification-menu-list">
+      @for (notification of latest(); track notification.id) {
+        <button mat-menu-item type="button" class="notification-menu-item" (click)="open(notification)">
+          <app-notification-item [notification]="notification" [clamp]="true" />
+        </button>
+      }
+    </div>
+  } @else if (!loadingLatest()) {
+    <p class="page-state">{{ message.EMPTY }}</p>
+  }
+
+  <a mat-menu-item class="notification-menu-footer" [routerLink]="allUrl">{{ message.VIEW_ALL }}</a>
+</mat-menu>

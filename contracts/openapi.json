@@ -260,6 +260,117 @@
         "tags" : [ "Me" ]
       }
     },
+    "/api/notifications" : {
+      "get" : {
+        "operationId" : "listNotifications",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "unreadOnly",
+          "required" : false,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        }, {
+          "description" : "Zero-based page index (0..N)",
+          "in" : "query",
+          "name" : "page",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "default" : 0,
+            "minimum" : 0
+          }
+        }, {
+          "description" : "The size of the page to be returned",
+          "in" : "query",
+          "name" : "size",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "default" : 20,
+            "minimum" : 1
+          }
+        }, {
+          "description" : "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+          "in" : "query",
+          "name" : "sort",
+          "required" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PageResponseNotificationResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "List my notifications, newest first",
+        "tags" : [ "Notifications" ]
+      }
+    },
+    "/api/notifications/read-all" : {
+      "post" : {
+        "operationId" : "markAllNotificationsRead",
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "summary" : "Mark all my notifications as read",
+        "tags" : [ "Notifications" ]
+      }
+    },
+    "/api/notifications/unread-count" : {
+      "get" : {
+        "operationId" : "getUnreadNotificationCount",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UnreadCountResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "summary" : "Count my unread notifications",
+        "tags" : [ "Notifications" ]
+      }
+    },
+    "/api/notifications/{id}/read" : {
+      "post" : {
+        "operationId" : "markNotificationRead",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        },
+        "summary" : "Mark one of my notifications as read",
+        "tags" : [ "Notifications" ]
+      }
+    },
     "/api/org-units" : {
       "post" : {
         "operationId" : "createOrgUnit",
@@ -1660,6 +1771,39 @@
         },
         "required" : [ "parentId" ]
       },
+      "NotificationEventType" : {
+        "type" : "string",
+        "enum" : [ "TASK_ACTIVATED", "REQUEST_APPROVED", "REQUEST_REJECTED", "REQUEST_STOPPED", "ASSET_HANDED_OVER", "ASSET_RECOVERED", "HOLDER_REQUEST", "TASK_REASSIGNED", "TASK_UNRESOLVED", "RECOVERY_DUE_REMINDER", "RECOVERY_OVERDUE_DIGEST", "TASK_OVERDUE_REMINDER", "TASK_OVERDUE_DIGEST", "APPROVED_REQUEST_CLOSED", "RECOVERY_EXTENDED", "HELD_ASSET_MAINTENANCE", "REQUEST_STAGE_PASSED", "EXTENSION_REJECTED" ]
+      },
+      "NotificationResponse" : {
+        "type" : "object",
+        "description" : "In-app notification of the current user",
+        "properties" : {
+          "content" : {
+            "type" : "string",
+            "description" : "Complete Vietnamese sentence, displayed as-is"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "eventType" : {
+            "$ref" : "#/components/schemas/NotificationEventType"
+          },
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "Relative in-app path, null when there is nothing to open"
+          },
+          "read" : {
+            "type" : "boolean"
+          }
+        },
+        "required" : [ "content", "createdAt", "eventType", "id", "read" ]
+      },
       "OrgUnitAction" : {
         "type" : "string",
         "enum" : [ "ADD_CHILD", "EDIT", "MOVE", "DELETE", "DEACTIVATE", "REACTIVATE" ]
@@ -1815,6 +1959,35 @@
       "OrgUnitType" : {
         "type" : "string",
         "enum" : [ "COMPANY", "BRANCH", "DEPARTMENT" ]
+      },
+      "PageResponseNotificationResponse" : {
+        "type" : "object",
+        "description" : "Paginated response with items and pagination info",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/NotificationResponse"
+            }
+          },
+          "page" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "totalElements" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        },
+        "required" : [ "items", "page", "size", "totalElements", "totalPages" ]
       },
       "PageResponseUserResponse" : {
         "type" : "object",
@@ -2036,6 +2209,17 @@
           }
         },
         "required" : [ "expiresAt", "probeId", "url" ]
+      },
+      "UnreadCountResponse" : {
+        "type" : "object",
+        "description" : "Number of unread notifications of the current user",
+        "properties" : {
+          "unreadCount" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        },
+        "required" : [ "unreadCount" ]
       },
       "UpdateOrgUnitRequest" : {
         "type" : "object",

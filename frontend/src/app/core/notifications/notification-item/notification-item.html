@@ -1,0 +1,17 @@
+<!-- Chỉ dùng span: phần tử này nằm trong <button> -->
+<span class="notification-item" [class.notification-item-unread]="!notification().read"
+      [class.notification-item-clamp]="clamp()">
+  <span class="notification-item-icon">
+    <mat-icon>{{ icon() }}</mat-icon>
+  </span>
+  <span class="notification-item-body">
+    <!-- Nội suy văn bản, không innerHTML -->
+    <span class="notification-item-content">{{ notification().content }}</span>
+    <span class="notification-item-time" [matTooltip]="notification().createdAt | date: fullDateTimeFormat">
+      {{ notification().createdAt | relativeTime }}
+    </span>
+  </span>
+  @if (!notification().read) {
+    <span class="notification-item-dot" role="img" [attr.aria-label]="unreadLabel"></span>
+  }
+</span>

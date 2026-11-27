@@ -21,6 +21,14 @@ export type { ChangeMyAvatar$Params as ChangeMyAvatar$Params } from './fn/me/cha
 export { changeMyAvatar as changeMyAvatar } from './fn/me/change-my-avatar';
 export type { RemoveMyAvatar$Params as RemoveMyAvatar$Params } from './fn/me/remove-my-avatar';
 export { removeMyAvatar as removeMyAvatar } from './fn/me/remove-my-avatar';
+export type { ListNotifications$Params as ListNotifications$Params } from './fn/notifications/list-notifications';
+export { listNotifications as listNotifications } from './fn/notifications/list-notifications';
+export type { MarkAllNotificationsRead$Params as MarkAllNotificationsRead$Params } from './fn/notifications/mark-all-notifications-read';
+export { markAllNotificationsRead as markAllNotificationsRead } from './fn/notifications/mark-all-notifications-read';
+export type { GetUnreadNotificationCount$Params as GetUnreadNotificationCount$Params } from './fn/notifications/get-unread-notification-count';
+export { getUnreadNotificationCount as getUnreadNotificationCount } from './fn/notifications/get-unread-notification-count';
+export type { MarkNotificationRead$Params as MarkNotificationRead$Params } from './fn/notifications/mark-notification-read';
+export { markNotificationRead as markNotificationRead } from './fn/notifications/mark-notification-read';
 export type { CreateOrgUnit$Params as CreateOrgUnit$Params } from './fn/organization/create-org-unit';
 export { createOrgUnit as createOrgUnit } from './fn/organization/create-org-unit';
 export type { GetOrgUnitTree$Params as GetOrgUnitTree$Params } from './fn/organization/get-org-unit-tree';

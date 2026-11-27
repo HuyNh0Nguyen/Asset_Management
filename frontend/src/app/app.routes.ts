@@ -29,6 +29,7 @@ export const routes: Routes = [
             { path: RoutePath.USERS, loadChildren: () => import('@features/users/users.routes') },
             { path: RoutePath.ROLES, loadChildren: () => import('@features/roles/roles.routes') },
             { path: RoutePath.ME, loadChildren: () => import('@features/me/me.routes') },
+            { path: RoutePath.NOTIFICATIONS, loadChildren: () => import('@features/notifications/notifications.routes') },
             { path: RoutePath.DEV_TOOLS, loadChildren: () => import('@features/dev-tools/dev-tools.routes') },
         ],
     },
